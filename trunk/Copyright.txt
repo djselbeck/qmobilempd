@@ -1,0 +1,1 @@
+All source code copyrighted 2011 by Hendrik Borghorst. It is allowed to distribute under the terms of the                     GNU GENERAL PUBLIC LICENSE Version 3. See gpl-3.0.txt for details.
