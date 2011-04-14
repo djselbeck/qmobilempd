@@ -1,3 +1,8 @@
+Version 1.0.5 (15.04.2011)
+-Current playing song info. Select via menu or tap on current track in playlist
+-Network bugs fixed (network streams not shown, thanks to user Murz on kde-look.org)
+-streamlined
+
 Version 1.0.3 (xx.xx.xxxx)
 -Changed kinetic scrolling from flickcharm to qskineticscroller (much smoother)
 -Code cleanup
