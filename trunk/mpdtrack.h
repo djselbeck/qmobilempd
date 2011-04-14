@@ -24,6 +24,12 @@ public:
     QString getAlbum();
     QString getArtist();
     QString getLengthFormated();
+    void    setTitle(QString);
+    void 	setFileUri(QString);
+    void 	setLength(quint32 length);
+    void 	setAlbum(QString);
+    void	setArtist(QString);
+
     bool getPlaying();
 private:
     QString title;
@@ -31,6 +37,7 @@ private:
     quint32 length;
     QString artist;
     QString album;
+    
     bool playing;
 
 signals:

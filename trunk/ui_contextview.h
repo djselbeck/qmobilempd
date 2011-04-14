@@ -22,7 +22,7 @@
 #include "commondebug.h"
 
 
-enum viewmode {viewmode_currentplaylist,viewmode_artistalbums,viewmode_artists,viewmode_albums,viewmode_albumtracks,viewmode_alltracks,viewmode_savedplaylists,viewmode_playlisttracks,viewmode_files,viewmode_count};
+enum viewmode {viewmode_currentplaylist,viewmode_artistalbums,viewmode_artists,viewmode_albums,viewmode_albumtracks,viewmode_alltracks,viewmode_savedplaylists,viewmode_playlisttracks,viewmode_files,viewmode_currentsonginfo,viewmode_count};
 
 namespace Ui {
     class Ui_ContextView;
@@ -36,7 +36,7 @@ public:
     explicit Ui_ContextView(QWidget *parent = 0);
     Ui_ContextView(QWidget *parent, NetworkAccess *netaccess);
     ~Ui_ContextView();
-    void setCurrentPlayingId(qint32 id,bool play);
+    void setCurrentPlayingId(qint32 id,quint8 play);
 
 private:
     Ui::Ui_ContextView *ui;
@@ -65,7 +65,7 @@ private:
     QPropertyAnimation *listinanimation;
     void setupContextMenu();
     bool playlistchanged;
-    bool playinglaststate;
+    quint8 playinglaststate;
     QList<MpdTrack*> *lastplaylist;
 
 
@@ -100,11 +100,14 @@ protected slots:
     void quitApplication();
     void updateStatus(status_struct tempstruct);
     void disconnectedFromServer();
+    void connectedToServer();
     void filesClickedDispatcher(QListWidgetItem *item);
+    void selectedDispatcher(QListWidgetItem *item);
 
 signals:
     void exitrequested();
     void requestMaximised(bool);
+    void showCurrentSongInfo();
 
 
 

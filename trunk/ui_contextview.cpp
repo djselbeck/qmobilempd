@@ -57,6 +57,7 @@ CommonDebug("Context Menu created");
     ui->btnSavePlaylist->hide();
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(disconnected()),this,SLOT(disconnectedFromServer()));
+    connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     //connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(disconnectedFromServer()));
     connect(ui->btnAdd,SIGNAL(clicked()),this,SLOT(addButtonDispatcher()));
     connect(ui->btnBack,SIGNAL(clicked()),this,SLOT(backButtonDispatcher()));
@@ -92,7 +93,7 @@ void Ui_ContextView::showArtists()
     ui->btnAdd->show();
     ui->btnBack->show();
     ui->btnClear->hide();
-    ui->btnPlay->hide();
+    ui->btnPlay->show();
     ui->btnLoadPlaylist->hide();
     ui->btnSavePlaylist->hide();
     //Disconnect all Handlers        CommonDebug("Artist:"+artist.toAscii());
@@ -370,8 +371,11 @@ void Ui_ContextView::afterAnimationshowCurrentPlaylist()
         }
     setCurrentPlayingId(playingid,true);
     slideListWidgetRight();
-    connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(playSelectedSong(QListWidgetItem*)));
+    connect(ui->listWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(selectedDispatcher(QListWidgetItem*)));
     playlistchanged = false;
+    playingid = -1;
+    playinglaststate = NetworkAccess::STOP;
+    updateStatus(netaccess->getStatus());
 }
 
 
@@ -433,8 +437,8 @@ void Ui_ContextView::setupAnimations()
         height = ui->listWidget->size().height();
         width = ui->listWidget->size().width();
         CommonDebug("LIST:"+QString::number(width).toAscii()+":"+QString::number(height).toAscii());
-        listoutanimation->setDuration(1);
-        listinanimation->setDuration(700);
+        listoutanimation->setDuration(300);
+        listinanimation->setDuration(400);
         listoutanimation->setStartValue(QRect(startx,starty,width,height));
         listoutanimation->setEndValue(QRect(endx,endy,width,height));
         listoutanimation->setEasingCurve(QEasingCurve::OutCurve);
@@ -506,7 +510,9 @@ void Ui_ContextView::showLibrarySongInfo(QListWidgetItem *item)
     ui->listWidget->setDisabled(true);
     QWidget::updateGeometry();
     QWidget::update();
-    parentWidget()->showFullScreen();
+    if(parentWidget()!=NULL) {
+        parentWidget()->showFullScreen();
+    }
 
     CommonDebug("List widget removed");
 }
@@ -527,7 +533,10 @@ void Ui_ContextView::hideLibrarySongInfo()
         songinfo = NULL;
         QWidget::updateGeometry();
         QWidget::update();
-        parentWidget()->showFullScreen();
+        if(parentWidget()!=NULL)
+        {
+            parentWidget()->showFullScreen();
+        }
         ui->listWidget->showFullScreen();
         switch(currentmode)
         {
@@ -542,7 +551,7 @@ void Ui_ContextView::hideLibrarySongInfo()
         case viewmode_playlisttracks:
             {
                 ui->btnAdd->hide();
-                ui->btnBack->hide();
+                ui->btnBack->show();
                 ui->btnPlay->show();
                 ui->btnQuit->show();
                 break;
@@ -559,44 +568,76 @@ void Ui_ContextView::hideLibrarySongInfo()
     }
 }
 
-void Ui_ContextView::setCurrentPlayingId(qint32 id, bool play)
+void Ui_ContextView::setCurrentPlayingId(qint32 id, quint8 play)
 {
-
-    /*Not playing at the moment */
-    if((currentmode==viewmode_currentplaylist)&&(ui->listWidget->count()>0))
-    {
-        if(playingid==-1&&id>=0)
-        {
-            if(!play)
+    CommonDebug("State:"+QString::number(play)+"oldid:newid  ->"+QString::number(playingid)+":"+QString::number(id));
+        if (    currentmode == viewmode_currentplaylist&&ui->listWidget->count()>id&&id>=0) {
+            switch (play)
             {
-                ui->listWidget->item(id)->setIcon(QIcon(":/icons/media-playback-pause.png"));
-            }
-            else
+            case NetworkAccess::PLAYING:
             {
-                ui->listWidget->item(id)->setIcon(QIcon(":/icons/media-playback-start.png"));
+                if (id!=playingid||playinglaststate!=play)
+                {
+                    //Remove old play/pause icon
+                    if ((ui->listWidget->count()>playingid)&&playingid>=0) {
+                        ui->listWidget->item(playingid)->setIcon(QIcon());
+                    }
+                    QListWidgetItem *item = ui->listWidget->item(id);
+                    if (play==NetworkAccess::PAUSE)
+                    {
+                        item->setIcon(QIcon(":/icons/media-playback-pause.png"));
+                    }
+                    else if (play==NetworkAccess::PLAYING)
+                    {
+                        item->setIcon(QIcon(":/icons/media-playback-start.png"));
+                    }
+                    CommonDebug("List icon changed!");
+                    ui->listWidget->scrollToItem(item);
+                }
+                break;
             }
+            case NetworkAccess::PAUSE:
+            {
+                if (id!=playingid||playinglaststate!=play)
+                {
+                    //Remove old play/pause icon
+                    if ((ui->listWidget->count()>playingid)&&playingid>=0) {
+                        ui->listWidget->item(playingid)->setIcon(QIcon());
+                    }
+                    QListWidgetItem *item = ui->listWidget->item(id);
+                    if (play==NetworkAccess::PAUSE)
+                    {
+                        item->setIcon(QIcon(":/icons/media-playback-pause.png"));
+                    }
+                    else if (play==NetworkAccess::PLAYING)
+                    {
+                        item->setIcon(QIcon(":/icons/media-playback-start.png"));
+                    }
+                    CommonDebug("List icon changed!");
+                    ui->listWidget->scrollToItem(item);
+                }
+                break;
+            }
+            case NetworkAccess::STOP:
+            {
+              if(playinglaststate!=play) {
+              CommonDebug("STOPPED remove ICON old id:"+QString::number(playingid)+":"+QString::number(id));
+                if ((ui->listWidget->count()>playingid)&&playingid>=0) {
+                    ui->listWidget->item(playingid)->setIcon(QIcon());
+                }}
+                break;
+            }
+            };
         }
-        /* Playing at the moment but changed title*/
-        if(playingid>=0&&id>=0&&(id!=playingid||playinglaststate!=play))
+        if(id==-1&&play==NetworkAccess::STOP&&playingid!=id)
         {
-            ui->listWidget->item(playingid)->setIcon(QIcon());
-            if(!play)
-            {
-                ui->listWidget->item(id)->setIcon(QIcon(":/icons/media-playback-pause.png"));
-            }
-            else
-            {
-                ui->listWidget->item(id)->setIcon(QIcon(":/icons/media-playback-start.png"));
-            }
+          CommonDebug("STOPPED remove ICON old id:"+QString::number(playingid)+":"+QString::number(id));
+                if ((ui->listWidget->count()>playingid)&&playingid>=0) {
+                    ui->listWidget->item(playingid)->setIcon(QIcon());
+                }
         }
-        //Was playing but stopped
-        if(playingid>=0&&id<0)
-        {
-            ui->listWidget->item(playingid)->setIcon(QIcon());
-        }
-    }
-    playingid = id;
-    playinglaststate = play;
+        playingid = id;
+        playinglaststate = play;
 }
 
 
@@ -620,7 +661,7 @@ void Ui_ContextView::addButtonDispatcher()
         {
             CommonDebug("Add all albums?");
             emit requestMaximised(false);
-            int ok = QMessageBox::question(this,"",tr("Do you really want to add ALL albums to current playlist?"),QMessageBox::Yes,QMessageBox::No);
+            int ok = QMessageBox::question(NULL,"",tr("Do you really want to add ALL albums to current playlist?"),QMessageBox::Yes,QMessageBox::No);
             emit requestMaximised(true);
             if (ok==QMessageBox::Yes) {
                 QList <MpdAlbum*> *albums = netaccess->getAlbums();
@@ -632,13 +673,35 @@ void Ui_ContextView::addButtonDispatcher()
             }
             break;
         }
+    case viewmode_artists:
+        {
+            QList <MpdArtist*> *artists = netaccess->getArtists();
+            QList <MpdAlbum*> *artistalbums;
+            QString artist = "";
+            QString album = "";
+            for(int i = 0;i<artists->length();i++)
+            {
+                artist = artists->at(i)->getName();
+                artistalbums = netaccess->getArtistsAlbums(artist);
+                for(int j = 0;j<artistalbums->length();j++)
+                {
+                  album = artistalbums->at(j)->getTitle();
+                  CommonDebug("Add Artist-album to pl:"+artist+":"+album+":"+QString::number(artistalbums->length()));
+                    netaccess->addArtistAlbumToPlaylist(artist,album);
+                }
+                delete (artistalbums);
+            }
+            delete (artists);
+            break;
+        }
     case viewmode_artistalbums:
         {
             QList <MpdAlbum*> *albums = netaccess->getArtistsAlbums(currentartist);
             for(int i = 0;i<albums->length();i++)
             {
-                netaccess->addAlbumToPlaylist(albums->at(i)->getTitle());
+                netaccess->addArtistAlbumToPlaylist(currentartist,albums->at(i)->getTitle());
             }
+            delete (albums);
             break;
         }
     case viewmode_playlisttracks:
@@ -694,14 +757,38 @@ void Ui_ContextView::playButtonDispatcher()
             netaccess->playTrackByNumber(0);
             break;
         }
+    case viewmode_artists:
+        {
+            netaccess->clearPlaylist();
+            QList <MpdArtist*> *artists = netaccess->getArtists();
+            QList <MpdAlbum*> *artistalbums;
+            QString artist = "";
+            QString album = "";
+            for(int i = 0;i<artists->length();i++)
+            {
+                artist = artists->at(i)->getName();
+                artistalbums = netaccess->getArtistsAlbums(artist);
+                for(int j = 0;j<artistalbums->length();j++)
+                {
+                  album = artistalbums->at(j)->getTitle();
+                  CommonDebug("Add Artist-album to pl:"+artist+":"+album+":"+QString::number(artistalbums->length()));
+                    netaccess->addArtistAlbumToPlaylist(artist,album);
+                }
+                delete (artistalbums);
+            }
+            delete (artists);
+            netaccess->playTrackByNumber(0);
+            break;
+        }
     case viewmode_artistalbums:
         {
             netaccess->clearPlaylist();
             QList <MpdAlbum*> *albums = netaccess->getArtistsAlbums(currentartist);
             for(int i = 0;i<albums->length();i++)
             {
-                netaccess->addAlbumToPlaylist(albums->at(i)->getTitle());
+                netaccess->addArtistAlbumToPlaylist(currentartist,albums->at(i)->getTitle());
             }
+            delete (albums);
             netaccess->playTrackByNumber(0);
             break;
         }
@@ -736,7 +823,63 @@ void Ui_ContextView::playButtonDispatcher()
     };
 }
 
+void Ui_ContextView::selectedDispatcher(QListWidgetItem *item)
+{
+    switch (currentmode)
+    {
+    case viewmode_albumtracks:
+        {
 
+            break;
+        }
+    case viewmode_albums:
+        {
+
+            break;
+        }
+    case viewmode_artistalbums:
+        {
+
+            break;
+        }
+    case viewmode_artists:
+        {
+
+            break;
+        }
+    case viewmode_alltracks:
+        {
+
+            break;
+        }
+    case viewmode_savedplaylists:
+        {
+
+            break;
+        }
+    case viewmode_playlisttracks:
+        {
+
+            break;
+        }
+    case viewmode_files:
+        {
+
+            break;
+        }
+    case viewmode_currentplaylist:
+        {
+            if(playingid==ui->listWidget->currentIndex().row()&&playinglaststate!=NetworkAccess::STOP)
+            {
+                emit showCurrentSongInfo();
+            }
+            else{
+                playSelectedSong(item);
+            }
+            break;
+        }
+    };
+}
 
 
 void Ui_ContextView::backButtonDispatcher()
@@ -823,6 +966,8 @@ void Ui_ContextView::setPlaylistVersion(int version)
         }
     }
 }
+
+
 
 void Ui_ContextView::savePlaylist()
 {
@@ -962,4 +1107,10 @@ void Ui_ContextView::filesClickedDispatcher(QListWidgetItem *item)
             showLibrarySongInfo(new wliTrack(NULL,1000,fileitem->getFile()->getTrack()));
         }
     }
+}
+
+void Ui_ContextView::connectedToServer()
+{
+//    updateStatus(netaccess->getStatus());
+    showCurrentPlaylist();
 }

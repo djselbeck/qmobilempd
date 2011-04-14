@@ -21,7 +21,8 @@ SOURCES += main.cpp mainwindow.cpp \
     mpdfileentry.cpp \
     wlifile.cpp \
     QsKineticScroller.cpp \
-    commondebug.cpp
+    commondebug.cpp \
+    currentsongwidget.cpp
 HEADERS += mainwindow.h \
     networkaccess.h \
     mpdalbum.h \
@@ -35,11 +36,13 @@ HEADERS += mainwindow.h \
     mpdfileentry.h \
     wlifile.h \
     QsKineticScroller.h \
-    commondebug.h
+    commondebug.h \
+    currentsongwidget.h
 FORMS += mainwindow.ui \
     ui_songinfo.ui \
     ui_contextview.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    currentsongwidget.ui
 
 # Please do not modify the following two lines. Required for deployment.
 
@@ -48,11 +51,12 @@ RESOURCES += \
 
 OTHER_FILES += \
     README.txt \
-    Changelog.txt
+    Changelog.txt \
+    debian/changelog
 
 
 #CONFIG += mobility
-MOBILITY = 
+#MOBILITY = feedback
 
 symbian {
     TARGET.UID3 = 0xe45c4912
@@ -62,7 +66,8 @@ symbian {
     ICON = qmobilempd.svg
 }
 
-VERSION = 1.0.3
+
+VERSION = 1.0.5
 
 TRANSLATIONS = qmobilempd_en.ts \
                 qmobilempd_de.ts

@@ -3,6 +3,12 @@
 MpdTrack::MpdTrack(QObject *parent) :
     QObject(parent)
 {
+  title="";
+  artist="";
+  album="";
+  length=0;
+  filename="";
+  
 }
 
 MpdTrack::MpdTrack(QObject *parent,QString file, QString title, quint32 length):
@@ -82,3 +88,33 @@ QString MpdTrack::getLengthFormated()
     }
     return temp;
 }
+
+QString MpdTrack::getName()
+{
+  return filename;
+}
+
+void MpdTrack::setAlbum(QString al)
+{
+    album = al;
+}
+void MpdTrack::setFileUri(QString uri)
+{
+  this->filename = uri;
+}
+
+void MpdTrack::setArtist(QString art)
+{
+  this->artist = art;
+}
+
+void MpdTrack::setLength(quint32 length)
+{
+  this->length = length;
+}
+
+void MpdTrack::setTitle(QString titti)
+{
+  this->title = titti;
+}
+

@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
 #ifdef Q_OS_SYMBIAN
     viewmenu->setFont(tempfont);
     viewmenu->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Expanding);
+
 #endif
     QWidget::updateGeometry();
     menuscroller->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -68,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     connectacion = viewmenu->addAction(tr("Connect to host"));
 
     QAction *settingsaction = viewmenu->addAction(tr("Settings"));
+    QAction *songinfoaction = viewmenu->addAction(tr("Show Song info"));
     //QAction *trackaction = viewmenu->addAction(QString("Tracks"));
     QAction *artistaction = viewmenu->addAction(tr("Artists"));
     QAction *albumaction = viewmenu->addAction(tr("Albums"));
@@ -80,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(connectacion,SIGNAL(triggered()),this,SLOT(tryConnect()));
     connect(settingsaction,SIGNAL(triggered()),this,SLOT(openSettings()));
+    connect(songinfoaction,SIGNAL(triggered()),this,SLOT(showCurrentSongInfo()));
     connect(artistaction,SIGNAL(triggered()),contextview,SLOT(showArtists()));
     connect(albumaction,SIGNAL(triggered()),contextview,SLOT(showAlbums()));
     connect(currentplaylistaction,SIGNAL(triggered()),contextview,SLOT(showCurrentPlaylist()));
@@ -97,8 +100,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(contextview,SIGNAL(exitrequested()),this,SLOT(close()));
     connect(netaccess,SIGNAL(disconnected()),this,SLOT(disconnected()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatusLabel(status_struct)));
+    connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connected()));
     connect(contextview,SIGNAL(requestMaximised(bool)),this,SLOT(setMaximised(bool)));
+    connect(contextview,SIGNAL(showCurrentSongInfo()),this,SLOT(showCurrentSongInfo()));
     connect(viewmenu,SIGNAL(aboutToHide()),menuscroller,SLOT(hide()));
+
 
 
     //connect(viewmenu,SIGNAL(aboutToHide()),this,SLOT(sh));
@@ -111,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
     volumeslider->setMinimum(0);
     volumeslider->hide();
 
-    connect(volumeslider,SIGNAL(sliderMoved(int)),this,SLOT(changeServerVolume(int)));
+    connect(volumeslider,SIGNAL(valueChanged(int)),this,SLOT(changeServerVolume(int)));
 
     showExpanded();
     currentstatusfield = StatusField_Title;
@@ -133,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent)
         QMessageBox::information(this,tr("Default Server"),tr("Please define a default server under server properties which is used for connection."),QMessageBox::Ok,QMessageBox::NoButton);
         setMaximised(true);
     }
+    currentsongview = NULL;
 }
 
 MainWindow::~MainWindow()
@@ -187,7 +194,7 @@ void MainWindow::showExpanded()
 #elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     showMaximized();
 #elif defined(QT_SIMULATOR)
-    showFullScreen();
+    showMaximized();
 #else
     show();
 #endif
@@ -196,6 +203,7 @@ void MainWindow::showExpanded()
 
 void MainWindow::updateStatusLabel(status_struct tempstruct)
 {
+    volumeslider->blockSignals(true);
     ui->pgr_time->setValue(tempstruct.percent);
     switch(currentstatusfield) {
     case StatusField_Artist:{ui->pgr_time->setFormat(tempstruct.artist);break;}
@@ -207,14 +215,18 @@ void MainWindow::updateStatusLabel(status_struct tempstruct)
     ui->btnShuffle->setChecked(tempstruct.shuffle);
     ui->btnRepeat->setChecked(tempstruct.repeat);
     updateVolumeSlider(tempstruct.volume);
-    if(tempstruct.playing==false)
+    CommonDebug("PLayStatus:"+QString::number(tempstruct.playing));
+    if(tempstruct.playing==NetworkAccess::PAUSE||tempstruct.playing==NetworkAccess::STOP)
     {
         ui->btnPlay->setIcon(QIcon(":/icons/media-playback-start.png"));
+        CommonDebug("Set icon to play");
     }
-    else
+    else if(tempstruct.playing==NetworkAccess::PLAYING)
     {
        ui->btnPlay->setIcon(QIcon(":/icons/media-playback-pause.png"));
+       CommonDebug("Set icon to pause");
     }
+    volumeslider->blockSignals(false);
 }
 
 
@@ -299,9 +311,9 @@ void MainWindow::toggleVolumeSlider()
         CommonDebug("show volume slide");
         int x,y;
         x =  ui->btnVolume->geometry().x();
-        y = (ui->btnVolume->geometry().y())- 200;
+        y = (ui->btnVolume->geometry().y())- 240;
         CommonDebug("sliderpos:"+QString::number(x).toAscii()+":"+QString::number(y).toAscii());
-        volumeslider->setGeometry(x,y,50,200);
+        volumeslider->setGeometry(x,y,50,240);
         volumeslider->show();
         volumeslider->setVisible(true);
         volumeslider->setFocus();
@@ -393,16 +405,6 @@ void MainWindow::tryConnect()
             if(password!="")
             {
                 bool pwsuccess = netaccess->authenticate(password);
-               /* if(!pwsuccess) {
-                    bool tryanother=true;
-                    while((tryanother)&&(!pwsuccess)) {
-                        password = QInputDialog::getText(this,tr("Wrong password"),"Enter password",QLineEdit::Password,"",&tryanother);
-                        netaccess->authenticate(password);
-                    }
-                    if((!tryanother)&&(!pwsuccess)) {
-                        QMessageBox::warning(this,tr("Not authenticated"),tr("Functions could be limited without password"),QMessageBox::Ok,QMessageBox::NoButton);
-                    }
-                }*/
                 if(!pwsuccess)
                 {
                     QMessageBox::warning(this,tr("Not authenticated"),tr("Functions could be limited without password, check settings and reconnect"),QMessageBox::Ok,QMessageBox::NoButton);
@@ -475,18 +477,26 @@ bool MainWindow::searchDefaultServer()
 
 bool MainWindow::event(QEvent *event)
 {
-    if(event->type()==QEvent::WindowDeactivate||event->type()==QEvent::Leave)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if(event->type()==QEvent::Leave)
     {
         netaccess->suspendUpdates();
     }
-    if(event->type()==QEvent::WindowActivate||event->type()==QEvent::Enter)
+    if(event->type()==QEvent::Enter)
     {
         netaccess->resumeUpdates();
     }
-    if(event->type()==QEvent::Resize)
+#elif defined(Q_OS_SYMBIAN)
+
+    if(event->type()==QEvent::WindowDeactivate)
     {
-        menuscroller->hide();
+        netaccess->setUpdateInterval(30000);
     }
+    if(event->type()==QEvent::WindowActivate)
+    {
+        netaccess->setUpdateInterval(5000);
+    }
+#endif
     return QMainWindow::event(event);
 }
 
@@ -507,11 +517,45 @@ void MainWindow::setMaximised(bool value)
     CommonDebug("set maximised called");
     if(!value)
     {
-        showMaximized();
-        ui->centralWidget->showMaximized();
+        showNormal();
+        //ui->centralWidget->showMaximized();
     }
     else
     {
         showExpanded();
     }
+}
+
+void MainWindow::showCurrentSongInfo()
+{
+    if(currentsongview==NULL)
+    {
+        currentsongview = new CurrentSongWidget(this,netaccess);
+        //Hide other stuff
+        contextview->hide();
+        ui->pgr_time->hide();
+        ui->verticalLayout_2->addWidget(currentsongview);
+        connect(currentsongview,SIGNAL(backRequested()),this,SLOT(hideCurrentSongInfo()));
+    }
+}
+
+void MainWindow::hideCurrentSongInfo()
+{
+    if(currentsongview!=NULL)
+    {
+        ui->verticalLayout_2->removeWidget(currentsongview);
+        contextview->show();
+        ui->pgr_time->show();
+        disconnect(currentsongview,SIGNAL(backRequested()),0,0);
+        delete (currentsongview);
+        currentsongview = NULL;
+        netaccess->setUpdateInterval(5000);
+    }
+
+
+}
+
+void MainWindow::connected()
+{
+    //updateStatusLabel(netaccess->getStatus());
 }

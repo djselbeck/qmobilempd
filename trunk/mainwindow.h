@@ -28,6 +28,7 @@
 #include <QSlider>
 #include <QScrollArea>
 #include "commondebug.h"
+#include "currentsongwidget.h"
 
 
 
@@ -58,6 +59,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Ui_ContextView *contextview;
+    CurrentSongWidget *currentsongview;
     NetworkAccess *netaccess;
     QSlider *volumeslider;
     quint8 currentstatusfield;
@@ -95,6 +97,9 @@ protected slots:
     void showFiles();
     void setMaximised(bool);
     void showMenu();
+    void showCurrentSongInfo();
+    void hideCurrentSongInfo();
+    void connected();
 
 
 protected:
