@@ -16,7 +16,7 @@ class MpdArtist;
 class MpdTrack;
 class MpdFileEntry;
 
-struct status_struct {quint32 playlistversion; qint32 id; quint16 bitrate;int tracknr;int albumtrackcount;quint8 percent; quint8 volume; QString info; QString title; QString album; QString artist;QString fileuri;quint8 playing; bool repeat; bool shuffle; quint32 length; quint32 currentpositiontime;};
+struct status_struct {quint32 playlistversion; qint32 id; quint16 bitrate;int tracknr;int albumtrackcount;quint8 percent; quint8 volume; QString info; QString title; QString album; QString artist;QString fileuri;quint8 playing; bool repeat; bool shuffle; quint32 length; quint32 currentpositiontime;quint32 playlistlength;};
 
 class NetworkAccess : public QThread
 {
