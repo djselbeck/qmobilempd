@@ -518,29 +518,20 @@ QList<MpdTrack*> *NetworkAccess::getTracks()
 QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
 {
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
-    if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
-        QString response ="";
-        MpdTrack *temptrack=NULL;
-        QString title;
-        QString file;
-        QString artist;
-        QString albumstring;
-        quint32 length=-1;
-        QTextStream outstream(tcpsocket);
-        outstream.setCodec("UTF-8");
-
-        CommonDebug("Start reading playlist");
-        quint32 playlistlength = getStatus().playlistlength;
-        quint32 tracks = 0;
-        for(int i = 0;i < playlistlength;i++)
-        {
-            CommonDebug("get playlist entry: "+QString::number(i) + " of " + QString::number(playlistlength));
-            outstream << "playlistinfo \"" << i << "\"" << endl;
-            response = "";
-            temptrack = NULL;
+        if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+            QString response ="";
+            MpdTrack *temptrack=NULL;
+            QString title;
+            QString file;
+            QString artist;
+            QString albumstring;
+            quint32 length=-1;
+            QTextStream outstream(tcpsocket);
+            outstream.setCodec("UTF-8");
+            outstream << "playlistinfo " << endl;
+            CommonDebug("Start reading playlist");
             while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
             {
-
                 if (!tcpsocket->waitForReadyRead(READYREAD))
                 {
                     CommonDebug("false:waitforreadyread()");
@@ -550,7 +541,7 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
                 while (tcpsocket->canReadLine())
                 {
                     response = QString::fromUtf8(tcpsocket->readLine());
-                    //                CommonDebug("Response: "+response);
+                    CommonDebug("Response: "+response);
                     if (response.left(6)==QString("file: ")) {
                         if (temptrack!=NULL)
                         {
@@ -588,8 +579,8 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
                         length = albumstring.toUInt();
                         temptrack->setLength(length);
                     }
-
                 }
+
             }
             if (temptrack!=NULL)
             {
@@ -597,10 +588,9 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
                 CommonDebug("add Track:");
             }
         }
-
+        return temptracks;
     }
-    return temptracks;
-}
+
 
 // QList<MpdTrack*> *NetworkAccess::getPlaylistTracks(QString name)
 // {
