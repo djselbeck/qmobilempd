@@ -2,6 +2,54 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="en_US">
 <context>
+    <name>CurrentSongWidget</name>
+    <message>
+        <location filename="currentsongwidget.ui" line="20"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="56"/>
+        <source>Album:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="76"/>
+        <source>Artist:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="96"/>
+        <source>Track-Nr.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="116"/>
+        <source>Bitrate:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="136"/>
+        <source>Path:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="156"/>
+        <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="275"/>
+        <source>0:00</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="currentsongwidget.ui" line="295"/>
+        <source>99:99</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="20"/>
@@ -39,82 +87,87 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="70"/>
+        <location filename="mainwindow.cpp" line="71"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="72"/>
-        <source>Artists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="73"/>
-        <source>Albums</source>
+        <source>Show Song info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="74"/>
-        <source>Playlist</source>
+        <source>Artists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="75"/>
-        <source>Files</source>
+        <source>Albums</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="76"/>
+        <source>Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="77"/>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="78"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="133"/>
+        <location filename="mainwindow.cpp" line="139"/>
         <source>Default Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="133"/>
+        <location filename="mainwindow.cpp" line="139"/>
         <source>Please define a default server under server properties which is used for connection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="273"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source>qmobilempd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="273"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source>qMobileMPD Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="273"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source> Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: &lt;a href=&apos;http://code.google.com/p/qmobilempd&apos;&gt;Homepage&lt;/a&gt; . This applications uses &lt;a href=&apos;http://www.tango-project.org&apos;&gt;Tango icons&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="419"/>
+        <location filename="mainwindow.cpp" line="421"/>
         <source>Connection error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="419"/>
+        <location filename="mainwindow.cpp" line="421"/>
         <source>Could not connect to default host check settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="408"/>
+        <location filename="mainwindow.cpp" line="410"/>
         <source>Not authenticated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="68"/>
+        <location filename="mainwindow.cpp" line="69"/>
         <source>Connect to host</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="408"/>
+        <location filename="mainwindow.cpp" line="410"/>
         <source>Functions could be limited without password, check settings and reconnect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -215,68 +268,68 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="167"/>
+        <location filename="ui_contextview.cpp" line="168"/>
         <source>Artists:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="214"/>
+        <location filename="ui_contextview.cpp" line="215"/>
         <source>Albums:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="341"/>
+        <location filename="ui_contextview.cpp" line="342"/>
         <source>Current playlist:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="658"/>
-        <location filename="ui_contextview.cpp" line="721"/>
+        <location filename="ui_contextview.cpp" line="664"/>
+        <location filename="ui_contextview.cpp" line="749"/>
         <source>Do you really want to add ALL albums to current playlist?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="866"/>
+        <location filename="ui_contextview.cpp" line="976"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="866"/>
+        <location filename="ui_contextview.cpp" line="976"/>
         <source>Please enter name for playlist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="874"/>
+        <location filename="ui_contextview.cpp" line="984"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="874"/>
+        <location filename="ui_contextview.cpp" line="984"/>
         <source>Sorry save list could not get saved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="900"/>
+        <location filename="ui_contextview.cpp" line="1010"/>
         <source>Saved playlists:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="907"/>
+        <location filename="ui_contextview.cpp" line="1017"/>
         <source>Clear playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="907"/>
+        <location filename="ui_contextview.cpp" line="1017"/>
         <source>Are you sure to delete current playlist?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="919"/>
+        <location filename="ui_contextview.cpp" line="1029"/>
         <source>Quit?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="919"/>
+        <location filename="ui_contextview.cpp" line="1029"/>
         <source>Are you sure to quit?</source>
         <translation type="unfinished"></translation>
     </message>
