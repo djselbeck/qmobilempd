@@ -282,7 +282,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::showAbout()
 {
     setMaximised(false);
-   QMessageBox::about(this,tr("qmobilempd"),tr("qMobileMPD Version:") + QString(VERSION) + tr(" Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: <a href='http://code.google.com/p/qmobilempd'>Homepage</a> . This applications uses <a href='http://www.tango-project.org'>Tango icons</a>."));
+    QMessageBox::about(this,tr("qmobilempd"),tr("qMobileMPD Version:") + QString(VERSION) + tr(" Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: <a href='http://code.google.com/p/qmobilempd'>Homepage</a> . This applications uses <a href='http://www.tango-project.org'>Tango icons</a>.")+tr(" Using Qt")+qVersion());
     setMaximised(true);
 }
 
