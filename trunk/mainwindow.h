@@ -77,6 +77,7 @@ private:
     QList<serverprofile> connectionprofiles;
     SettingsDialog *settingsdialogobject;
     bool searchDefaultServer();
+    quint8 laststate;
 
 
 

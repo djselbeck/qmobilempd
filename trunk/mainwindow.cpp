@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     netaccess = new NetworkAccess(this);
+    netaccess->setUpdateInterval(5000);
 
 
 
@@ -140,6 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
         setMaximised(true);
     }
     currentsongview = NULL;
+    netaccess->setUpdateInterval(5000);
 }
 
 MainWindow::~MainWindow()
@@ -216,6 +218,7 @@ void MainWindow::updateStatusLabel(status_struct tempstruct)
     ui->btnRepeat->setChecked(tempstruct.repeat);
     updateVolumeSlider(tempstruct.volume);
     CommonDebug("PLayStatus:"+QString::number(tempstruct.playing));
+    if(laststate!=tempstruct.playing){
     if(tempstruct.playing==NetworkAccess::PAUSE||tempstruct.playing==NetworkAccess::STOP)
     {
         ui->btnPlay->setIcon(QIcon(":/icons/media-playback-start.png"));
@@ -225,8 +228,10 @@ void MainWindow::updateStatusLabel(status_struct tempstruct)
     {
        ui->btnPlay->setIcon(QIcon(":/icons/media-playback-pause.png"));
        CommonDebug("Set icon to pause");
-    }
+   } }
+    laststate=tempstruct.playing;
     volumeslider->blockSignals(false);
+
 }
 
 
@@ -282,7 +287,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::showAbout()
 {
     setMaximised(false);
-    QMessageBox::about(this,tr("qmobilempd"),tr("qMobileMPD Version:") + QString(VERSION) + tr(" Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: <a href='http://code.google.com/p/qmobilempd'>Homepage</a> . This applications uses <a href='http://www.tango-project.org'>Tango icons</a>.")+tr(" Using Qt")+qVersion());
+   QMessageBox::about(this,tr("qmobilempd"),tr("qMobileMPD Version:") + QString(VERSION) + tr(" Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: <a href='http://code.google.com/p/qmobilempd'>Homepage</a> . This applications uses <a href='http://www.tango-project.org'>Tango icons</a>."));
     setMaximised(true);
 }
 
@@ -494,7 +499,11 @@ bool MainWindow::event(QEvent *event)
     }
     if(event->type()==QEvent::WindowActivate)
     {
-        netaccess->setUpdateInterval(5000);
+        if(currentsongview==NULL)
+        {
+            netaccess->setUpdateInterval(5000);
+        }
+        else{netaccess->setUpdateInterval(1000);}
     }
 #endif
     return QMainWindow::event(event);

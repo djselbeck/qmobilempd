@@ -9,7 +9,7 @@
 #include "mpdfileentry.h"
 #include "common.h"
 #include "commondebug.h"
-#define READYREAD 5000
+#define READYREAD 3000
 
 class MpdAlbum;
 class MpdArtist;
