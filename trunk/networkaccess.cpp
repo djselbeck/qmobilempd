@@ -1338,34 +1338,36 @@ void NetworkAccess::playTrack(QString fileuri)
         }
         //Get song id in playlist
 
-        response = "";
-        QString idstring;
-        QString fileuristring;
-        outstream.setCodec("UTF-8");
-        outstream << "playlist " << endl;
-        QStringList stringlist;
-        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
-        {
-            tcpsocket->waitForReadyRead(READYREAD);
-            while (tcpsocket->canReadLine())
-            {
-                response = QString::fromUtf8(tcpsocket->readLine());
-                if (response!="OK" && response!="ACK") {
-                    //TODO performance optimaization checks
-                    stringlist = response.split(":");
-                    if (stringlist.length()==3) {
-                        idstring = stringlist.first();
-                        fileuristring = stringlist.at(2);
-                        fileuristring.chop(1);
-                        if (fileuristring.right(fileuristring.length()-1) == fileuri)
-                        {
-                            outstream << "play " << idstring << endl;
-                        }
-                    }
-                }
-            }
-        }
+//        response = "";
+//        QString idstring;
+//        QString fileuristring;
+//        outstream.setCodec("UTF-8");
+//        outstream << "playlist " << endl;
+//        QStringList stringlist;
+//        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
+//        {
+//            tcpsocket->waitForReadyRead(READYREAD);
+//            while (tcpsocket->canReadLine())
+//            {
+//                response = QString::fromUtf8(tcpsocket->readLine());
+//                CommonDebug("PLAYTRACK: "  + response);
+//                if (response!="OK" && response!="ACK") {
+//                    //TODO performance optimaization checks
+//                    stringlist = response.split(":");
+//                    if (stringlist.length()==3) {
+//                        idstring = stringlist.first();
+//                        fileuristring = stringlist.at(2);
+//                        fileuristring.chop(1);
+//                        if (fileuristring.right(fileuristring.length()-1) == fileuri)
+//                        {
+//                            outstream << "play " << idstring << endl;
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
+        playTrackByNumber(getStatus().playlistlength-1);
     }
     updateStatusInternal();
 }
