@@ -73,7 +73,7 @@ symbian {
 }
 
 
-VERSION = 1.0.5
+VERSION = 1.0.7
 
 TRANSLATIONS = qmobilempd_en.ts \
                 qmobilempd_de.ts
