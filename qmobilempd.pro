@@ -52,7 +52,13 @@ RESOURCES += \
 OTHER_FILES += \
     README.txt \
     Changelog.txt \
-    debian/changelog
+    debian/changelog \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog
 
 
 #CONFIG += mobility
@@ -71,3 +77,8 @@ VERSION = 1.0.5
 
 TRANSLATIONS = qmobilempd_en.ts \
                 qmobilempd_de.ts
+
+unix:!symbian:!maemo5 {
+    target.path = /opt/qmobilempd/bin
+    INSTALLS += target
+}
