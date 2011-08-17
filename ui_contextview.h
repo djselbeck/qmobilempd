@@ -21,6 +21,11 @@
 #include "QsKineticScroller.h"
 #include "commondebug.h"
 
+//DEFINE FOR KDE PLASMOID
+//#define QMPDPLASMOID_KDE
+//DEFINE FOR QMOBILEMPD don't set unless compiling qmobilempd
+#define QMOBILEMPD
+
 
 enum viewmode {viewmode_currentplaylist,viewmode_artistalbums,viewmode_artists,viewmode_albums,viewmode_albumtracks,viewmode_alltracks,viewmode_savedplaylists,viewmode_playlisttracks,viewmode_files,viewmode_currentsonginfo,viewmode_count};
 
@@ -37,6 +42,7 @@ public:
     Ui_ContextView(QWidget *parent, NetworkAccess *netaccess);
     ~Ui_ContextView();
     void setCurrentPlayingId(qint32 id,quint8 play);
+    bool doubleClickToSelect();
 
 private:
     Ui::Ui_ContextView *ui;
@@ -66,7 +72,11 @@ private:
     void setupContextMenu();
     bool playlistchanged;
     quint8 playinglaststate;
+    bool doubleclick;
     QList<MpdTrack*> *lastplaylist;
+    QString backscrolltext;
+    void scrollTo(QString itemtext);
+    
 
 
 
@@ -83,9 +93,9 @@ public slots:
     void playSelectedSong(QListWidgetItem *item);
     void showCurrentPlaylist();
     void setPlaylistVersion(int version);
+    void setDoubleClickNeeded(bool dbl);
 
 protected slots:
-    void showContextMenu(const QPoint& pos);
     void playButtonDispatcher();
     void addButtonDispatcher();
     void addAlbumToPlaylist();
@@ -103,6 +113,7 @@ protected slots:
     void connectedToServer();
     void filesClickedDispatcher(QListWidgetItem *item);
     void selectedDispatcher(QListWidgetItem *item);
+    void scrollTo();
 
 signals:
     void exitrequested();
