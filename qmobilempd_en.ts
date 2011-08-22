@@ -9,43 +9,102 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="56"/>
+        <location filename="currentsongwidget.ui" line="59"/>
         <source>Album:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="76"/>
+        <location filename="currentsongwidget.ui" line="79"/>
         <source>Artist:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="96"/>
+        <location filename="currentsongwidget.ui" line="99"/>
         <source>Track-Nr.:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="116"/>
+        <location filename="currentsongwidget.ui" line="119"/>
         <source>Bitrate:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="136"/>
+        <location filename="currentsongwidget.ui" line="139"/>
         <source>Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="156"/>
+        <location filename="currentsongwidget.ui" line="159"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="275"/>
+        <location filename="currentsongwidget.ui" line="278"/>
         <source>0:00</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="295"/>
+        <location filename="currentsongwidget.ui" line="298"/>
         <source>99:99</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>HorizontalMenuWidget</name>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="27"/>
+        <source>Current Song</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="42"/>
+        <source>Artists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="57"/>
+        <source>Albums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="72"/>
+        <source>Playlists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="87"/>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="106"/>
+        <location filename="horizontalmenuwidget.cpp" line="26"/>
+        <source>Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="121"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="136"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="151"/>
+        <source>Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.cpp" line="31"/>
+        <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -87,87 +146,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="71"/>
-        <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="72"/>
-        <source>Show Song info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="74"/>
-        <source>Artists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="75"/>
-        <source>Albums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="76"/>
-        <source>Playlist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="77"/>
-        <source>Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="78"/>
-        <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>Default Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>Please define a default server under server properties which is used for connection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source>qmobilempd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source>qMobileMPD Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source> Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: &lt;a href=&apos;http://code.google.com/p/qmobilempd&apos;&gt;Homepage&lt;/a&gt; . This applications uses &lt;a href=&apos;http://www.tango-project.org&apos;&gt;Tango icons&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="275"/>
+        <source>Using qt version: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="482"/>
         <source>Connection error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="482"/>
         <source>Could not connect to default host check settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="471"/>
         <source>Not authenticated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="69"/>
+        <location filename="mainwindow.cpp" line="71"/>
         <source>Connect to host</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="471"/>
         <source>Functions could be limited without password, check settings and reconnect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -185,12 +214,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="47"/>
+        <location filename="settingsdialog.ui" line="49"/>
         <source>ADD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="54"/>
+        <location filename="settingsdialog.ui" line="56"/>
         <source>DEL</source>
         <translation type="unfinished"></translation>
     </message>
@@ -268,69 +297,128 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="168"/>
+        <location filename="ui_contextview.cpp" line="204"/>
         <source>Artists:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="215"/>
+        <location filename="ui_contextview.cpp" line="263"/>
         <source>Albums:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="342"/>
+        <location filename="ui_contextview.cpp" line="430"/>
         <source>Current playlist:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="664"/>
-        <location filename="ui_contextview.cpp" line="749"/>
+        <location filename="ui_contextview.cpp" line="762"/>
+        <location filename="ui_contextview.cpp" line="847"/>
         <source>Do you really want to add ALL albums to current playlist?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="976"/>
+        <location filename="ui_contextview.cpp" line="1060"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="976"/>
+        <location filename="ui_contextview.cpp" line="1060"/>
         <source>Please enter name for playlist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="984"/>
+        <location filename="ui_contextview.cpp" line="1068"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="984"/>
+        <location filename="ui_contextview.cpp" line="1068"/>
         <source>Sorry save list could not get saved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1010"/>
+        <location filename="ui_contextview.cpp" line="1101"/>
         <source>Saved playlists:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1017"/>
+        <location filename="ui_contextview.cpp" line="1107"/>
         <source>Clear playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1017"/>
+        <location filename="ui_contextview.cpp" line="1107"/>
         <source>Are you sure to delete current playlist?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1029"/>
+        <location filename="ui_contextview.cpp" line="1119"/>
         <source>Quit?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1029"/>
+        <location filename="ui_contextview.cpp" line="1119"/>
         <source>Are you sure to quit?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VerticalMenuWidget</name>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="25"/>
+        <source>Current Song</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="40"/>
+        <source>Artists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="55"/>
+        <source>Albums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="70"/>
+        <source>Playlists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="85"/>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="100"/>
+        <location filename="verticalmenuwidget.cpp" line="28"/>
+        <source>Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="115"/>
+        <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="130"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="145"/>
+        <source>Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.cpp" line="33"/>
+        <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
