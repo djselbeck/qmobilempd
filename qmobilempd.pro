@@ -22,7 +22,10 @@ SOURCES += main.cpp mainwindow.cpp \
     wlifile.cpp \
     QsKineticScroller.cpp \
     commondebug.cpp \
-    currentsongwidget.cpp
+    currentsongwidget.cpp \
+    abstractmenuwidget.cpp \
+    verticalmenuwidget.cpp \
+    horizontalmenuwidget.cpp
 HEADERS += mainwindow.h \
     networkaccess.h \
     mpdalbum.h \
@@ -37,12 +40,17 @@ HEADERS += mainwindow.h \
     wlifile.h \
     QsKineticScroller.h \
     commondebug.h \
-    currentsongwidget.h
+    currentsongwidget.h \
+    abstractmenuwidget.h \
+    verticalmenuwidget.h \
+    horizontalmenuwidget.h
 FORMS += mainwindow.ui \
     ui_songinfo.ui \
     ui_contextview.ui \
     settingsdialog.ui \
-    currentsongwidget.ui
+    currentsongwidget.ui \
+    verticalmenuwidget.ui \
+    horizontalmenuwidget.ui
 
 # Please do not modify the following two lines. Required for deployment.
 

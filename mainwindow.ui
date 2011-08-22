@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Icons.qrc">
-    <normaloff>:/qmobilempd.svg</normaloff>:/qmobilempd.svg</iconset>
+    <normaloff>:/qmobilempd.png</normaloff>:/qmobilempd.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">

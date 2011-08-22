@@ -47,7 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
     QFont tempfont = QFont("Arial",8);
     tempfont.setBold(false);
 
-
+    menuwidget = 0;
+    currentsongview = 0;
     //FIXME
     //WORKAROUND no scrollbar on popup menu see QTBUG-17633
     menuscroller = new QScrollArea(NULL);
@@ -69,27 +70,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connectacion = viewmenu->addAction(tr("Connect to host"));
 
-    QAction *settingsaction = viewmenu->addAction(tr("Settings"));
-    QAction *songinfoaction = viewmenu->addAction(tr("Show Song info"));
-    //QAction *trackaction = viewmenu->addAction(QString("Tracks"));
-    QAction *artistaction = viewmenu->addAction(tr("Artists"));
-    QAction *albumaction = viewmenu->addAction(tr("Albums"));
-    QAction *currentplaylistaction = viewmenu->addAction(tr("Playlist"));
-    QAction *filesaction = viewmenu->addAction(tr("Files"));
-    QAction *aboutaction = viewmenu->addAction(tr("About"));
-    QAction *exitaction = viewmenu->addAction("Exit");
+
     //Connect Menubar Signals
     //connect(trackaction,SIGNAL(triggered()),contextview,SLOT(showTracks()));
 
-    connect(connectacion,SIGNAL(triggered()),this,SLOT(tryConnect()));
-    connect(settingsaction,SIGNAL(triggered()),this,SLOT(openSettings()));
-    connect(songinfoaction,SIGNAL(triggered()),this,SLOT(showCurrentSongInfo()));
-    connect(artistaction,SIGNAL(triggered()),contextview,SLOT(showArtists()));
-    connect(albumaction,SIGNAL(triggered()),contextview,SLOT(showAlbums()));
-    connect(currentplaylistaction,SIGNAL(triggered()),contextview,SLOT(showCurrentPlaylist()));
-    connect(filesaction,SIGNAL(triggered()),this,SLOT(showFiles()));
-    connect(aboutaction,SIGNAL(triggered()),this,SLOT(showAbout()));
-    connect(exitaction,SIGNAL(triggered()),this,SLOT(close()));
+
     connect(ui->btnPlay,SIGNAL(clicked()),netaccess,SLOT(pause()));
     connect(ui->btnStop,SIGNAL(clicked()),netaccess,SLOT(stop()));
     connect(ui->btnNext,SIGNAL(clicked()),netaccess,SLOT(next()));
@@ -294,16 +279,87 @@ void MainWindow::showAbout()
 void MainWindow::showMenu()
 {
     //setMaximised(false);
-    if(!viewmenu->isVisible())
+//    if(!viewmenu->isVisible())
+//    {
+//        viewmenu->show();
+//    }
+//    else{
+//        menuscroller->hide();
+//        viewmenu->hide();
+//    }
+
+    if(menuwidget == 0)
     {
-        viewmenu->show();
+        //FIXME Vertical orientation
+        if(this->size().height()>this->size().width())
+        {
+            menuwidget = new VerticalMenuWidget(this);
+        }
+        else
+            menuwidget = new HorizontalMenuWidget(this);
+        contextview->hide();
+        if(currentsongview!=0)
+            currentsongview->hide();
+        ui->verticalLayout_2->addWidget(menuwidget);
+
+        menuwidget->show();
+
+        connect(menuwidget,SIGNAL(showAbout()),this,SLOT(showAbout()));
+        connect(menuwidget,SIGNAL(showAbout()),this,SLOT(hideMenu()));
+
+        connect(menuwidget,SIGNAL(showSettings()),this,SLOT(openSettings()));
+
+        connect(menuwidget,SIGNAL(connectClicked()),this,SLOT(tryConnect()));
+        connect(menuwidget,SIGNAL(connectClicked()),this,SLOT(hideMenu()));
+
+        connect(menuwidget,SIGNAL(showAlbums()),contextview,SLOT(showAlbums()));
+        connect(menuwidget,SIGNAL(showAlbums()),this,SLOT(hideMenu()));
+
+        connect(menuwidget,SIGNAL(showArtists()),contextview,SLOT(showAlbums()));
+        connect(menuwidget,SIGNAL(showArtists()),this,SLOT(hideMenu()));
+
+        connect(menuwidget,SIGNAL(showFiles()),this,SLOT(showFiles()));
+        connect(menuwidget,SIGNAL(showFiles()),this,SLOT(hideMenu()));
+
+
+        connect(menuwidget,SIGNAL(showPlaylist()),contextview,SLOT(showCurrentPlaylist()));
+        connect(menuwidget,SIGNAL(showPlaylist()),this,SLOT(hideMenu()));
+
+        connect(menuwidget,SIGNAL(exitClicked()),this,SLOT(close()));
+
+
+
+        connect(menuwidget,SIGNAL(showCurrentSong()),this,SLOT(showCurrentSongInfo()));
     }
-    else{
-        menuscroller->hide();
-        viewmenu->hide();
+    else
+    {
+        disconnect(menuwidget,0);
+        ui->verticalLayout_2->removeWidget(menuwidget);
+        if(currentsongview!=0)
+            currentsongview->show();
+        else
+            contextview->show();
+        menuwidget->hide();
+        delete(menuwidget);
+        menuwidget = 0;
     }
+
 }
 
+void MainWindow::hideMenu()
+{
+    CommonDebug("hideMenu()");
+    if(menuwidget != 0)
+    {
+        disconnect(menuwidget,0);
+        ui->verticalLayout_2->removeWidget(menuwidget);
+        contextview->show();
+        menuwidget->hide();
+        delete(menuwidget);
+        menuwidget = 0;
+    }
+
+}
 
 void MainWindow::toggleVolumeSlider()
 {
@@ -445,8 +501,29 @@ void MainWindow::disconnected()
 
 void MainWindow::openSettings()
 {
+    if(menuwidget != 0)
+    {
+        disconnect(menuwidget,0);
+        ui->verticalLayout_2->removeWidget(menuwidget);
+        contextview->hide();
+        menuwidget->hide();
+        delete(menuwidget);
+        menuwidget = 0;
+    }
     settingsdialogobject = new SettingsDialog(connectionprofiles,this);
-    settingsdialogobject->showFullScreen();
+
+    ui->verticalLayout_2->addWidget(settingsdialogobject);
+    ui->pgr_time->hide();
+    ui->pgr_time->hide();
+    ui->btnNext->hide();
+    ui->btnPlay->hide();
+    ui->btnPrev->hide();
+    ui->btnRepeat->hide();
+    ui->btnShuffle->hide();
+    ui->btnStop->hide();
+    ui->btn_Menu->hide();
+    ui->btnVolume->hide();
+
     connect(settingsdialogobject,SIGNAL(okRequested(QList<serverprofile>)),this,SLOT(applySettings(QList<serverprofile>)));
     connect(settingsdialogobject,SIGNAL(cancelRequested()),this,SLOT(discardSettings()));
 }
@@ -460,7 +537,20 @@ void MainWindow::applySettings(QList<serverprofile> profiles)
 void MainWindow::discardSettings()
 {
     settingsdialogobject->hide();
+    ui->verticalLayout_2->removeWidget(settingsdialogobject);
+    contextview->show();
+    ui->pgr_time->show();
+    ui->btnNext->show();
+    ui->btnPlay->show();
+    ui->btnPrev->show();
+    ui->btnRepeat->show();
+    ui->btnShuffle->show();
+    ui->btnStop->show();
+    ui->btn_Menu->show();
+    ui->btnVolume->show();
+
     delete settingsdialogobject;
+    settingsdialogobject = 0;
 }
 
 bool MainWindow::searchDefaultServer()
@@ -537,7 +627,9 @@ void MainWindow::setMaximised(bool value)
 
 void MainWindow::showCurrentSongInfo()
 {
-    if(currentsongview==NULL)
+    if(menuwidget!=0)
+        showMenu();
+    if(currentsongview==0)
     {
         currentsongview = new CurrentSongWidget(this,netaccess);
         //Hide other stuff
@@ -550,14 +642,14 @@ void MainWindow::showCurrentSongInfo()
 
 void MainWindow::hideCurrentSongInfo()
 {
-    if(currentsongview!=NULL)
+    if(currentsongview!=0)
     {
         ui->verticalLayout_2->removeWidget(currentsongview);
         contextview->show();
         ui->pgr_time->show();
         disconnect(currentsongview,SIGNAL(backRequested()),0,0);
         delete (currentsongview);
-        currentsongview = NULL;
+        currentsongview = 0;
         netaccess->setUpdateInterval(5000);
     }
 
