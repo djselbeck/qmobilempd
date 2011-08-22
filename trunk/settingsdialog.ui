@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SettingsDialog</class>
- <widget class="QDialog" name="SettingsDialog">
+ <widget class="QWidget" name="SettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>380</width>
-        <height>249</height>
+        <width>363</width>
+        <height>304</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -41,21 +41,21 @@
          <item>
           <widget class="QComboBox" name="comboBoxProfiles"/>
          </item>
-         <item>
-          <widget class="QPushButton" name="btnAddProfile">
-           <property name="text">
-            <string>ADD</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnDeleteProfile">
-           <property name="text">
-            <string>DEL</string>
-           </property>
-          </widget>
-         </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnAddProfile">
+         <property name="text">
+          <string>ADD</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDeleteProfile">
+         <property name="text">
+          <string>DEL</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label">

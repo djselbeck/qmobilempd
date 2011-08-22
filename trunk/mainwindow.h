@@ -17,6 +17,9 @@
 #include "wlitrack.h"
 #include "ui_contextview.h"
 #include "settingsdialog.h"
+#include "abstractmenuwidget.h"
+#include "verticalmenuwidget.h"
+#include "horizontalmenuwidget.h"
 
 
 #include <QKeyEvent>
@@ -70,6 +73,7 @@ private:
     QScrollArea *menuscroller;
     QAction *connectacion;
     quint16 port;
+    AbstractMenuWidget *menuwidget;
     void writeSettings();
     void loadSettings();
     void closeEvent(QCloseEvent *);
@@ -98,6 +102,7 @@ protected slots:
     void showFiles();
     void setMaximised(bool);
     void showMenu();
+    void hideMenu();
     void showCurrentSongInfo();
     void hideCurrentSongInfo();
     void connected();

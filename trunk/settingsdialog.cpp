@@ -2,14 +2,14 @@
 #include "ui_settingsdialog.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
 }
 
 SettingsDialog::SettingsDialog(QList<serverprofile> profiles,QWidget *parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);

@@ -22,8 +22,8 @@
         <file>icons/format-justify-fill.png</file>
         <file>icons/media-playlist-repeat.png</file>
         <file>icons/media-playlist-shuffle.png</file>
-        <file>qmobilempd.svg</file>
         <file>qmobilempd_de.qm</file>
         <file>qmobilempd_en.qm</file>
+        <file>qmobilempd.png</file>
     </qresource>
 </RCC>

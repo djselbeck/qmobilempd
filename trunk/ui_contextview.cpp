@@ -13,7 +13,7 @@ Ui_ContextView::Ui_ContextView(QWidget *parent, NetworkAccess *netaccess) : QWid
     this->netaccess = netaccess;
     ui->setupUi(this);
 #ifdef Q_OS_SYMBIAN
-    QFont tempfont = QFont("Arial",8);
+    QFont tempfont = QFont("Nokia Sans",8);
     tempfont.setBold(false);
     ui->listWidget->setFont(tempfont);
 #endif
