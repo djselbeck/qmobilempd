@@ -500,7 +500,7 @@
     <value key="Qt4ProjectManager.S60DeployConfiguration.DeviceAddress" type="QString">192.168.2.62</value>
     <value key="Qt4ProjectManager.S60DeployConfiguration.DevicePort" type="QString">1534</value>
     <value key="Qt4ProjectManager.S60DeployConfiguration.InstallationDriveLetter" type="QChar">C</value>
-    <value key="Qt4ProjectManager.S60DeployConfiguration.SerialPortName" type="QString"></value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.SerialPortName" type="QString">COM5</value>
     <value key="Qt4ProjectManager.S60DeployConfiguration.SilentInstall" type="bool">true</value>
    </valuemap>
    <value key="ProjectExplorer.Target.DeployConfigurationCount" type="int">1</value>
