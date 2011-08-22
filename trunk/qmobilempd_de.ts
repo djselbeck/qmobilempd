@@ -6,35 +6,35 @@
     <message>
         <location filename="currentsongwidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="96"/>
+        <location filename="currentsongwidget.ui" line="99"/>
         <source>Track-Nr.:</source>
         <translation>Lied-Nr.:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="116"/>
+        <location filename="currentsongwidget.ui" line="119"/>
         <source>Bitrate:</source>
         <translation>Bitrate:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="136"/>
+        <location filename="currentsongwidget.ui" line="139"/>
         <source>Path:</source>
         <translation>Pfad:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="156"/>
+        <location filename="currentsongwidget.ui" line="159"/>
         <source>Title:</source>
         <translation>Titel:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="56"/>
+        <location filename="currentsongwidget.ui" line="59"/>
         <source>Album:</source>
         <translation>Album:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="76"/>
+        <location filename="currentsongwidget.ui" line="79"/>
         <source>Artist:</source>
         <translation>Interpret:</translation>
     </message>
@@ -43,14 +43,14 @@
         <translation type="obsolete">Dateipfad:</translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="275"/>
+        <location filename="currentsongwidget.ui" line="278"/>
         <source>0:00</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="currentsongwidget.ui" line="295"/>
+        <location filename="currentsongwidget.ui" line="298"/>
         <source>99:99</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Title: </source>
@@ -75,6 +75,65 @@
     <message>
         <source>Track-Nr.: </source>
         <translation type="obsolete">Lied-Nr.: </translation>
+    </message>
+</context>
+<context>
+    <name>HorizontalMenuWidget</name>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="27"/>
+        <source>Current Song</source>
+        <translation>aktuelles Lied</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="42"/>
+        <source>Artists</source>
+        <translation>Interpreten</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="57"/>
+        <source>Albums</source>
+        <translation>Alben</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="72"/>
+        <source>Playlists</source>
+        <translation>Wiedergabeliste</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="87"/>
+        <source>Files</source>
+        <translation>Dateien</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="106"/>
+        <location filename="horizontalmenuwidget.cpp" line="26"/>
+        <source>Connect</source>
+        <translation>verbinden</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="121"/>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="136"/>
+        <source>About</source>
+        <translation>Programminfo</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.ui" line="151"/>
+        <source>Exit</source>
+        <translation>Beenden</translation>
+    </message>
+    <message>
+        <location filename="horizontalmenuwidget.cpp" line="31"/>
+        <source>Disconnect</source>
+        <translation>Trennen</translation>
     </message>
 </context>
 <context>
@@ -115,79 +174,77 @@
         <translation>Zeige Lautstärkenkontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="69"/>
+        <location filename="mainwindow.cpp" line="71"/>
         <source>Connect to host</source>
         <translation>Mit Server verbinden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="71"/>
         <source>Settings</source>
-        <translation>Einstellungen</translation>
+        <translation type="obsolete">Einstellungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="72"/>
         <source>Show Song info</source>
-        <translation type="unfinished">Zeige Lied Informationen</translation>
+        <translation type="obsolete">Zeige Lied Informationen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="74"/>
         <source>Artists</source>
-        <translation>Interpreten</translation>
+        <translation type="obsolete">Interpreten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="75"/>
         <source>Albums</source>
-        <translation>Alben</translation>
+        <translation type="obsolete">Alben</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="76"/>
         <source>Playlist</source>
-        <translation>Wiedergabelisten</translation>
+        <translation type="obsolete">Wiedergabelisten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="77"/>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation type="obsolete">Dateien</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="78"/>
         <source>About</source>
-        <translation>Programminfo</translation>
+        <translation type="obsolete">Programminfo</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>Default Server</source>
         <translation>Standard-Server</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="139"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>Please define a default server under server properties which is used for connection.</source>
         <translation>Bitte definieren sie einen standard Server,welcher zur Verbindung genutzt wird.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source>qmobilempd</source>
-        <translation type="unfinished">qmobileMPD</translation>
+        <translation>qmobileMPD</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source>qMobileMPD Version:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="275"/>
         <source> Copyright 2011 by Hendrik Borghorst, licensed under GPLv3 for more information visit: &lt;a href=&apos;http://code.google.com/p/qmobilempd&apos;&gt;Homepage&lt;/a&gt; . This applications uses &lt;a href=&apos;http://www.tango-project.org&apos;&gt;Tango icons&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation> Copyright 2011 bei Hendrik Borghorst, lizensiert unter der GPLv3 für mehr Informationen die : &lt;a href=&apos;http://code.google.com/p/qmobilempd&apos;&gt;Homepage&lt;/a&gt; besuchen. Die Anwendung benutzt &lt;a href=&apos;http://www.tango-project.org&apos;&gt;Tango icons&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="275"/>
+        <source>Using qt version: </source>
+        <translation>Benutze Qt Version: </translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="482"/>
         <source>Connection error</source>
-        <translation type="unfinished">Verbindungsfehler</translation>
+        <translation>Verbindungsfehler</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="482"/>
         <source>Could not connect to default host check settings</source>
-        <translation type="unfinished">Kann nicht zum Server verbinden, bitte standard-Einstellungen überprüfen</translation>
+        <translation>Kann nicht zum Server verbinden, bitte standard-Einstellungen überprüfen</translation>
     </message>
     <message>
         <source>qmobilempd</source>
@@ -195,12 +252,12 @@
         <translation type="obsolete">qmobileMPD</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="471"/>
         <source>Not authenticated</source>
         <translation>Nicht authentifiziert</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="471"/>
         <source>Functions could be limited without password, check settings and reconnect</source>
         <translation>Funktionsumfang könnte limitiert sein ohne Passwort.</translation>
     </message>
@@ -220,15 +277,15 @@
     <message>
         <location filename="settingsdialog.ui" line="35"/>
         <source>Profile:</source>
-        <translation>Profil</translation>
+        <translation>Profil:</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="47"/>
+        <location filename="settingsdialog.ui" line="49"/>
         <source>ADD</source>
         <translation>hinzufügen</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="54"/>
+        <location filename="settingsdialog.ui" line="56"/>
         <source>DEL</source>
         <translation>löschen</translation>
     </message>
@@ -250,7 +307,7 @@
     <message>
         <location filename="settingsdialog.ui" line="97"/>
         <source>Make this the default</source>
-        <translation>Standardverbindung?</translation>
+        <translation>Standardverbindung</translation>
     </message>
     <message>
         <location filename="settingsdialog.ui" line="104"/>
@@ -273,32 +330,32 @@
     <message>
         <location filename="ui_contextview.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="113"/>
         <source>add item</source>
-        <translation type="unfinished">hinzufügen</translation>
+        <translation>hinzufügen</translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="136"/>
         <source>play this item</source>
-        <translation type="unfinished">abspielen</translation>
+        <translation>abspielen</translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="159"/>
         <source>clear playlist</source>
-        <translation type="unfinished">Wiedergabeliste löschen</translation>
+        <translation>Wiedergabeliste löschen</translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="182"/>
         <source>open playlist</source>
-        <translation type="unfinished">Wiedergabeliste öffnen</translation>
+        <translation>Wiedergabeliste öffnen</translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="205"/>
         <source>save playlist</source>
-        <translation type="unfinished">Wiedergabeliste abspeichern</translation>
+        <translation>Wiedergabeliste abspeichern</translation>
     </message>
     <message>
         <location filename="ui_contextview.ui" line="228"/>
@@ -306,70 +363,129 @@
         <translation>Anwendung beenden</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="168"/>
+        <location filename="ui_contextview.cpp" line="204"/>
         <source>Artists:</source>
         <translation>Interpreten:</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="215"/>
+        <location filename="ui_contextview.cpp" line="263"/>
         <source>Albums:</source>
         <translation>Alben:</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="342"/>
+        <location filename="ui_contextview.cpp" line="430"/>
         <source>Current playlist:</source>
         <translation>aktuelle Wiedergabeliste:</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="664"/>
-        <location filename="ui_contextview.cpp" line="749"/>
+        <location filename="ui_contextview.cpp" line="762"/>
+        <location filename="ui_contextview.cpp" line="847"/>
         <source>Do you really want to add ALL albums to current playlist?</source>
         <translation>Möchten sie wirklich ALLE Alben zur aktuellen Wiedergabeliste hinzufügen?</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="976"/>
+        <location filename="ui_contextview.cpp" line="1060"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="976"/>
+        <location filename="ui_contextview.cpp" line="1060"/>
         <source>Please enter name for playlist.</source>
         <translation>Bitte geben sie einen Namen für die Wiedergabeliste ein.</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="984"/>
+        <location filename="ui_contextview.cpp" line="1068"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="984"/>
+        <location filename="ui_contextview.cpp" line="1068"/>
         <source>Sorry save list could not get saved</source>
         <translation>Wiedergabeliste konnte nicht gespeichert werden.</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1010"/>
+        <location filename="ui_contextview.cpp" line="1101"/>
         <source>Saved playlists:</source>
         <translation>gespeicherte Wiedergabelisten:</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1017"/>
+        <location filename="ui_contextview.cpp" line="1107"/>
         <source>Clear playlist</source>
         <translation>Wiedergabeliste löschen</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1017"/>
+        <location filename="ui_contextview.cpp" line="1107"/>
         <source>Are you sure to delete current playlist?</source>
         <translation>Möchten sie wirklich die aktuelle Wiedergabeliste löschen?</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1029"/>
+        <location filename="ui_contextview.cpp" line="1119"/>
         <source>Quit?</source>
         <translation>Beenden?</translation>
     </message>
     <message>
-        <location filename="ui_contextview.cpp" line="1029"/>
+        <location filename="ui_contextview.cpp" line="1119"/>
         <source>Are you sure to quit?</source>
         <translation>Möchten sie wirklich das Programm beenden?</translation>
+    </message>
+</context>
+<context>
+    <name>VerticalMenuWidget</name>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="25"/>
+        <source>Current Song</source>
+        <translation>Aktuelles Lied</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="40"/>
+        <source>Artists</source>
+        <translation>Interpreten</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="55"/>
+        <source>Albums</source>
+        <translation>Alben</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="70"/>
+        <source>Playlists</source>
+        <translation>Wiedergabeliste</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="85"/>
+        <source>Files</source>
+        <translation>Dateien</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="100"/>
+        <location filename="verticalmenuwidget.cpp" line="28"/>
+        <source>Connect</source>
+        <translation>verbinden</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="115"/>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="130"/>
+        <source>About</source>
+        <translation>Programminfo</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.ui" line="145"/>
+        <source>Exit</source>
+        <translation>Beenden</translation>
+    </message>
+    <message>
+        <location filename="verticalmenuwidget.cpp" line="33"/>
+        <source>Disconnect</source>
+        <translation>Trennen</translation>
     </message>
 </context>
 <context>
@@ -392,7 +508,7 @@
     <message>
         <location filename="ui_songinfo.ui" line="86"/>
         <source>Album:</source>
-        <translation type="unfinished">Album:</translation>
+        <translation>Album:</translation>
     </message>
     <message>
         <location filename="ui_songinfo.ui" line="99"/>
