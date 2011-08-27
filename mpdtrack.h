@@ -11,6 +11,12 @@ class MpdAlbum;
 class MpdTrack : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QString title READ getTitle )
+    Q_PROPERTY(QString uri READ getFileUri )
+    Q_PROPERTY(QString length READ getLength )
+    Q_PROPERTY(QString artist READ getArtist )
+    Q_PROPERTY(QString album READ getAlbum )
 public:
     explicit MpdTrack(QObject *parent = 0);
     MpdTrack(QObject *parent,QString file,QString title, quint32 length);

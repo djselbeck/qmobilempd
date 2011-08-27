@@ -6,7 +6,11 @@
 
 class wliTrack : public QListWidgetItem
 {
-
+    Q_PROPERTY(QString title READ getTitle )
+    Q_PROPERTY(QString uri READ getFileUri )
+    Q_PROPERTY(QString length READ getLength )
+    Q_PROPERTY(QString artist READ getArtist )
+    Q_PROPERTY(QString album READ getAlbum )
 public:
     explicit wliTrack( QListWidget * parent = 0, int type = 1000 );
     wliTrack( QListWidget * parent = 0, int type = 1000, MpdTrack *track = 0);
@@ -19,6 +23,7 @@ public:
     QString getInfo();
     QString getLength();
     MpdTrack *getTrack();
+
 
 
 

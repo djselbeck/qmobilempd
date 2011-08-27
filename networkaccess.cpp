@@ -2,7 +2,7 @@
 /** Constructor for NetworkAccess object. Handles all the network stuff
   */
 NetworkAccess::NetworkAccess(QObject *parent) :
-        QThread(parent)
+    QThread(parent)
 {
     updateinterval = 5000;
     //create socket later used for communication
@@ -91,6 +91,8 @@ QList<MpdAlbum*> *NetworkAccess::getAlbums()
     }
 
     //Get album tracks
+    qSort(albums->begin(),albums->end(),MpdAlbum::lessThan);
+    emit albumsReady((QList<QObject*>*)albums);
     return albums;
 }
 
@@ -127,6 +129,8 @@ QList<MpdArtist*> *NetworkAccess::getArtists()
             }
         }
     }
+    qSort(artists->begin(),artists->end(),MpdArtist::lessThan);
+    emit artistsReady((QList<QObject*>*)artists);
     return artists;
 }
 
@@ -588,6 +592,7 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
             CommonDebug("add Track:");
         }
     }
+    emit currentPlayListReady((QList<QObject*>*)temptracks);
     return temptracks;
 }
 
@@ -1712,6 +1717,7 @@ QList<MpdFileEntry*> *NetworkAccess::getDirectory(QString path)
             }
         }
     }
+    emit filesReady((QList<QObject*>*)tempfiles);
     return tempfiles;
 }
 
@@ -1759,5 +1765,4 @@ void NetworkAccess::errorHandle()
 {
     tcpsocket->disconnectFromHost();
 }
-
 

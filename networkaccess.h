@@ -25,7 +25,7 @@ class NetworkAccess : public QThread
 public:
   enum State {PAUSE,PLAYING,STOP};
     explicit NetworkAccess(QObject *parent = 0);
-    bool connectToHost(QString hostname, quint16 port);
+    Q_INVOKABLE bool connectToHost(QString hostname, quint16 port);
     bool savePlaylist(QString name);
     QList<MpdAlbum*> *getAlbums();
     QList<MpdArtist*> *getArtists();
@@ -43,7 +43,7 @@ public:
     void resumeUpdates();
     void setUpdateInterval(quint16 ms);
     QList<MpdFileEntry*> *getDirectory(QString path);
-    bool connected();
+    Q_INVOKABLE bool connected();
     void seekPosition(int id,int pos);
     status_struct getStatus();
 
@@ -53,6 +53,10 @@ signals:
     void disconnected();
     void statusUpdate(status_struct status);
     void connectionError(QString);
+    void currentPlayListReady(QList<QObject*>*);
+    void artistsReady(QList<QObject*>*);
+    void albumsReady(QList<QObject*>*);
+    void filesReady(QList<QObject*>*);
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
@@ -90,6 +94,7 @@ private:
     QString mpdversion;
     QTimer *statusupdater;
     quint16 updateinterval;
+
 
 
 
