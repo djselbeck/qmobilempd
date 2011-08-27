@@ -212,7 +212,8 @@ QList<MpdAlbum*> *NetworkAccess::getArtistsAlbums(QString artist)
     }
 
     //Get album tracks
-
+    qSort(albums->begin(),albums->end(),MpdAlbum::lessThan);
+    emit(artistAlbumsReady((QList<QObject*>*)albums));
     return albums;
 }
 
