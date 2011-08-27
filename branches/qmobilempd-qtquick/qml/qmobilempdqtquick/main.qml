@@ -1,5 +1,4 @@
 import QtQuick 1.0
- import QtWebKit 1.0
 import com.nokia.symbian 1.0
 
 
@@ -14,6 +13,8 @@ Window {
     signal connectToServer();
     signal requestCurrentPlaylist();
     signal requestArtists();
+    signal requestArtistAlbums(string artist);
+
     signal requestAlbums();
     signal requestFiles(string files);
     signal play();
@@ -37,20 +38,32 @@ Window {
                 console.debug("Settings clicked");
                 pageStack.push(settingspage);
             }
+            else if(list_view1.model.get(index).ident=="currentsong"){
+                console.debug("Current song clicked");
+                pageStack.push(currentsong_page);
+            }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
                 pageStack.push(albumspage);
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
+                window.requestArtists();
+                artist_list_view.model = artistsModel;
                 pageStack.push(artistpage);
             }
             else if(list_view1.model.get(index).ident=="files"){
                 console.debug("Files clicked");
-
                 pageStack.push(Qt.createComponent("FilesPage.qml"));
             }
         }
+    }
+
+    function artistClicked(item)
+    {
+        console.debug("Artist "+item+" clicked");
+        window.requestArtistAlbums(item);
+        pageStack.push(artistalbumspage);
     }
 
     Component.onCompleted: {
@@ -87,6 +100,7 @@ Window {
                 }
                 ListModel {
                     id: mainMenuModel
+                    ListElement { name: "Current song"; ident:"currentsong"; }
                     ListElement { name: "Artists"; ident:"artists"; }
                     ListElement { name: "Albums"; ident:"albums";}
                     ListElement { name: "Files"; ident:"files" ;}
@@ -192,8 +206,8 @@ Window {
             if(status==PageStatus.Activating)
             {
                 console.debug("artis activating");
-                window.requestArtists();
-                artist_list_view.model = artistsModel;
+                //window.requestArtists();
+
             }
         }
         Component.onDestruction: {
@@ -251,6 +265,46 @@ Window {
         }
 
     }
+    Page{
+        id: artistalbumspage
+        tools: backTools
+        Component.onCompleted: {
+            console.debug("albums completed");
+        }
+
+        onStatusChanged: {
+            console.debug("albums status changed: "+status);
+            if(status==PageStatus.Activating)
+            {
+                console.debug("albums activating");
+                artistalbums_list_view.model = albumsModel;
+            }
+        }
+        Component.onDestruction: {
+            console.debug("albums destroyed");
+        }
+        ListView{
+            id: artistalbums_list_view
+            delegate: albumDelegate
+            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+            clip: true
+        }
+
+    }
+
+    Page {
+        id: currentsong_page
+        tools: backTools
+        Column {
+            Text{ text: "Current Song:";color:"white" }
+            Text{text: "Title:";color:"white"}
+            Text{id:titleText ;text: "";color:"white";font.pointSize:10}
+            Text{text: "Album:";color:"white"}
+            Text{id:albumText ;text: "";color:"white";font.pointSize:10}
+            Text{text: "Artist:";color:"white"}
+            Text{id:artistText ;text: "";color:"white";font.pointSize:10}
+        }
+    }
 
 
     ToolBarLayout {
@@ -295,7 +349,7 @@ Window {
                 onClicked: {
 
                     list_view1.currentIndex = index
-                    parseClicked(index);
+                    artistClicked(artist);
                 }
             }
         }

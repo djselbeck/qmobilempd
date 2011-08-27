@@ -20,6 +20,7 @@ public:
 public slots:
     void updateAlbumsModel(QList<QObject*>* list);
     void updateArtistsModel(QList<QObject*>* list);
+    void updateArtistAlbumsModel(QList<QObject*>* list);
     void updatePlaylistModel(QList<QObject*>* list);
     void setHostname(QString hostname);
     void setPassword(QString password);
@@ -37,6 +38,7 @@ private slots:
     void requestCurrentPlaylist();
     void requestAlbums();
     void requestArtists();
+    void requestArtistAlbums(QString artist);
     void requestFiles(QString);
 
 };

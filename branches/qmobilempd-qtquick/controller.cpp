@@ -17,13 +17,19 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
 
 void Controller::updateArtistsModel(QList<QObject*>* list)
 {
-    CommonDebug("PLAYLIST UPDATE REQUIRED");
+    CommonDebug("ARTISTS UPDATE REQUIRED");
     viewer->rootContext()->setContextProperty("artistsModel",QVariant::fromValue(*list));
+}
+
+void Controller::updateArtistAlbumsModel(QList<QObject*>* list)
+{
+    CommonDebug("ARTIST ALBUMS UPDATE REQUIRED");
+    viewer->rootContext()->setContextProperty("albumsModel",QVariant::fromValue(*list));
 }
 
 void Controller::updateAlbumsModel(QList<QObject*>* list)
 {
-    CommonDebug("PLAYLIST UPDATE REQUIRED");
+    CommonDebug("ALBUMS UPDATE REQUIRED");
     viewer->rootContext()->setContextProperty("albumsModel",QVariant::fromValue(*list));
 }
 void Controller::connectSignals()
@@ -36,12 +42,15 @@ void Controller::connectSignals()
     connect(item,SIGNAL(connectToServer()),this,SLOT(connectToServer()));
     connect(item,SIGNAL(requestCurrentPlaylist()),this,SLOT(requestCurrentPlaylist()));
     connect(item,SIGNAL(requestArtists()),this,SLOT(requestArtists()));
+    connect(item,SIGNAL(requestArtistAlbums(QString)),this,SLOT(requestArtistAlbums(QString)));
     connect(item,SIGNAL(requestAlbums()),this,SLOT(requestAlbums()));
     connect(item,SIGNAL(requestFiles(QString)),this,SLOT(requestFiles(QString)));
     connect(item,SIGNAL(requestCurrentPlaylist()),this,SLOT(requestCurrentPlaylist()));
     connect(netaccess,SIGNAL(currentPlayListReady(QList<QObject*>*)),this,SLOT(updatePlaylistModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(albumsReady(QList<QObject*>*)),this,SLOT(updateAlbumsModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(artistsReady(QList<QObject*>*)),this,SLOT(updateArtistsModel(QList<QObject*>*)));
+    connect(netaccess,SIGNAL(artistAlbumsReady(QList<QObject*>*)),this,SLOT(updateArtistAlbumsModel(QList<QObject*>*)));
+
 }
 
 void Controller::setPassword(QString password)
@@ -84,6 +93,11 @@ void Controller::requestAlbums()
 void Controller::requestArtists()
 {
     netaccess->getArtists();
+}
+
+void Controller::requestArtistAlbums(QString artist)
+{
+    netaccess->getArtistsAlbums(artist);
 }
 
 void Controller::requestFiles(QString string)

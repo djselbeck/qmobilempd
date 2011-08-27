@@ -57,6 +57,7 @@ signals:
     void artistsReady(QList<QObject*>*);
     void albumsReady(QList<QObject*>*);
     void filesReady(QList<QObject*>*);
+    void artistAlbumsReady(QList<QObject*>*);
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
