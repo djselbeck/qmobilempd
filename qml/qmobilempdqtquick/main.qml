@@ -14,6 +14,8 @@ Window {
     signal requestCurrentPlaylist();
     signal requestArtists();
     signal requestArtistAlbums(string artist);
+    signal setCurrentArtist(string artist);
+    signal requestAlbum(variant album);
 
     signal requestAlbums();
     signal requestFiles(string files);
@@ -21,11 +23,63 @@ Window {
     signal next();
     signal prev();
     signal stop();
+    signal deletePlaylist();
+    signal playPlaylistTrack(int index);
     signal seek(int position);
 
 
+    function updateCurrentPlaying(list)
+    {
 
+    }
 
+    function updatePlaylist()
+    {
+        playlist_list_view.model = playlistModel;
+        if(pageStack.currentPage == playlistpage)
+        {
+            //pageStack.replace(playlistpage);
+          console.debug("Playlist repushed");
+        }
+
+    }
+
+    function albumClicked(albumname)
+    {
+        console.debug("Currentartist: "+"" + " album: "+ albumname +"clicked");
+        window.requestAlbum(["",albumname]);
+        albumsongspage.artistname = "";
+        albumsongs_list_view.model= albumTracksModel;
+        pageStack.push(albumsongspage);
+    }
+
+    function artistalbumClicked(artistname, album)
+    {
+        console.debug("Currentartist: "+artistname + " album: "+ album +"clicked");
+        window.requestAlbum([artistname,album]);
+        albumsongspage.artistname = artistname;
+        albumsongs_list_view.model= albumTracksModel;
+        pageStack.push(albumsongspage);
+    }
+
+    function slotShowPopup(string)
+    {
+        console.debug("POPUP: "+string+" requested");
+        popuptext.text=string;
+        popuptext.visible=true;
+        popuptext.textwidth = popuptext.textpaintedwidth;
+        if(popuptext.textwidth>window.width)
+        {
+            popuptext.textwidth = window.width;
+        }
+        popupblendin.start();
+        popupanimationtimer.start();
+    }
+
+    function parseClickedPlaylist(index)
+    {
+        window.playPlaylistTrack(index);
+    }
     function parseClicked(index)
     {
         if(pageStack.currentPage==mainPage){
@@ -44,12 +98,15 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
+                window.requestAlbums();
+                albums_list_view.model = albumsModel;
                 pageStack.push(albumspage);
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
                 window.requestArtists();
                 artist_list_view.model = artistsModel;
+
                 pageStack.push(artistpage);
             }
             else if(list_view1.model.get(index).ident=="files"){
@@ -63,6 +120,8 @@ Window {
     {
         console.debug("Artist "+item+" clicked");
         window.requestArtistAlbums(item);
+        artistalbums_list_view.model = albumsModel;
+        artistalbumspage.artistname = item;
         pageStack.push(artistalbumspage);
     }
 
@@ -134,6 +193,7 @@ Window {
         tools: ToolBarLayout {
             id: pageSpecificTools
             ToolButton { iconSource: "toolbar-back"; onClicked: Qt.quit() }
+
 //            ToolButton { text: "next page"; onClicked: pageStack.push(secondPage) }
         }
 
@@ -157,11 +217,11 @@ Window {
         Column{
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white"}
-            TextField{id: hostnameInput;  text: "192.168.2.22"; anchors { left: parent.left; right: parent.right}}
+            TextField{id: hostnameInput;  text: "192.168.2.51"; anchors { left: parent.left; right: parent.right}}
             Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
             TextField{id: portInput;text: "6600"; anchors { left: parent.left; right: parent.right}}
             Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-            TextField{id: passwordInput; anchors { left: parent.left; right: parent.right}}
+            TextField{id: passwordInput; text:"nudelsuppe"; anchors { left: parent.left; right: parent.right}}
         }
 
     }
@@ -176,18 +236,39 @@ Window {
             if(status==PageStatus.Activating)
             {
                 console.debug("Playlist activating");
-                window.requestCurrentPlaylist();
-                playlist_list_view.model = playlistModel;
+
             }
         }
         Component.onDestruction: {
             console.debug("Playlist destroyed");
         }
 
-        tools: backTools
+        tools:ToolBarLayout {
+        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+            ButtonRow {
+                    ToolButton {
+                        iconSource: "toolbar-delete"
+                        onClicked: {
+                            window.deletePlaylist();
+                        }
+                    }
+                    ToolButton {
+                        iconSource: "toolbar-mediacontrol-stop"
+                        onClicked: {
+                            window.stop();
+                        }
+                    }
+                    ToolButton {
+                        iconSource: "toolbar-mediacontrol-play"
+                        onClicked: {
+                            window.play();
+                        }
+                    }
+
+                } }
         ListView{
             id: playlist_list_view
-            delegate: trackDelegate
+            delegate: playlisttrackDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
         }
@@ -250,8 +331,7 @@ Window {
             if(status==PageStatus.Activating)
             {
                 console.debug("albums activating");
-                window.requestAlbums();
-                albums_list_view.model = albumsModel;
+
             }
         }
         Component.onDestruction: {
@@ -267,6 +347,7 @@ Window {
     }
     Page{
         id: artistalbumspage
+        property string artistname;
         tools: backTools
         Component.onCompleted: {
             console.debug("albums completed");
@@ -285,7 +366,35 @@ Window {
         }
         ListView{
             id: artistalbums_list_view
-            delegate: albumDelegate
+            delegate: artistalbumDelegate
+            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+            clip: true
+        }
+
+    }
+
+    Page{
+        id: albumsongspage
+        tools: backTools
+        property string artistname;
+        Component.onCompleted: {
+            console.debug("albumsongs completed");
+        }
+
+        onStatusChanged: {
+            console.debug("albumsongs status changed: "+status);
+            if(status==PageStatus.Activating)
+            {
+                console.debug("albumsongs activating");
+                //artistalbums_list_view.model = albumsModel;
+            }
+        }
+        Component.onDestruction: {
+            console.debug("albumsongs destroyed");
+        }
+        ListView{
+            id: albumsongs_list_view
+            delegate: albumtrackDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
         }
@@ -310,11 +419,65 @@ Window {
     ToolBarLayout {
         id: backTools
         ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        ButtonRow {
+            id: mediaButtons
+                checkedButton: stop3b
+
+                ToolButton {
+                    id: stop3b;
+                    iconSource: "toolbar-mediacontrol-stop"
+                    onClicked: {
+                        window.stop();
+                    }
+                }
+                ToolButton {
+                    id: prevButton;
+                    iconSource: "toolbar-mediacontrol-backwards"
+                    onClicked: {
+                        window.prev();
+                    }
+                }
+                ToolButton {
+                    iconSource: "toolbar-mediacontrol-play"
+                    onClicked: {
+                        window.play();
+                    }
+                }
+                ToolButton {
+                    id: nextButton;
+                    iconSource: "toolbar-mediacontrol-forward"
+                    onClicked: {
+                        window.next();
+                    }
+                }
+            }
+
 //            ToolButton { text: "next page"; onClicked: pageStack.push(secondPage) }
     }
 
     Component{
-        id:trackDelegate
+        id:playlisttrackDelegate
+        Item {
+            id: itemItem
+            width: list_view1.width
+            height: topLayout.height
+            Row{
+                id: topLayout
+                Text { text: title; color:"white";font.pointSize:10;font.italic:(playing) ? true:false;}
+                Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                    list_view1.currentIndex = index
+                    parseClickedPlaylist(index);
+                }
+            }
+        }
+    }
+    Component{
+        id: albumtrackDelegate
         Item {
             id: itemItem
             width: list_view1.width
@@ -322,13 +485,14 @@ Window {
             Row{
                 id: topLayout
                 Text { text: title; color:"white";font.pointSize:10}
+                Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
 
                     list_view1.currentIndex = index
-                    parseClicked(index);
+                    albumTrackClicked(index);
                 }
             }
         }
@@ -370,11 +534,68 @@ Window {
                 onClicked: {
 
                     list_view1.currentIndex = index
-                    parseClicked(index);
+                    albumClicked(title);
                 }
             }
         }
     }
+
+    Component{
+        id:artistalbumDelegate
+        Item {
+            id: itemItem
+            width: list_view1.width
+            height: topLayout.height
+            Row{
+                id: topLayout
+                Text { text: title; color:"white";font.pointSize:10}
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                    list_view1.currentIndex = index
+                    artistalbumClicked(artistalbumspage.artistname,title);
+                }
+            }
+        }
+    }
+
+    Rectangle{
+        id: popuptext
+         property alias text: textoutput.text;
+        property alias textwidth: textoutput.width;
+        property alias textpaintedwidth : textoutput.paintedWidth;
+        color: "white";
+        width: textoutput.width;
+        height: textoutput.height;
+        Text{
+            id: textoutput;
+            text: "TEST POPUP"
+            color: "black";
+            font.pointSize: 10;
+            horizontalAlignment: "AlignHCenter";
+            wrapMode: "WrapAnywhere";
+        }
+       // anchors { left: parent.left; right: parent.right; }
+        x:window.width/2-(width/2);
+        y: window.height/2-20;
+        opacity: 0;
+        visible: false;
+    }
+
+
+    PropertyAnimation {id: popupblendin; target: popuptext; properties: "opacity"; to: "0.8"; duration: 500}
+    PropertyAnimation {id: popupblendout; target: popuptext; properties: "opacity"; to: "0"; duration: 500
+    onCompleted: {popuptext.visible=false;popuptext.textwidth=0;}}
+    Timer{
+        id: popupanimationtimer;
+        interval: 3000;
+        onTriggered: {
+            popupblendout.start();
+        }
+    }
+
 
 }
 
