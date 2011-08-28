@@ -22,10 +22,16 @@ public slots:
     void updateArtistsModel(QList<QObject*>* list);
     void updateArtistAlbumsModel(QList<QObject*>* list);
     void updatePlaylistModel(QList<QObject*>* list);
+    void updateAlbumTracksModel(QList<QObject*>* list);
+    void connectedToServer();
     void setHostname(QString hostname);
     void setPassword(QString password);
     void setPort(int port);
     void connectToServer();
+
+signals:
+    void sendPopup(QVariant text);
+    void playlistUpdated();
 
 
 private:
@@ -33,13 +39,19 @@ private:
     NetworkAccess *netaccess;
     QString hostname,password;
     quint16 port;
+    quint32 playlistversion;
+    quint32 currentsongid;
+    QList<MpdTrack*> *playlist;
 
 private slots:
     void requestCurrentPlaylist();
     void requestAlbums();
     void requestArtists();
     void requestArtistAlbums(QString artist);
+    void requestAlbum(QVariant array);
     void requestFiles(QString);
+    void updateStatus(status_struct status);
+
 
 };
 

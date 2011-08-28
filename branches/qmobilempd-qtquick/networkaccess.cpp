@@ -17,7 +17,7 @@ NetworkAccess::NetworkAccess(QObject *parent) :
 
 
 /** connects to host and return true if successful, false if not. Takes an string as hostname and int as port */
-bool NetworkAccess::connectToHost(QString hostname, quint16 port)
+bool NetworkAccess::connectToHost(QString hostname, quint16 port,QString password)
 {
     tcpsocket->connectToHost(hostname ,port,QIODevice::ReadWrite);
     connect(tcpsocket,SIGNAL(connected()),SLOT(socketConnected()));
@@ -35,6 +35,7 @@ bool NetworkAccess::connectToHost(QString hostname, quint16 port)
         while (tcpsocket->canReadLine())
         {
             response += tcpsocket->readLine();
+            CommonDebug(response+"\n");
         }
         CommonDebug(response.toUtf8());
         QString teststring = response;
@@ -44,6 +45,8 @@ bool NetworkAccess::connectToHost(QString hostname, quint16 port)
             CommonDebug("Valid MPD found\n");
 
         }
+        authenticate(password);
+        emit connectionestablished();
         return true;
 
     }
@@ -171,8 +174,8 @@ bool NetworkAccess::authenticate(QString password)
 
 void NetworkAccess::socketConnected()
 {
-    emit connectionestablished();
-    updateStatusInternal();
+    //emit connectionestablished();
+    //updateStatusInternal();
 }
 
 QList<MpdAlbum*> *NetworkAccess::getArtistsAlbums(QString artist)
@@ -292,6 +295,8 @@ QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album)
             CommonDebug("add Track:");
         }
     }
+    emit albumTracksReady((QList<QObject*>*)temptracks);
+
     return temptracks;
 }
 
@@ -376,6 +381,7 @@ QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album, QString cartist)
             }            CommonDebug("add Track:");
         }
     }
+    emit albumTracksReady((QList<QObject*>*)temptracks);
     return temptracks;
 }
 
@@ -557,6 +563,7 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
                     if (temptrack==NULL)
                     {
                         temptrack = new MpdTrack(NULL);
+                        temptrack->setPlaying(false);
                     }
                     file = response.right(response.length()-6);
                     file.chop(1);
@@ -1119,6 +1126,12 @@ status_struct NetworkAccess::getStatus()
         tempstat.tracknr = tracknr;
         tempstat.bitrate = bitrate.toUInt();
         tempstat.albumtrackcount = albumtrackcount;
+        if(mPlaylistversion!=tempstat.playlistversion)
+        {
+            CommonDebug("Playlist version change detected");
+            getCurrentPlaylistTracks();
+        }
+        mPlaylistversion=tempstat.playlistversion;
         return tempstat;
     }
     status_struct tempstat;
@@ -1140,6 +1153,12 @@ status_struct NetworkAccess::getStatus()
     tempstat.bitrate = 0;
     tempstat.albumtrackcount = 0;
     tempstat.playlistlength = 0;
+    if(mPlaylistversion!=tempstat.playlistversion)
+    {
+        CommonDebug("Playlist version change detected");
+        getCurrentPlaylistTracks();
+    }
+    mPlaylistversion=tempstat.playlistversion;
     return tempstat;
 }
 
@@ -1350,8 +1369,9 @@ void NetworkAccess::playTrack(QString fileuri)
     updateStatusInternal();
 }
 
-void NetworkAccess::playTrackByNumber(qint32 nr)
+void NetworkAccess::playTrackByNumber(int nr)
 {
+    CommonDebug("Request playback of "+nr);
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
         outstream.setCodec("UTF-8");

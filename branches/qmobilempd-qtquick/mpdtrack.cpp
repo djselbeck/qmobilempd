@@ -118,3 +118,8 @@ void MpdTrack::setTitle(QString titti)
   this->title = titti;
 }
 
+void MpdTrack::setPlaying(bool playing)
+{
+    this->playing = playing;
+    emit playingchanged();
+}
