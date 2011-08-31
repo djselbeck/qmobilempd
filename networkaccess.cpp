@@ -1453,7 +1453,7 @@ void NetworkAccess::setRandom(bool random)
 
 }
 
-void NetworkAccess::setVolume(quint8 volume)
+void NetworkAccess::setVolume(int volume)
 {
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
@@ -1785,5 +1785,14 @@ bool NetworkAccess::connected()
 void NetworkAccess::errorHandle()
 {
     tcpsocket->disconnectFromHost();
+}
+
+void NetworkAccess::addArtist(QString artist)
+{
+    QList<MpdAlbum*> *albums = getArtistsAlbums(artist);
+    for(int i=0;i<albums->length();i++)
+    {
+        addAlbumToPlaylist(albums->at(i)->getTitle());
+    }
 }
 
