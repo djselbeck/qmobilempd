@@ -222,42 +222,7 @@ Window {
         anchors.bottom: parent.bottom
     }
     
-        ToolBarLayout {
-        id: backTools
-        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-        ButtonRow {
-            id: mediaButtons
-                checkedButton: stop3b
-
-                ToolButton {
-                    id: stop3b;
-                    iconSource: "toolbar-mediacontrol-stop"
-                    onClicked: {
-                        window.stop();
-                    }
-                }
-                ToolButton {
-                    id: prevButton;
-                    iconSource: "toolbar-mediacontrol-backwards"
-                    onClicked: {
-                        window.prev();
-                    }
-                }
-                ToolButton {
-                    iconSource: "toolbar-mediacontrol-play"
-                    onClicked: {
-                        window.play();
-                    }
-                }
-                ToolButton {
-                    id: nextButton;
-                    iconSource: "toolbar-mediacontrol-forward"
-                    onClicked: {
-                        window.next();
-                    }
-                }
-            }
-    }
+  
 
     Page{
         id: playlistpage
