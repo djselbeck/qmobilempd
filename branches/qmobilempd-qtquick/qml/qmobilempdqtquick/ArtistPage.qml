@@ -4,6 +4,26 @@ import com.nokia.symbian 1.0
 
 Page{
         id: artistpage
+
+        property alias listmodel: artist_list_view.model;
+        tools: ToolBarLayout {
+            ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+            ButtonRow {
+                ToolButton {
+                    iconSource: "toolbar-mediacontrol-stop"
+                    onClicked: {
+                        window.stop();
+                    }
+                }
+                ToolButton {
+                    iconSource: "toolbar-mediacontrol-play"
+                    onClicked: {
+                        window.play();
+                    }
+                }
+
+
+            } }
         Component.onCompleted: {
             console.debug("artis completed");
         }

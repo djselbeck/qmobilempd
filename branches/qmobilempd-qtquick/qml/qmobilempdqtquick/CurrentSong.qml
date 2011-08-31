@@ -10,21 +10,22 @@ Page {
         property alias lengthtext:lengthText.text;
         property alias position: positionSlider.value;
         property alias bitrate: bitrateText.text;
+        property bool playing;
 
         tools: backTools
         Column {
             anchors {left:parent.left; right: parent.right;}
-            Text{ text: "Current Song:";color:"white" }
-            Text{text: "Title:";color:"white"}
+            Text{text: "Title:";color:"grey"}
             Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text­­{text: "Album:";color:"white"}
+            Text{text: "Album:";color:"grey"}
             Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Artist:";color:"white"}
+            Text{text: "Artist:";color:"grey"}
             Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Length:";color:"white"}
+            Text{text: "Length:";color:"grey"}
             Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Bitrate:";color:"white"}
+            Text{text: "Bitrate:";color:"grey"}
             Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            clip: true;
         }
             Slider
             {
@@ -43,6 +44,6 @@ Page {
 
                 anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
                 }
-        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
+//        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
 
     }
