@@ -29,6 +29,19 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
     emit playlistUpdated();
 }
 
+void Controller::updateFilesModel(QList<QObject*>* list)
+{
+    CommonDebug("FILES UPDATE REQUIRED");
+    if(list->length()>0)
+    {
+        MpdFileEntry *file = dynamic_cast<MpdFileEntry*>(list->at(0));
+
+        viewer->rootContext()->setContextProperty("filesModel",QVariant::fromValue(*list));
+        emit filesModelReady(QVariant::fromValue(*list));
+    }
+
+}
+
 void Controller::updateArtistsModel(QList<QObject*>* list)
 {
     CommonDebug("ARTISTS UPDATE REQUIRED");
@@ -74,15 +87,22 @@ void Controller::connectSignals()
     connect(item,SIGNAL(next()),netaccess,SLOT(next()));
     connect(item,SIGNAL(prev()),netaccess,SLOT(previous()));
     connect(item,SIGNAL(deletePlaylist()),netaccess,SLOT(clearPlaylist()));
+    connect(item,SIGNAL(addAlbum(QVariant)),this,SLOT(addAlbum(QVariant)));
+    connect(item,SIGNAL(addFiles(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
+    connect(item,SIGNAL(seek(int)),this,SLOT(seek(int)));
     connect(this,SIGNAL(sendPopup(QVariant)),item,SLOT(slotShowPopup(QVariant)));
+    connect(this,SIGNAL(sendStatus(QVariant)),item,SLOT(updateCurrentPlaying(QVariant)));
     connect(this,SIGNAL(playlistUpdated()),item,SLOT(updatePlaylist()));
+    connect(this,SIGNAL(filesModelReady(QVariant)),item,SLOT(receiveFilesModel(QVariant)));
     connect(netaccess,SIGNAL(currentPlayListReady(QList<QObject*>*)),this,SLOT(updatePlaylistModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(albumsReady(QList<QObject*>*)),this,SLOT(updateAlbumsModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(artistsReady(QList<QObject*>*)),this,SLOT(updateArtistsModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(artistAlbumsReady(QList<QObject*>*)),this,SLOT(updateArtistAlbumsModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(albumTracksReady(QList<QObject*>*)),this,SLOT(updateAlbumTracksModel(QList<QObject*>*)));
+    connect(netaccess,SIGNAL(filesReady(QList<QObject*>*)),this,SLOT(updateFilesModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
+
 }
 
 void Controller::setPassword(QString password)
@@ -147,6 +167,16 @@ void Controller::requestAlbum(QVariant array)
     netaccess->getAlbumTracks(strings.at(1),strings.at(0));
 }
 
+void Controller::addAlbum(QVariant array)
+{
+    QStringList strings = array.toStringList();
+    for(int i=0;i<strings.length();i++)
+    {
+        CommonDebug("STRING: "+strings.at(i));
+    }
+    netaccess->addArtistAlbumToPlaylist(strings.at(0),strings.at(1));
+}
+
 void Controller::connectedToServer()
 {
     emit sendPopup(tr("Connected to server"));
@@ -171,4 +201,17 @@ void Controller::updateStatus(status_struct status)
     currentsongid = status.id;
     if(playlist==0)
         currentsongid = INT_MAX;
+    QStringList strings;
+    strings.append(status.title);
+    strings.append(status.album);
+    strings.append(status.artist);
+    strings.append(QString::number(status.currentpositiontime));
+    strings.append(QString::number(status.length));
+    strings.append(QString::number(status.bitrate));
+    emit sendStatus(strings);
+}
+
+void Controller::seek(int pos)
+{
+    netaccess->seekPosition(currentsongid,pos);
 }

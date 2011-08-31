@@ -15,10 +15,14 @@ Window {
     signal requestArtists();
     signal requestArtistAlbums(string artist);
     signal setCurrentArtist(string artist);
+    //Variant in format [artistname,albumname]
     signal requestAlbum(variant album);
+    signal addAlbum(variant album);
+    signal playAlbum(variant album);
 
     signal requestAlbums();
     signal requestFiles(string files);
+    signal addFiles(string files);
     signal play();
     signal next();
     signal prev();
@@ -27,10 +31,29 @@ Window {
     signal playPlaylistTrack(int index);
     signal seek(int position);
 
+    property list<ListModel> filemodels;
 
     function updateCurrentPlaying(list)
     {
+        currentsong_page.title = list[0];
+        currentsong_page.album = list[1];
+        currentsong_page.artist = list[2];
+        currentsong_page.position = list[3];
+        currentsong_page.length = list[4];
+        currentsong_page.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
+        currentsong_page.bitrate = list[5]+"kbps";
+    }
 
+    function filesClicked(path)
+    {
+        console.debug("Files clicked "+path + "/");
+        //pageStack.currentPage.listmodel = filesModel;
+        var filescomponent = Qt.createComponent("FilesPage.qml");
+        var filesobject = filescomponent.createObject(window);
+
+        pageStack.push(filesobject);
+        pageStack.currentPage.filepath = path;
+        window.requestFiles(path);
     }
 
     function updatePlaylist()
@@ -44,11 +67,45 @@ Window {
 
     }
 
+    function receiveFilesModel(modelid)
+    {
+        pageStack.currentPage.listmodel = filesModel;
+    }
+
+
+    function formatLength(length)
+    {
+        var temphours = Math.floor(length/3600);
+        var min = 0;
+        var sec = 0;
+        var temp="";
+        console.debug("Length format");
+        if(temphours>1)
+        {
+            min=(length-(3600*temphours))/60;
+        }
+        else{
+            min=Math.floor(length/60);
+        }
+        sec = length-temphours*3600-min*60;
+        if(temphours===0)
+        {
+            temp=(min)+":"+(sec<10?"0":"")+(sec);
+        }
+        else
+        {
+            temp=(temphours)+":"+(min)+":"+(sec);
+        }
+        console.debug("Length formatted:" + temp);
+        return temp;
+    }
+
     function albumClicked(albumname)
     {
         console.debug("Currentartist: "+"" + " album: "+ albumname +"clicked");
         window.requestAlbum(["",albumname]);
         albumsongspage.artistname = "";
+        albumsongspage.albumname = albumname;
         albumsongs_list_view.model= albumTracksModel;
         pageStack.push(albumsongspage);
     }
@@ -58,6 +115,7 @@ Window {
         console.debug("Currentartist: "+artistname + " album: "+ album +"clicked");
         window.requestAlbum([artistname,album]);
         albumsongspage.artistname = artistname;
+        albumsongspage.albumname = album;
         albumsongs_list_view.model= albumTracksModel;
         pageStack.push(albumsongspage);
     }
@@ -90,7 +148,8 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="settings"){
                 console.debug("Settings clicked");
-                pageStack.push(settingspage);
+                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"));
+
             }
             else if(list_view1.model.get(index).ident=="currentsong"){
                 console.debug("Current song clicked");
@@ -111,7 +170,13 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="files"){
                 console.debug("Files clicked");
-                pageStack.push(Qt.createComponent("FilesPage.qml"));
+
+                var filescomponent = Qt.createComponent("FilesPage.qml");
+                var filesobject = filescomponent.createObject(window);
+
+                pageStack.push(filesobject);
+                window.requestFiles("/");
+
             }
         }
     }
@@ -144,6 +209,57 @@ Window {
         id: commonToolBar
         anchors.bottom: parent.bottom
     }
+
+    Page{
+        id: playlistpage
+        Component.onCompleted: {
+            console.debug("Playlist completed");
+        }
+
+        onStatusChanged: {
+            console.debug("Playlist status changed: "+status);
+            if(status==PageStatus.Activating)
+            {
+                console.debug("Playlist activating");
+
+            }
+        }
+        Component.onDestruction: {
+            console.debug("Playlist destroyed");
+        }
+
+        tools:ToolBarLayout {
+        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+            ButtonRow {
+                    ToolButton {
+                        iconSource: "toolbar-delete"
+                        onClicked: {
+                            window.deletePlaylist();
+                        }
+                    }
+                    ToolButton {
+                        iconSource: "toolbar-mediacontrol-stop"
+                        onClicked: {
+                            window.stop();
+                        }
+                    }
+                    ToolButton {
+                        iconSource: "toolbar-mediacontrol-play"
+                        onClicked: {
+                            window.play();
+                        }
+                    }
+
+                } }
+        ListView{
+            id: playlist_list_view
+            delegate: playlisttrackDelegate
+            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+            clip: true
+        }
+
+    }
+
 
     Page {
         id: mainPage
@@ -199,85 +315,10 @@ Window {
 
     }
 
-    Page{
-        id: settingspage
-        tools:ToolBarLayout {
-            id: settingsTools
-//            ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-                ToolButton { text: "Cancel"; onClicked: pageStack.pop()  }
-                ToolButton { text: "Ok"; onClicked: {
-//                        netaccess.connectToHost(hostnameInput.text,portInput.text);
-                        window.setHostname(hostnameInput.text);
-                        window.setPassword(passwordInput.text);
-                        window.setPort(portInput.text);
-                        window.connectToServer();
-                        pageStack.pop();
-                    } }
-        }
-        Column{
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white"}
-            TextField{id: hostnameInput;  text: "192.168.2.51"; anchors { left: parent.left; right: parent.right}}
-            Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-            TextField{id: portInput;text: "6600"; anchors { left: parent.left; right: parent.right}}
-            Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-            TextField{id: passwordInput; text:"nudelsuppe"; anchors { left: parent.left; right: parent.right}}
-        }
 
-    }
-    Page{
-        id: playlistpage
-        Component.onCompleted: {
-            console.debug("Playlist completed");
-        }
-
-        onStatusChanged: {
-            console.debug("Playlist status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("Playlist activating");
-
-            }
-        }
-        Component.onDestruction: {
-            console.debug("Playlist destroyed");
-        }
-
-        tools:ToolBarLayout {
-        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
-                    ToolButton {
-                        iconSource: "toolbar-delete"
-                        onClicked: {
-                            window.deletePlaylist();
-                        }
-                    }
-                    ToolButton {
-                        iconSource: "toolbar-mediacontrol-stop"
-                        onClicked: {
-                            window.stop();
-                        }
-                    }
-                    ToolButton {
-                        iconSource: "toolbar-mediacontrol-play"
-                        onClicked: {
-                            window.play();
-                        }
-                    }
-
-                } }
-        ListView{
-            id: playlist_list_view
-            delegate: playlisttrackDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-        }
-
-    }
 
     Page{
         id: artistpage
-        tools: backTools
         Component.onCompleted: {
             console.debug("artis completed");
         }
@@ -299,7 +340,7 @@ Window {
                  Rectangle {
                      width: window.width
                      height: childrenRect.height
-                     color: "lightsteelblue"
+                     color: "darkgrey"
 
                      Text {
                          text: section
@@ -337,11 +378,27 @@ Window {
         Component.onDestruction: {
             console.debug("albums destroyed");
         }
+        Component {
+                 id: sectionHeadingAlbum
+                 Rectangle {
+                     width: window.width
+                     height: childrenRect.height
+                     color: "darkgrey"
+
+                     Text {
+                         text: section
+                         font.bold: true
+                     }
+                 }
+             }
         ListView{
             id: albums_list_view
             delegate: albumDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
+            section.property: "title";
+            section.criteria: ViewSection.FirstCharacter
+            section.delegate: sectionHeading
         }
 
     }
@@ -373,46 +430,51 @@ Window {
 
     }
 
-    Page{
-        id: albumsongspage
-        tools: backTools
-        property string artistname;
-        Component.onCompleted: {
-            console.debug("albumsongs completed");
-        }
-
-        onStatusChanged: {
-            console.debug("albumsongs status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("albumsongs activating");
-                //artistalbums_list_view.model = albumsModel;
-            }
-        }
-        Component.onDestruction: {
-            console.debug("albumsongs destroyed");
-        }
-        ListView{
-            id: albumsongs_list_view
-            delegate: albumtrackDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-        }
-
-    }
-
+    
     Page {
         id: currentsong_page
+        property alias title: titleText.text;
+        property alias album: albumText.text;
+        property alias artist: artistText.text;
+        property alias length: positionSlider.maximumValue;
+        property alias lengthtext:lengthText.text;
+        property alias position: positionSlider.value;
+        property alias bitrate: bitrateText.text;
+
         tools: backTools
         Column {
+            anchors {left:parent.left; right: parent.right;}
             Text{ text: "Current Song:";color:"white" }
             Text{text: "Title:";color:"white"}
-            Text{id:titleText ;text: "";color:"white";font.pointSize:10}
-            Text{text: "Album:";color:"white"}
-            Text{id:albumText ;text: "";color:"white";font.pointSize:10}
+            Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            Text­­{text: "Album:";color:"white"}
+            Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "Artist:";color:"white"}
-            Text{id:artistText ;text: "";color:"white";font.pointSize:10}
+            Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            Text{text: "Length:";color:"white"}
+            Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            Text{text: "Bitrate:";color:"white"}
+            Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
         }
+            Slider
+            {
+                id: positionSlider
+                stepSize: 1;
+                orientation: Qt.Horizontal
+                valueIndicatorVisible: true
+                onPressedChanged: {
+                    if(!pressed)
+                    {
+                        window.seek(value);
+
+                    }
+                }
+                onValueChanged: {valueIndicatorText=formatLength(value);}
+
+                anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
+                }
+        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
+
     }
 
 

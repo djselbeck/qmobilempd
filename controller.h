@@ -7,6 +7,7 @@
 
 #include "qmlapplicationviewer.h"
 #include <QDeclarativeContext>
+#include <QDeclarativeListReference>
 #include "networkaccess.h"
 #include "commondebug.h"
 
@@ -22,6 +23,7 @@ public slots:
     void updateArtistsModel(QList<QObject*>* list);
     void updateArtistAlbumsModel(QList<QObject*>* list);
     void updatePlaylistModel(QList<QObject*>* list);
+    void updateFilesModel(QList<QObject*>* list);
     void updateAlbumTracksModel(QList<QObject*>* list);
     void connectedToServer();
     void setHostname(QString hostname);
@@ -31,7 +33,9 @@ public slots:
 
 signals:
     void sendPopup(QVariant text);
+    void sendStatus(QVariant status);
     void playlistUpdated();
+    void filesModelReady(QVariant modelid);
 
 
 private:
@@ -49,7 +53,9 @@ private slots:
     void requestArtists();
     void requestArtistAlbums(QString artist);
     void requestAlbum(QVariant array);
+    void addAlbum(QVariant array);
     void requestFiles(QString);
+    void seek(int);
     void updateStatus(status_struct status);
 
 

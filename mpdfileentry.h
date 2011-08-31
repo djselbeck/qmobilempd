@@ -8,6 +8,10 @@
 class MpdFileEntry : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString name READ getName)
+    Q_PROPERTY(QString prepath READ getPrePath)
+    Q_PROPERTY(bool isFile READ isFile)
+    Q_PROPERTY(bool isDirectory READ isDirectory)
 public:
     enum MpdFileType {MpdFileType_File,MpdFileType_Directory,MpdFileType_Playlist,MpdFileType_NR};
     explicit MpdFileEntry(QObject *parent = 0);
