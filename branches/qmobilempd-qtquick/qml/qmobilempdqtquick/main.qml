@@ -317,91 +317,8 @@ Window {
 
 
 
-    Page{
-        id: artistpage
-        Component.onCompleted: {
-            console.debug("artis completed");
-        }
-
-        onStatusChanged: {
-            console.debug("artis status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("artis activating");
-                //window.requestArtists();
-
-            }
-        }
-        Component.onDestruction: {
-            console.debug("artis destroyed");
-        }
-        Component {
-                 id: sectionHeading
-                 Rectangle {
-                     width: window.width
-                     height: childrenRect.height
-                     color: "darkgrey"
-
-                     Text {
-                         text: section
-                         font.bold: true
-                     }
-                 }
-             }
-        ListView{
-            id: artist_list_view
-            delegate: artistDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-            section.property: "artist";
-                     section.criteria: ViewSection.FirstCharacter
-                              section.delegate: sectionHeading
-        }
-
-
-    }
-    Page{
-        id: albumspage
-        tools: backTools
-        Component.onCompleted: {
-            console.debug("albums completed");
-        }
-
-        onStatusChanged: {
-            console.debug("albums status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("albums activating");
-
-            }
-        }
-        Component.onDestruction: {
-            console.debug("albums destroyed");
-        }
-        Component {
-                 id: sectionHeadingAlbum
-                 Rectangle {
-                     width: window.width
-                     height: childrenRect.height
-                     color: "darkgrey"
-
-                     Text {
-                         text: section
-                         font.bold: true
-                     }
-                 }
-             }
-        ListView{
-            id: albums_list_view
-            delegate: albumDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-            section.property: "title";
-            section.criteria: ViewSection.FirstCharacter
-            section.delegate: sectionHeading
-        }
-
-    }
+    
+    
     Page{
         id: artistalbumspage
         property string artistname;
@@ -431,51 +348,7 @@ Window {
     }
 
     
-    Page {
-        id: currentsong_page
-        property alias title: titleText.text;
-        property alias album: albumText.text;
-        property alias artist: artistText.text;
-        property alias length: positionSlider.maximumValue;
-        property alias lengthtext:lengthText.text;
-        property alias position: positionSlider.value;
-        property alias bitrate: bitrateText.text;
-
-        tools: backTools
-        Column {
-            anchors {left:parent.left; right: parent.right;}
-            Text{ text: "Current Song:";color:"white" }
-            Text{text: "Title:";color:"white"}
-            Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text­­{text: "Album:";color:"white"}
-            Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Artist:";color:"white"}
-            Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Length:";color:"white"}
-            Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Bitrate:";color:"white"}
-            Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-        }
-            Slider
-            {
-                id: positionSlider
-                stepSize: 1;
-                orientation: Qt.Horizontal
-                valueIndicatorVisible: true
-                onPressedChanged: {
-                    if(!pressed)
-                    {
-                        window.seek(value);
-
-                    }
-                }
-                onValueChanged: {valueIndicatorText=formatLength(value);}
-
-                anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
-                }
-        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
-
-    }
+   
 
 
     ToolBarLayout {
