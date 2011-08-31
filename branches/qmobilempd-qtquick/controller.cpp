@@ -7,7 +7,7 @@ Controller::Controller(QObject *parent) : QObject(parent)
 Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(parent),viewer(viewer),password(""),hostname(""),port(6600)
 {
     netaccess = new NetworkAccess(this);
-    netaccess->setUpdateInterval(1000);
+    netaccess->setUpdateInterval(5000);
     currentsongid=0;
     playlistversion = 0;
     playlist = 0;
@@ -90,6 +90,8 @@ void Controller::connectSignals()
     connect(item,SIGNAL(addAlbum(QVariant)),this,SLOT(addAlbum(QVariant)));
     connect(item,SIGNAL(addFiles(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
     connect(item,SIGNAL(seek(int)),this,SLOT(seek(int)));
+    connect(item,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
+    connect(item,SIGNAL(addArtist(QString)),netaccess,SLOT(addArtist(QString)));
     connect(this,SIGNAL(sendPopup(QVariant)),item,SLOT(slotShowPopup(QVariant)));
     connect(this,SIGNAL(sendStatus(QVariant)),item,SLOT(updateCurrentPlaying(QVariant)));
     connect(this,SIGNAL(playlistUpdated()),item,SLOT(updatePlaylist()));
@@ -208,6 +210,26 @@ void Controller::updateStatus(status_struct status)
     strings.append(QString::number(status.currentpositiontime));
     strings.append(QString::number(status.length));
     strings.append(QString::number(status.bitrate));
+    switch (status.playing) {
+    case NetworkAccess::PLAYING:
+    {
+        strings.append("playing");
+        break;
+    }
+    case NetworkAccess::PAUSE:
+    {
+        strings.append("pause");
+        break;
+    }
+    case NetworkAccess::STOP:
+    {
+        strings.append("stop");
+        break;
+    }
+    default: strings.append("stop");
+    }
+    strings.append(QString::number(status.volume));
+
     emit sendStatus(strings);
 }
 

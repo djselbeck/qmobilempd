@@ -62,6 +62,7 @@ public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
     void addArtistAlbumToPlaylist(QString artist,QString album);
+    void addArtist(QString artist);
     void playTrack(QString fileuri);
     void playTrackByNumber(int nr);
     void socketConnected();
@@ -70,7 +71,7 @@ public slots:
     void previous();
     void stop();
     void clearPlaylist();
-    void setVolume(quint8 volume);
+    void setVolume(int volume);
     void setRandom(bool);
     void setRepeat(bool);
     void disconnect();

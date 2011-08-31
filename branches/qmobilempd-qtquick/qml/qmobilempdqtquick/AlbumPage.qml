@@ -5,7 +5,30 @@ import com.nokia.symbian 1.0
 Page{
         id: albumspage
         property alias listmodel: albums_list_view.model;
-        tools: backTools
+        tools: ToolBarLayout
+        {
+        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        ButtonRow {
+    //                ToolButton {
+    //                    iconSource: "toolbar-mediacontrol-stop"
+    //                    onClicked: {
+    //                        window.stop();
+    //                    }
+    //                }
+
+            ToolButton {
+                iconSource: "toolbar-add"
+                onClicked: window.addArtist(artistname);
+            }
+
+            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+            ToolButton {
+                iconSource: playbuttoniconsource; onClicked: window.play()
+            }
+            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+
+
+        } }
         Component.onCompleted: {
             console.debug("albums completed");
         }

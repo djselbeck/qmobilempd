@@ -8,9 +8,11 @@ Window {
     property int port;
     property string password;
     property Page currentsongpage;
+    property string playbuttoniconsource;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
+    signal setVolume(int volume);
     signal connectToServer();
     signal requestCurrentPlaylist();
     signal requestArtists();
@@ -19,6 +21,7 @@ Window {
     //Variant in format [artistname,albumname]
     signal requestAlbum(variant album);
     signal addAlbum(variant album);
+    signal addArtist(string artist);
     signal playAlbum(variant album);
 
     signal requestAlbums();
@@ -32,8 +35,6 @@ Window {
     signal playPlaylistTrack(int index);
     signal seek(int position);
 
-    property list<ListModel> filemodels;
-
     function updateCurrentPlaying(list)
     {
         currentsongpage.title = list[0];
@@ -43,6 +44,8 @@ Window {
         currentsongpage.length = list[4];
         currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
         currentsongpage.bitrate = list[5]+"kbps";
+        playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
+        volumeslider.value = list[7];
 
     }
 
@@ -131,11 +134,11 @@ Window {
         console.debug("POPUP: "+string+" requested");
         popuptext.text=string;
         popuptext.visible=true;
-        popuptext.textwidth = popuptext.textpaintedwidth;
-        if(popuptext.textwidth>window.width)
-        {
-            popuptext.textwidth = window.width;
-        }
+        //popuptext.textwidth = popuptext.textpaintedwidth;
+//        if(popuptext.textwidth>window.width)
+//        {
+//            popuptext.textwidth = window.width;
+//        }
         popupblendin.start();
         popupanimationtimer.start();
     }
@@ -150,7 +153,10 @@ Window {
             console.debug("parseClicked("+index+")")
             if(list_view1.model.get(index).ident=="playlist"){
                 console.debug("Playlist clicked");
-                pageStack.push(playlistpage);
+                var component = Qt.createComponent("PlaylistPage.qml");
+                var object = component.createObject(window);
+                object.listmodel = playlistModel;
+                pageStack.push(object);
             }
             else if(list_view1.model.get(index).ident=="settings"){
                 console.debug("Settings clicked");
@@ -193,16 +199,19 @@ Window {
     function artistClicked(item)
     {
         console.debug("Artist "+item+" clicked");
+        var component = Qt.createComponent("ArtistAlbumPage.qml");
+        var object = component.createObject(window);
         window.requestArtistAlbums(item);
-        artistalbums_list_view.model = albumsModel;
-        artistalbumspage.artistname = item;
-        pageStack.push(artistalbumspage);
+        object.listmodel = albumsModel;
+        object.artistname = item;
+        pageStack.push(object);
     }
 
     Component.onCompleted: {
         var component = Qt.createComponent("CurrentSong.qml");
         var object = component.createObject(window);
         currentsongpage = object;
+        playbuttoniconsource = "toolbar-mediacontrol-play";
         pageStack.push(mainPage);
     }
 
@@ -224,55 +233,7 @@ Window {
     
   
 
-    Page{
-        id: playlistpage
-        Component.onCompleted: {
-            console.debug("Playlist completed");
-        }
 
-        onStatusChanged: {
-            console.debug("Playlist status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("Playlist activating");
-
-            }
-        }
-        Component.onDestruction: {
-            console.debug("Playlist destroyed");
-        }
-
-        tools:ToolBarLayout {
-        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
-                    ToolButton {
-                        iconSource: "toolbar-delete"
-                        onClicked: {
-                            window.deletePlaylist();
-                        }
-                    }
-                    ToolButton {
-                        iconSource: "toolbar-mediacontrol-stop"
-                        onClicked: {
-                            window.stop();
-                        }
-                    }
-                    ToolButton {
-                        iconSource: "toolbar-mediacontrol-play"
-                        onClicked: {
-                            window.play();
-                        }
-                    }
-
-                } }
-        ListView{
-            id: playlist_list_view
-            delegate: playlisttrackDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-        }
-
-    }
 
 
     Page {
@@ -303,10 +264,10 @@ Window {
                     Item {
                         id: itemItem
                         width: list_view1.width
-                        height: 70
+                        height: 50
                         Row{
                             id: topLayout
-                            Text { text: name; color:"white";font.pointSize:10}
+                            Text { text: name; color:"white";font.pointSize:12;}
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -324,49 +285,21 @@ Window {
             id: pageSpecificTools
             ToolButton { iconSource: "toolbar-back"; onClicked: Qt.quit() }
 
-//            ToolButton { text: "next page"; onClicked: pageStack.push(secondPage) }
-        }
+        //                ToolButton {
+        //                    iconSource: "toolbar-mediacontrol-stop"
+        //                    onClicked: {
+        //                        window.stop();
+        //                    }
+        //                }
+                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+                ToolButton {
+                    iconSource: playbuttoniconsource; onClicked: window.play()
+                }
+                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
 
-    }
-
-
-
-    
-    
-    Page{
-        id: artistalbumspage
-        property string artistname;
-        tools: backTools
-        Component.onCompleted: {
-            console.debug("albums completed");
-        }
-
-        onStatusChanged: {
-            console.debug("albums status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("albums activating");
-                artistalbums_list_view.model = albumsModel;
             }
-        }
-        Component.onDestruction: {
-            console.debug("albums destroyed");
-        }
-        ListView{
-            id: artistalbums_list_view
-            delegate: artistalbumDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
-            clip: true
-        }
 
     }
-
-    
-   
-
-
-
-
     Component{
         id:playlisttrackDelegate
         Item {
@@ -452,54 +385,53 @@ Window {
         }
     }
 
-    Component{
-        id:artistalbumDelegate
-        Item {
-            id: itemItem
-            width: list_view1.width
-            height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: title; color:"white";font.pointSize:10}
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-
-                    list_view1.currentIndex = index
-                    artistalbumClicked(artistalbumspage.artistname,title);
-                }
-            }
-        }
-    }
-
     Rectangle{
         id: popuptext
-         property alias text: textoutput.text;
-        property alias textwidth: textoutput.width;
-        property alias textpaintedwidth : textoutput.paintedWidth;
-        color: "white";
-        width: textoutput.width;
-        height: textoutput.height;
+        property alias text: textoutput.text
+        color: "white"
+        width: window.width
+        height: textoutput.height
+                x:0
+        y: 0
+        opacity: 0
+        visible: false
         Text{
-            id: textoutput;
+            id: textoutput
             text: "TEST POPUP"
-            color: "black";
-            font.pointSize: 10;
-            horizontalAlignment: "AlignHCenter";
-            wrapMode: "WrapAnywhere";
+            color: "black"
+            font.pointSize: 10
+            horizontalAlignment: "AlignHCenter"
+            wrapMode: "WrapAnywhere"
+            //anchors.fill: parent
+            width: parent.width
         }
        // anchors { left: parent.left; right: parent.right; }
-        x:window.width/2-(width/2);
-        y: window.height/2-20;
-        opacity: 0;
-        visible: false;
+        
     }
 
 
     PropertyAnimation {id: popupblendin; target: popuptext; properties: "opacity"; to: "0.8"; duration: 500}
-    PropertyAnimation {id: popupblendout; target: popuptext; properties: "opacity"; to: "0"; duration: 500
-    onCompleted: {popuptext.visible=false;popuptext.textwidth=0;}}
+    PropertyAnimation {id: popupblendout
+		target: popuptext
+		properties: "opacity"
+		to: "0"
+		duration: 500
+    onCompleted: {
+		popuptext.visible=false;popuptext.textwidth=0;
+		}
+	}
+
+    PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500}
+    PropertyAnimation {id: volumeblendout
+                target: volumeslider
+                properties: "opacity"
+                to: "0"
+                duration: 500
+    onCompleted: {
+                volumeslider.visible=false;
+                }
+        }
+
     Timer{
         id: popupanimationtimer;
         interval: 3000;
@@ -507,8 +439,26 @@ Window {
             popupblendout.start();
         }
     }
+    Slider{
+        id: volumeslider
+        orientation: Qt.Vertical
+        maximumValue: 100
+        minimumValue: 0
+        stepSize: 1
+        visible:false
+        opacity:0
+        inverted: true
+        height: (window.height/3>100) ? 200 : window.height/3
+        anchors {right:parent.right;bottom:commonToolBar.top;}
+        onValueChanged: {
+            if(pressed)
+            {
+                window.setVolume(value);
+            }
+        }
+    }
 
+    onFocusChanged: {
 
+    }
 }
-
-

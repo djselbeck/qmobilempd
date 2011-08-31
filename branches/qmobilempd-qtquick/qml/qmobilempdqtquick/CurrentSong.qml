@@ -12,7 +12,31 @@ Page {
         property alias bitrate: bitrateText.text;
         property bool playing;
 
-        tools: backTools
+        //tools: backTools
+        tools: ToolBarLayout {
+            ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+            ButtonRow {
+                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+                ToolButton {
+                    iconSource: playbuttoniconsource; onClicked: window.play()
+                }
+                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+                ToolButton {
+                    text: "Vol"
+                    onClicked: {
+                        if(volumeslider.visible)
+                        {
+                            volumeblendout.start();
+                        }
+                        else{
+                            volumeslider.visible=true;
+                            volumeblendin.start();
+                        }
+                    }
+                }
+            }
+        }
+
         Column {
             anchors {left:parent.left; right: parent.right;}
             Text{text: "Title:";color:"grey"}

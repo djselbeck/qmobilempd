@@ -9,18 +9,19 @@ Page{
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
             ButtonRow {
+//                ToolButton {
+//                    iconSource: "toolbar-mediacontrol-stop"
+//                    onClicked: {
+//                        window.stop();
+//                    }
+//                }
+
+
+                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
                 ToolButton {
-                    iconSource: "toolbar-mediacontrol-stop"
-                    onClicked: {
-                        window.stop();
-                    }
+                    iconSource: playbuttoniconsource; onClicked: window.play()
                 }
-                ToolButton {
-                    iconSource: "toolbar-mediacontrol-play"
-                    onClicked: {
-                        window.play();
-                    }
-                }
+                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
 
 
             } }
