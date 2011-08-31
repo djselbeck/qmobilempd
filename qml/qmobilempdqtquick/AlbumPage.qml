@@ -4,6 +4,7 @@ import com.nokia.symbian 1.0
 
 Page{
         id: albumspage
+        property alias listmodel: albums_list_view.model;
         tools: backTools
         Component.onCompleted: {
             console.debug("albums completed");
@@ -40,7 +41,7 @@ Page{
             clip: true
             section.property: "title";
             section.criteria: ViewSection.FirstCharacter
-            section.delegate: sectionHeading
+            section.delegate: sectionHeadingAlbum
         }
 
     }

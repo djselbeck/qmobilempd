@@ -7,6 +7,7 @@ Window {
     property string hostname;
     property int port;
     property string password;
+    property Page currentsongpage;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -35,13 +36,14 @@ Window {
 
     function updateCurrentPlaying(list)
     {
-        currentsong_page.title = list[0];
-        currentsong_page.album = list[1];
-        currentsong_page.artist = list[2];
-        currentsong_page.position = list[3];
-        currentsong_page.length = list[4];
-        currentsong_page.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
-        currentsong_page.bitrate = list[5]+"kbps";
+        currentsongpage.title = list[0];
+        currentsongpage.album = list[1];
+        currentsongpage.artist = list[2];
+        currentsongpage.position = list[3];
+        currentsongpage.length = list[4];
+        currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
+        currentsongpage.bitrate = list[5]+"kbps";
+
     }
 
     function filesClicked(path)
@@ -104,20 +106,24 @@ Window {
     {
         console.debug("Currentartist: "+"" + " album: "+ albumname +"clicked");
         window.requestAlbum(["",albumname]);
-        albumsongspage.artistname = "";
-        albumsongspage.albumname = albumname;
-        albumsongs_list_view.model= albumTracksModel;
-        pageStack.push(albumsongspage);
+        var component = Qt.createComponent("AlbumSongPage.qml");
+        var object = component.createObject(window);
+        object.artistname = "";
+        object.albumname = albumname;
+        object.listmodel= albumTracksModel;
+        pageStack.push(object);
     }
 
     function artistalbumClicked(artistname, album)
     {
         console.debug("Currentartist: "+artistname + " album: "+ album +"clicked");
         window.requestAlbum([artistname,album]);
-        albumsongspage.artistname = artistname;
-        albumsongspage.albumname = album;
-        albumsongs_list_view.model= albumTracksModel;
-        pageStack.push(albumsongspage);
+        var component = Qt.createComponent("AlbumSongPage.qml");
+        var object = component.createObject(window);
+        object.artistname = artistname;
+        object.albumname = album;
+        object.listmodel= albumTracksModel;
+        pageStack.push(object);
     }
 
     function slotShowPopup(string)
@@ -153,20 +159,23 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="currentsong"){
                 console.debug("Current song clicked");
-                pageStack.push(currentsong_page);
+                pageStack.push(currentsongpage);
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
+                var albumpagecomponent = Qt.createComponent("AlbumPage.qml");
+                var albumpageobject = albumpagecomponent.createObject(window);
                 window.requestAlbums();
-                albums_list_view.model = albumsModel;
-                pageStack.push(albumspage);
+                albumpageobject.listmodel = albumsModel;
+                pageStack.push(albumpageobject);
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
                 window.requestArtists();
-                artist_list_view.model = artistsModel;
-
-                pageStack.push(artistpage);
+                var component = Qt.createComponent("ArtistPage.qml");
+                var object = component.createObject(window);
+                object.listmodel = artistsModel;
+                pageStack.push(object);
             }
             else if(list_view1.model.get(index).ident=="files"){
                 console.debug("Files clicked");
@@ -191,6 +200,9 @@ Window {
     }
 
     Component.onCompleted: {
+        var component = Qt.createComponent("CurrentSong.qml");
+        var object = component.createObject(window);
+        currentsongpage = object;
         pageStack.push(mainPage);
     }
 
