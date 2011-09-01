@@ -7,7 +7,7 @@ Controller::Controller(QObject *parent) : QObject(parent)
 Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(parent),viewer(viewer),password(""),hostname(""),port(6600)
 {
     netaccess = new NetworkAccess(this);
-    netaccess->setUpdateInterval(5000);
+    netaccess->setUpdateInterval(1000);
     currentsongid=0;
     playlistversion = 0;
     playlist = 0;
@@ -186,7 +186,7 @@ void Controller::connectedToServer()
 
 void Controller::updateStatus(status_struct status)
 {
-
+    CommonDebug("got STATUS id:"+QString::number(status.id));
     if(currentsongid != status.id)
     {
         if(status.playing==NetworkAccess::PLAYING)

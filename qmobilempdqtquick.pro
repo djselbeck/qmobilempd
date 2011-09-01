@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     mpdartist.cpp \
     mpdalbum.cpp \
     commondebug.cpp \
-    controller.cpp
+    controller.cpp \
+    networkstatusupdater.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -63,4 +64,7 @@ HEADERS += \
     mpdalbum.h \
     commondebug.h \
     common.h \
-    controller.h
+    controller.h \
+    networkstatusupdater.h
+
+RESOURCES +=

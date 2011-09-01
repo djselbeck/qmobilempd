@@ -13,6 +13,8 @@ NetworkAccess::NetworkAccess(QObject *parent) :
     connect(tcpsocket,SIGNAL(disconnected()),this,SLOT(disconnectedfromServer()));
     connect(statusupdater,SIGNAL(timeout()),this,SLOT(updateStatusInternal()));
     connect(tcpsocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(errorHandle()));
+    updater = 0;
+
 }
 
 
@@ -45,9 +47,24 @@ bool NetworkAccess::connectToHost(QString hostname, quint16 port,QString passwor
             CommonDebug("Valid MPD found\n");
 
         }
+        if(updater!=0)
+        {
+            delete(updater);
+        }
+            updater = new NetworkStatusUpdater(hostname,password,port,this);
+            qRegisterMetaType<status_struct>("status_struct");
+            qRegisterMetaType<QList<MpdTrack*>*>("QList<MpdTrack*>*");
+            connect(updater,SIGNAL(statusUpdate(status_struct)),this,SIGNAL(statusUpdate(status_struct)));
+            connect(updater,SIGNAL(currentPlayListReady(QList<QObject*>*)),this,SIGNAL(currentPlayListReady(QList<QObject*>*)));
+            updater->setInterval(updateinterval);
+            updater->start();
+            updater->doUpdate();
         authenticate(password);
         emit connectionestablished();
+
+
         return true;
+
 
     }
     return false;
@@ -1579,7 +1596,8 @@ void NetworkAccess::disconnectedfromServer()
 }
 
 void NetworkAccess::connectedtoServer() {
-    statusupdater->start(updateinterval);
+    //statusupdater->start(updateinterval);
+
 }
 
 quint32 NetworkAccess::getPlayListVersion()
