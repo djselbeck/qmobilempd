@@ -37,20 +37,34 @@ Window {
 
     function updateCurrentPlaying(list)
     {
-        currentsongpage.title = list[0];
-        currentsongpage.album = list[1];
-        currentsongpage.artist = list[2];
-        currentsongpage.position = list[3];
-        currentsongpage.length = list[4];
-        currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
-        currentsongpage.bitrate = list[5]+"kbps";
-        playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
-        volumeslider.value = list[7];
+        if(pageStack.currentPage===currentsongpage)
+        {
+            currentsongpage.title = list[0];
+            currentsongpage.album = list[1];
+            currentsongpage.artist = list[2];
+            currentsongpage.position = list[3];
+            currentsongpage.length = list[4];
+            currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
+            currentsongpage.bitrate = list[5]+"kbps";
+            playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
+            volumeslider.value = list[7];
+        }
 
+    }
+
+    function restartCurrentSongTimer()
+    {
+//        if(!currentsongtimer.running)
+//        {
+//            currentsongtimer.stop();
+//            currentsongtimer.start();
+//        }
     }
 
     function filesClicked(path)
     {
+        restartCurrentSongTimer();
+
         console.debug("Files clicked "+path + "/");
         //pageStack.currentPage.listmodel = filesModel;
         var filescomponent = Qt.createComponent("FilesPage.qml");
@@ -84,7 +98,7 @@ Window {
         var min = 0;
         var sec = 0;
         var temp="";
-        console.debug("Length format");
+       // console.debug("Length format");
         if(temphours>1)
         {
             min=(length-(3600*temphours))/60;
@@ -101,7 +115,7 @@ Window {
         {
             temp=(temphours)+":"+(min)+":"+(sec);
         }
-        console.debug("Length formatted:" + temp);
+        //console.debug("Length formatted:" + temp);
         return temp;
     }
 
@@ -115,6 +129,7 @@ Window {
         object.albumname = albumname;
         object.listmodel= albumTracksModel;
         pageStack.push(object);
+        restartCurrentSongTimer();
     }
 
     function artistalbumClicked(artistname, album)
@@ -127,6 +142,7 @@ Window {
         object.albumname = album;
         object.listmodel= albumTracksModel;
         pageStack.push(object);
+        restartCurrentSongTimer();
     }
 
     function slotShowPopup(string)
@@ -146,6 +162,7 @@ Window {
     function parseClickedPlaylist(index)
     {
         window.playPlaylistTrack(index);
+        restartCurrentSongTimer();
     }
     function parseClicked(index)
     {
@@ -194,6 +211,7 @@ Window {
 
             }
         }
+        restartCurrentSongTimer();
     }
 
     function artistClicked(item)
@@ -205,6 +223,7 @@ Window {
         object.listmodel = albumsModel;
         object.artistname = item;
         pageStack.push(object);
+        restartCurrentSongTimer();
     }
 
     Component.onCompleted: {
@@ -213,6 +232,7 @@ Window {
         currentsongpage = object;
         playbuttoniconsource = "toolbar-mediacontrol-play";
         pageStack.push(mainPage);
+        restartCurrentSongTimer();
     }
 
     StatusBar {
@@ -417,7 +437,7 @@ Window {
 		to: "0"
 		duration: 500
     onCompleted: {
-		popuptext.visible=false;popuptext.textwidth=0;
+                popuptext.visible=false;
 		}
 	}
 
@@ -460,5 +480,17 @@ Window {
 
     onFocusChanged: {
 
+    }
+
+    Timer{
+        id:currentsongtimer
+        interval: 15000
+        repeat: false
+        onTriggered: {
+            if(pageStack.currentPage!==currentsongpage)
+            {
+                pageStack.push(currentsongpage);
+            }
+        }
     }
 }

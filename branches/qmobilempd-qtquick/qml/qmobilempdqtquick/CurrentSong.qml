@@ -22,7 +22,8 @@ Page {
                 }
                 ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
                 ToolButton {
-                    text: "Vol"
+                    //text: "Vol"
+                    iconSource: Qt.resolvedUrl("res/icon-m-toolbar-volume-white.png");
                     onClicked: {
                         if(volumeslider.visible)
                         {
