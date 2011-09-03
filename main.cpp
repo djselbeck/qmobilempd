@@ -10,12 +10,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QmlApplicationViewer *viewer = new QmlApplicationViewer();
-    Controller *control = new Controller(viewer,0);
-    MpdArtist *artist1 = new MpdArtist(0,"aa");
-    MpdArtist *artist2 = new MpdArtist(0,"bb");
-    CommonDebug("BLAAAA: "+QString::number(*artist1<*artist2));
+    QCoreApplication::setOrganizationName("Hendrik Borghorst");
+    QCoreApplication::setApplicationName("qmobilempd");
     viewer->setMainQmlFile(QLatin1String("qml/qmobilempdqtquick/main.qml"));
-    control->connectSignals();
+    Controller *control = new Controller(viewer,0);
+
     viewer->showFullScreen();
 
     return app.exec();

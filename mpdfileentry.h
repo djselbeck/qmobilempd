@@ -12,6 +12,11 @@ class MpdFileEntry : public QObject
     Q_PROPERTY(QString prepath READ getPrePath)
     Q_PROPERTY(bool isFile READ isFile)
     Q_PROPERTY(bool isDirectory READ isDirectory)
+    Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(QString album READ getAlbum)
+    Q_PROPERTY(QString path READ getPath)
+    Q_PROPERTY(QString artist READ getArtist)
+    Q_PROPERTY(QString length READ getLengthFormatted)
 public:
     enum MpdFileType {MpdFileType_File,MpdFileType_Directory,MpdFileType_Playlist,MpdFileType_NR};
     explicit MpdFileEntry(QObject *parent = 0);
@@ -24,6 +29,26 @@ public:
     QString getName();
     QString getPrePath();
     MpdTrack *getTrack();
+    QString getTitle() {
+        if(track!=0)
+            return getTrack()->getTitle();
+    }
+    QString getArtist() {
+        if(track!=0)
+            return getTrack()->getArtist();
+    }
+    QString getPath() {
+        if(track!=0)
+            return getTrack()->getFileUri();
+    }
+    QString getAlbum() {
+        if(track!=0)
+            return getTrack()->getAlbum();
+    }
+    QString getLengthFormatted(){
+        if(track!=0)
+            return getTrack()->getLengthFormated();
+    }
 
 private:
     quint8 type;

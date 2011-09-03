@@ -1,6 +1,10 @@
 #include "networkaccess.h"
+
 /** Constructor for NetworkAccess object. Handles all the network stuff
   */
+
+
+
 NetworkAccess::NetworkAccess(QObject *parent) :
     QThread(parent)
 {
@@ -13,8 +17,6 @@ NetworkAccess::NetworkAccess(QObject *parent) :
     connect(tcpsocket,SIGNAL(disconnected()),this,SLOT(disconnectedfromServer()));
     connect(statusupdater,SIGNAL(timeout()),this,SLOT(updateStatusInternal()));
     connect(tcpsocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(errorHandle()));
-    updater = 0;
-
 }
 
 
@@ -47,24 +49,9 @@ bool NetworkAccess::connectToHost(QString hostname, quint16 port,QString passwor
             CommonDebug("Valid MPD found\n");
 
         }
-        if(updater!=0)
-        {
-            delete(updater);
-        }
-            updater = new NetworkStatusUpdater(hostname,password,port,this);
-            qRegisterMetaType<status_struct>("status_struct");
-            qRegisterMetaType<QList<MpdTrack*>*>("QList<MpdTrack*>*");
-            connect(updater,SIGNAL(statusUpdate(status_struct)),this,SIGNAL(statusUpdate(status_struct)));
-            connect(updater,SIGNAL(currentPlayListReady(QList<QObject*>*)),this,SIGNAL(currentPlayListReady(QList<QObject*>*)));
-            updater->setInterval(updateinterval);
-            updater->start();
-            updater->doUpdate();
         authenticate(password);
         emit connectionestablished();
-
-
         return true;
-
 
     }
     return false;
@@ -78,7 +65,7 @@ void NetworkAccess::disconnect()
 
 /** return all albums currently availible from connected MPD as MpdAlbum objects,
   * empty list if not connected or no albums are availible */
-QList<MpdAlbum*> *NetworkAccess::getAlbums()
+void NetworkAccess::getAlbums()
 {
     QList<MpdAlbum*> *albums = new QList<MpdAlbum*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -113,10 +100,9 @@ QList<MpdAlbum*> *NetworkAccess::getAlbums()
     //Get album tracks
     qSort(albums->begin(),albums->end(),MpdAlbum::lessThan);
     emit albumsReady((QList<QObject*>*)albums);
-    return albums;
 }
 
-QList<MpdArtist*> *NetworkAccess::getArtists()
+void NetworkAccess::getArtists()
 {
     QList<MpdArtist*> *artists = new QList<MpdArtist*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -151,7 +137,7 @@ QList<MpdArtist*> *NetworkAccess::getArtists()
     }
     qSort(artists->begin(),artists->end(),MpdArtist::lessThan);
     emit artistsReady((QList<QObject*>*)artists);
-    return artists;
+
 }
 
 
@@ -195,49 +181,59 @@ void NetworkAccess::socketConnected()
     //updateStatusInternal();
 }
 
-QList<MpdAlbum*> *NetworkAccess::getArtistsAlbums(QString artist)
+void NetworkAccess::getArtistsAlbums(QString artist)
 {
-    QList<MpdAlbum*> *albums = new QList<MpdAlbum*>();
-    //CommonDebug("Check connection state\n");
-    if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
-        //Start getting list from mpd
-        //Send request
-        //CommonDebug("Send request for albums\n");
-        QTextStream outstream(tcpsocket);
-        outstream.setCodec("UTF-8");
-        outstream.setAutoDetectUnicode(false);
-        outstream.setCodec("UTF-8");
-        outstream << "list album \"" <<artist<<"\"" << endl;
+    emit(artistAlbumsReady((QList<QObject*>*)getArtistsAlbums_prv(artist)));
+}
 
-        //Read all albums until OK send from mpd
-        QString response ="";
-        MpdAlbum *tempalbum;
-        CommonDebug("Albums from Artist:"+artist.toAscii());
-        QString name;
-        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
-        {
-            tcpsocket->waitForReadyRead(READYREAD);
-            while (tcpsocket->canReadLine())
+QList<MpdAlbum*> *NetworkAccess::getArtistsAlbums_prv(QString artist)
+{
+        QList<MpdAlbum*> *albums = new QList<MpdAlbum*>();
+        //CommonDebug("Check connection state\n");
+        if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+            //Start getting list from mpd
+            //Send request
+            //CommonDebug("Send request for albums\n");
+            QTextStream outstream(tcpsocket);
+            outstream.setCodec("UTF-8");
+            outstream.setAutoDetectUnicode(false);
+            outstream.setCodec("UTF-8");
+            outstream << "list album \"" <<artist<<"\"" << endl;
+
+            //Read all albums until OK send from mpd
+            QString response ="";
+            MpdAlbum *tempalbum;
+            CommonDebug("Albums from Artist:"+artist.toAscii());
+            QString name;
+            while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
             {
-                response = QString::fromUtf8(tcpsocket->readLine());
-                if (response.left(7)==QString("Album: "))
+                tcpsocket->waitForReadyRead(READYREAD);
+                while (tcpsocket->canReadLine())
                 {
-                    name = response.right(response.length()-7);
-                    name.chop(1);
-                    tempalbum = new MpdAlbum(NULL,name);
-                    albums->append(tempalbum);
+                    response = QString::fromUtf8(tcpsocket->readLine());
+                    if (response.left(7)==QString("Album: "))
+                    {
+                        name = response.right(response.length()-7);
+                        name.chop(1);
+                        tempalbum = new MpdAlbum(NULL,name);
+                        albums->append(tempalbum);
+                    }
                 }
             }
         }
-    }
 
-    //Get album tracks
-    qSort(albums->begin(),albums->end(),MpdAlbum::lessThan);
-    emit(artistAlbumsReady((QList<QObject*>*)albums));
-    return albums;
+        //Get album tracks
+        qSort(albums->begin(),albums->end(),MpdAlbum::lessThan);
+        return albums;
+
 }
 
-QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album)
+void NetworkAccess::getAlbumTracks(QString album)
+{
+    emit albumTracksReady((QList<QObject*>*)getAlbumTracks_prv(album));
+}
+
+QList<MpdTrack*>* NetworkAccess::getAlbumTracks_prv(QString album)
 {
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -312,16 +308,26 @@ QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album)
             CommonDebug("add Track:");
         }
     }
-    emit albumTracksReady((QList<QObject*>*)temptracks);
-
     return temptracks;
 }
 
-QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album, QString cartist)
+void  NetworkAccess::getAlbumTracks(QString album, QString cartist)
+{
+    emit albumTracksReady((QList<QObject*>*)getAlbumTracks_prv(album,cartist));
+}
+
+void  NetworkAccess::getAlbumTracks(QVariant albuminfo)
+{
+    QStringList strings = albuminfo.toStringList();
+    emit albumTracksReady((QList<QObject*>*)getAlbumTracks_prv(strings[1],strings[0]));
+}
+
+QList<MpdTrack*>*  NetworkAccess::getAlbumTracks_prv(QString album, QString cartist)
 {
     if (cartist=="")
     {
-        return getAlbumTracks(album);
+
+        return getAlbumTracks_prv(album);
     }
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -398,11 +404,10 @@ QList<MpdTrack*> *NetworkAccess::getAlbumTracks(QString album, QString cartist)
             }            CommonDebug("add Track:");
         }
     }
-    emit albumTracksReady((QList<QObject*>*)temptracks);
     return temptracks;
 }
 
-QList<MpdTrack*> *NetworkAccess::getTracks()
+void NetworkAccess::getTracks()
 {
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -475,7 +480,7 @@ QList<MpdTrack*> *NetworkAccess::getTracks()
             CommonDebug("add Track:");
         }
     }
-    return temptracks;
+
 }
 
 // QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
@@ -543,10 +548,11 @@ QList<MpdTrack*> *NetworkAccess::getTracks()
 // }
 
 
-QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
+void NetworkAccess::getCurrentPlaylistTracks()
 {
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+        emit userNotification(tr("Getting current playlist. Please standby"));
         QString response ="";
         MpdTrack *temptrack=NULL;
         QString title;
@@ -569,7 +575,7 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
             while (tcpsocket->canReadLine())
             {
                 response = QString::fromUtf8(tcpsocket->readLine());
-                CommonDebug("Response: "+response);
+                //CommonDebug("Response: "+response);
                 if (response.left(6)==QString("file: ")) {
                     if (temptrack!=NULL)
                     {
@@ -614,11 +620,10 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
         if (temptrack!=NULL)
         {
             temptracks->append(temptrack);
-            CommonDebug("add Track:");
+            //CommonDebug("add Track:");
         }
     }
     emit currentPlayListReady((QList<QObject*>*)temptracks);
-    return temptracks;
 }
 
 // QList<MpdTrack*> *NetworkAccess::getPlaylistTracks(QString name)
@@ -685,7 +690,7 @@ QList<MpdTrack*> *NetworkAccess::getCurrentPlaylistTracks()
 //     return temptracks;
 // }
 
-QList<MpdTrack*> *NetworkAccess::getPlaylistTracks(QString name)
+void NetworkAccess::getPlaylistTracks(QString name)
 {
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -758,7 +763,7 @@ QList<MpdTrack*> *NetworkAccess::getPlaylistTracks(QString name)
             CommonDebug("add Track:");
         }
     }
-    return temptracks;
+    emit savedplaylistTracksReady((QList<QObject*>*)temptracks);
 }
 
 void NetworkAccess::updateStatusInternal()
@@ -1276,7 +1281,7 @@ void NetworkAccess::addAlbumToPlaylist(QString album)
         QString file;
         quint32 length=1;
 
-        temptracks = getAlbumTracks(album);
+        temptracks = getAlbumTracks_prv(album);
         //Add Tracks to Playlist
         outstream.setCodec("UTF-8");
         outstream << "command_list_begin" << endl;
@@ -1312,7 +1317,7 @@ void NetworkAccess::addArtistAlbumToPlaylist(QString artist, QString album)
         QString artisttemp;
         QString file;
         quint32 length=1;
-        temptracks = getAlbumTracks(album,artist);
+        temptracks = getAlbumTracks_prv(album,artist);
 
         //Add Tracks to Playlist
         outstream.setCodec("UTF-8");
@@ -1335,6 +1340,13 @@ void NetworkAccess::addArtistAlbumToPlaylist(QString artist, QString album)
     CommonDebug("ArtistAlbum added");
 //     updateStatusInternal();
 }
+
+void NetworkAccess::addArtistAlbumToPlaylist(QVariant albuminfo)
+{
+    QStringList strings = albuminfo.toStringList();
+    addArtistAlbumToPlaylist(strings[0],strings[1]);
+}
+
 
 void NetworkAccess::addTrackToPlaylist(QString fileuri)
 {
@@ -1427,6 +1439,11 @@ void NetworkAccess::seekPosition(int id, int pos)
     }
 }
 
+void NetworkAccess::seek(int pos)
+{
+    seekPosition(getStatus().id,pos);
+}
+
 
 
 void NetworkAccess::setRepeat(bool repeat)
@@ -1489,7 +1506,7 @@ void NetworkAccess::setVolume(int volume)
     }
 }
 
-bool NetworkAccess::savePlaylist(QString name)
+void NetworkAccess::savePlaylist(QString name)
 {
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
@@ -1506,17 +1523,20 @@ bool NetworkAccess::savePlaylist(QString name)
         }
         if (response.left(2)=="OK")
         {
-            return true;
+            CommonDebug("Playlist "+ name +" saved");
+            emit userNotification(tr("Playlist saved successfully"));
+            return;
         }
         else {
-            return false;
+            emit userNotification(tr("There was an error during saving of current playlist"));
+            return;
         }
 
     }
-    return false;
+    return;
 }
 
-QStringList *NetworkAccess::getSavedPlaylists()
+void NetworkAccess::getSavedPlaylists()
 {
     QStringList *tempplaylists  = new QStringList();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -1544,7 +1564,7 @@ QStringList *NetworkAccess::getSavedPlaylists()
         }
 
     }
-    return tempplaylists;
+    emit savedPlaylistsReady(tempplaylists);
 }
 
 
@@ -1596,8 +1616,8 @@ void NetworkAccess::disconnectedfromServer()
 }
 
 void NetworkAccess::connectedtoServer() {
-    //statusupdater->start(updateinterval);
-
+    CommonDebug("CONNECTED START UPDATE TIMER");
+    statusupdater->start(updateinterval);
 }
 
 quint32 NetworkAccess::getPlayListVersion()
@@ -1626,7 +1646,7 @@ quint32 NetworkAccess::getPlayListVersion()
     return playlistversion;
 }
 
-QList<MpdFileEntry*> *NetworkAccess::getDirectory(QString path)
+void NetworkAccess::getDirectory(QString path)
 {
     QList<MpdFileEntry*> *tempfiles = new QList<MpdFileEntry*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
@@ -1757,7 +1777,7 @@ QList<MpdFileEntry*> *NetworkAccess::getDirectory(QString path)
         }
     }
     emit filesReady((QList<QObject*>*)tempfiles);
-    return tempfiles;
+//    return tempfiles;
 }
 
 void NetworkAccess::resumeUpdates()
@@ -1807,10 +1827,22 @@ void NetworkAccess::errorHandle()
 
 void NetworkAccess::addArtist(QString artist)
 {
-    QList<MpdAlbum*> *albums = getArtistsAlbums(artist);
+    QList<MpdAlbum*> *albums = getArtistsAlbums_prv(artist);
     for(int i=0;i<albums->length();i++)
     {
-        addAlbumToPlaylist(albums->at(i)->getTitle());
+
+        addArtistAlbumToPlaylist(artist,albums->at(i)->getTitle());
     }
 }
 
+void NetworkAccess::setConnectParameters(QString hostname, int port, QString password)
+{
+    this->hostname = hostname;
+    this->password = password;
+    this->port = port;
+}
+
+void NetworkAccess::connectToHost()
+{
+    connectToHost(hostname,port,password);
+}
