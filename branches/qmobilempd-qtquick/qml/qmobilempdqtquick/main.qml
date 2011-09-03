@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import com.nokia.symbian 1.0
+import com.nokia.extras 1.0
 
 
 Window {
@@ -8,7 +9,14 @@ Window {
     property int port;
     property string password;
     property Page currentsongpage;
+    property Page playlistpage;
+    property Page settingslist;
     property string playbuttoniconsource;
+    property string volumebuttoniconsource;
+    property string lastpath;
+    property string artistname;
+    property string albumname;
+    property string playlistname;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -23,9 +31,13 @@ Window {
     signal addAlbum(variant album);
     signal addArtist(string artist);
     signal playAlbum(variant album);
+    signal savePlaylist(string name);
+    signal requestSavedPlaylists();
+    signal requestSavedPlaylist(string name);
 
     signal requestAlbums();
-    signal requestFiles(string files);
+    signal requestFilesPage(string files);
+    signal requestFilesModel(string files);
     signal addFiles(string files);
     signal play();
     signal next();
@@ -34,63 +46,144 @@ Window {
     signal deletePlaylist();
     signal playPlaylistTrack(int index);
     signal seek(int position);
+    signal newProfile();
+    signal changeProfile(variant profile);
+    signal deleteProfile(int index);
+    signal connectProfile(int index);
+    signal playSong(string uri);
+    signal addSong(string uri);
+    signal addPlaylist(string name);
+
+    signal quit();
+
+    function settingsModelUpdated()
+    {
+        settingslist.listmodel = settingsModel;
+    }
 
     function updateCurrentPlaying(list)
     {
-        if(pageStack.currentPage===currentsongpage)
-        {
-            currentsongpage.title = list[0];
-            currentsongpage.album = list[1];
-            currentsongpage.artist = list[2];
-            currentsongpage.position = list[3];
-            currentsongpage.length = list[4];
-            currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
-            currentsongpage.bitrate = list[5]+"kbps";
-            playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
-            volumeslider.value = list[7];
-        }
+        currentsongpage.title = list[0];
+        currentsongpage.album = list[1];
+        currentsongpage.artist = list[2];
+        currentsongpage.position = list[3];
+        currentsongpage.length = list[4];
+        currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
+        currentsongpage.bitrate = list[5]+"kbps";
+        playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
+        volumeslider.value = list[7];
 
     }
 
-    function restartCurrentSongTimer()
+    function savedPlaylistClicked(modelData)
     {
-//        if(!currentsongtimer.running)
-//        {
-//            currentsongtimer.stop();
-//            currentsongtimer.start();
-//        }
+        playlistname = modelData;
+        window.requestSavedPlaylist(modelData);
+    }
+
+    function updateSavedPlaylistModel()
+    {
+        var component = Qt.createComponent("SavedPlaylistTracks.qml");
+        var object = component.createObject(window);
+        object.listmodel = savedPlaylistModel;
+        object.playlistname = playlistname;
+        pageStack.push(object);
+    }
+
+    function updateSavedPlaylistsModel()
+    {
+        var component = Qt.createComponent("SavedPlaylistsPage.qml");
+        var object = component.createObject(window);
+        object.listmodel = savedPlaylistsModel;
+        pageStack.push(object);
     }
 
     function filesClicked(path)
     {
-        restartCurrentSongTimer();
-
         console.debug("Files clicked "+path + "/");
         //pageStack.currentPage.listmodel = filesModel;
-        var filescomponent = Qt.createComponent("FilesPage.qml");
-        var filesobject = filescomponent.createObject(window);
+        popuptext.text = "Please wait";
+        infobanner.text = qsTr("Please Wait");
+        infobanner.open();
+//        popuptext.visible = "true";
+//        popupblendin.start();
+//        var filescomponent = Qt.createComponent("FilesPage.qml");
+//        var filesobject = filescomponent.createObject(window);
 
-        pageStack.push(filesobject);
-        pageStack.currentPage.filepath = path;
-        window.requestFiles(path);
+//        pageStack.push(filesobject);
+//        pageStack.currentPage.filepath = path;
+        lastpath = path;
+        window.requestFilesPage(path);
     }
 
     function updatePlaylist()
     {
-        playlist_list_view.model = playlistModel;
+        console.debug("Playlist model updated");
+        playlistpage.listmodel = playlistModel;
         if(pageStack.currentPage == playlistpage)
         {
             //pageStack.replace(playlistpage);
-          console.debug("Playlist repushed");
+
         }
 
     }
 
-    function receiveFilesModel(modelid)
-    {
-        pageStack.currentPage.listmodel = filesModel;
+    function updateAlbumsModel(){
+        var albumpagecomponent = Qt.createComponent("AlbumPage.qml");
+        var albumpageobject = albumpagecomponent.createObject(window);
+        albumpageobject.listmodel = albumsModel;
+        albumpageobject.artistname = artistname;
+        pageStack.push(albumpageobject);
+        infobanner.close();
     }
 
+    function updateArtistModel(){
+        var component = Qt.createComponent("ArtistPage.qml");
+        var object = component.createObject(window);
+        object.listmodel = artistsModel;
+        pageStack.push(object);
+        infobanner.close();
+    }
+
+    function updateAlbumModel()
+    {
+        var component = Qt.createComponent("AlbumSongPage.qml");
+
+        var object = component.createObject(window);
+        object.artistname = artistname;
+        object.albumname = albumname;
+        object.listmodel= albumTracksModel;
+        pageStack.push(object);
+    }
+
+    function albumTrackClicked(title,album,artist,lengthformatted,uri)
+    {
+        var component = Qt.createComponent("SongPage.qml");
+        var object = component.createObject(window);
+        object.title = title;
+        object.album = album;
+        object.artist = artist;
+        object.filename = uri;
+        object.lengthtext = lengthformatted;
+        pageStack.push(object);
+    }
+
+
+    function receiveFilesModel()
+    {        
+        console.debug("Files model updated");
+    }
+
+    function receiveFilesPage()
+    {
+        var filescomponent = Qt.createComponent("FilesPage.qml");
+        var filesobject = filescomponent.createObject(window);
+        filesobject.listmodel = filesModel;
+        filesobject.filepath = lastpath;
+        infobanner.close();
+        pageStack.push(filesobject);
+
+    }
 
     function formatLength(length)
     {
@@ -115,69 +208,59 @@ Window {
         {
             temp=(temphours)+":"+(min)+":"+(sec);
         }
-        //console.debug("Length formatted:" + temp);
+       // console.debug("Length formatted:" + temp);
         return temp;
     }
 
-    function albumClicked(albumname)
+    function albumClicked(artist,albumstring)
     {
-        console.debug("Currentartist: "+"" + " album: "+ albumname +"clicked");
-        window.requestAlbum(["",albumname]);
-        var component = Qt.createComponent("AlbumSongPage.qml");
-        var object = component.createObject(window);
-        object.artistname = "";
-        object.albumname = albumname;
-        object.listmodel= albumTracksModel;
-        pageStack.push(object);
-        restartCurrentSongTimer();
+        console.debug("Currentartist: "+artist + " album: "+ albumstring +"clicked");
+        window.requestAlbum([artist,albumstring]);
+        artistname = artist;
+        this.albumname = albumstring;
     }
 
-    function artistalbumClicked(artistname, album)
+    function artistalbumClicked(artist, album)
     {
-        console.debug("Currentartist: "+artistname + " album: "+ album +"clicked");
-        window.requestAlbum([artistname,album]);
-        var component = Qt.createComponent("AlbumSongPage.qml");
-        var object = component.createObject(window);
-        object.artistname = artistname;
-        object.albumname = album;
-        object.listmodel= albumTracksModel;
-        pageStack.push(object);
-        restartCurrentSongTimer();
+        console.debug("Currentartist: "+artist + " album: "+ album +"clicked");
+        window.requestAlbum([artist,album]);
+        artistname = artistname;
+        albumname = album;
     }
 
     function slotShowPopup(string)
     {
         console.debug("POPUP: "+string+" requested");
         popuptext.text=string;
-        popuptext.visible=true;
-        //popuptext.textwidth = popuptext.textpaintedwidth;
-//        if(popuptext.textwidth>window.width)
-//        {
-//            popuptext.textwidth = window.width;
-//        }
-        popupblendin.start();
-        popupanimationtimer.start();
+        infobanner.text=string;
+        infobanner.open();
+//        popuptext.visible=true;
+//        //popuptext.textwidth = popuptext.textpaintedwidth;
+////        if(popuptext.textwidth>window.width)
+////        {
+////            popuptext.textwidth = window.width;
+////        }
+//        popupblendin.start();
+//        popupanimationtimer.start();
     }
 
     function parseClickedPlaylist(index)
     {
         window.playPlaylistTrack(index);
-        restartCurrentSongTimer();
     }
     function parseClicked(index)
     {
         if(pageStack.currentPage==mainPage){
             console.debug("parseClicked("+index+")")
             if(list_view1.model.get(index).ident=="playlist"){
-                console.debug("Playlist clicked");
-                var component = Qt.createComponent("PlaylistPage.qml");
-                var object = component.createObject(window);
-                object.listmodel = playlistModel;
-                pageStack.push(object);
+
+                pageStack.push(playlistpage);
             }
             else if(list_view1.model.get(index).ident=="settings"){
                 console.debug("Settings clicked");
-                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"));
+                //pageStack.push(Qt.resolvedUrl("SettingsList.qml"));
+
+                pageStack.push(settingslist);
 
             }
             else if(list_view1.model.get(index).ident=="currentsong"){
@@ -186,53 +269,49 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
-                var albumpagecomponent = Qt.createComponent("AlbumPage.qml");
-                var albumpageobject = albumpagecomponent.createObject(window);
+                infobanner.text = qsTr("Please Wait");
+                infobanner.open();
+                artistname = "";
+
                 window.requestAlbums();
-                albumpageobject.listmodel = albumsModel;
-                pageStack.push(albumpageobject);
+
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
+                infobanner.text = qsTr("Please Wait");
+                infobanner.open();
                 window.requestArtists();
-                var component = Qt.createComponent("ArtistPage.qml");
-                var object = component.createObject(window);
-                object.listmodel = artistsModel;
-                pageStack.push(object);
+
             }
             else if(list_view1.model.get(index).ident=="files"){
                 console.debug("Files clicked");
 
-                var filescomponent = Qt.createComponent("FilesPage.qml");
-                var filesobject = filescomponent.createObject(window);
-
-                pageStack.push(filesobject);
-                window.requestFiles("/");
+                filesClicked("/");
 
             }
         }
-        restartCurrentSongTimer();
     }
 
     function artistClicked(item)
     {
         console.debug("Artist "+item+" clicked");
-        var component = Qt.createComponent("ArtistAlbumPage.qml");
-        var object = component.createObject(window);
+        this.artistname = item;
         window.requestArtistAlbums(item);
-        object.listmodel = albumsModel;
-        object.artistname = item;
-        pageStack.push(object);
-        restartCurrentSongTimer();
     }
 
     Component.onCompleted: {
         var component = Qt.createComponent("CurrentSong.qml");
         var object = component.createObject(window);
         currentsongpage = object;
+        var pcomponent = Qt.createComponent("PlaylistPage.qml");
+        var pobject = pcomponent.createObject(window);
+        playlistpage = pobject;
         playbuttoniconsource = "toolbar-mediacontrol-play";
+        volumebuttoniconsource = "icons/audio-volume-high.png"
+        var component = Qt.createComponent("SettingsList.qml");
+        var object = component.createObject(window);
+        settingslist = object;
         pageStack.push(mainPage);
-        restartCurrentSongTimer();
     }
 
     StatusBar {
@@ -258,14 +337,15 @@ Window {
 
     Page {
         id: mainPage
+        Text{id: hometext;color: "red"; text:qsTr("Home"); horizontalAlignment: "AlignHCenter";font.pointSize: 12
+        anchors {left: parent.left;right:parent.right;top:parent.top;}  }
                 ListView{
                     id: list_view1
-
                     model: mainMenuModel
                     delegate: itemDelegate
                     signal playlistClicked
                     onPlaylistClicked: console.log("Send playlistClicked signal")
-                    anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+                    anchors { left: parent.left; right: parent.right; top: hometext.bottom; bottom: parent.bottom }
                     clip: true
                 }
                 ListModel {
@@ -275,7 +355,7 @@ Window {
                     ListElement { name: "Albums"; ident:"albums";}
                     ListElement { name: "Files"; ident:"files" ;}
                     ListElement { name: "Playlist"; ident:"playlist";}
-                    ListElement { name: "Settings"; ident:"settings"}
+                    ListElement { name: "Servers"; ident:"settings"}
                 }
 
 
@@ -303,7 +383,7 @@ Window {
 
         tools: ToolBarLayout {
             id: pageSpecificTools
-            ToolButton { iconSource: "toolbar-back"; onClicked: Qt.quit() }
+            ToolButton { iconSource: "toolbar-back"; onClicked: window.quit() }
 
         //                ToolButton {
         //                    iconSource: "toolbar-mediacontrol-stop"
@@ -316,6 +396,19 @@ Window {
                     iconSource: playbuttoniconsource; onClicked: window.play()
                 }
                 ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+                ToolButton {
+                    iconSource: volumebuttoniconsource;
+                    onClicked: {
+                        if(volumeslider.visible)
+                        {
+                            volumeblendout.start();
+                        }
+                        else{
+                            volumeslider.visible=true;
+                            volumeblendin.start();
+                        }
+                    }
+                }
 
             }
 
@@ -328,7 +421,7 @@ Window {
             height: topLayout.height
             Row{
                 id: topLayout
-                Text { text: title; color:"white";font.pointSize:10;font.italic:(playing) ? true:false;}
+                Text { text: title; color:"white";font.pointSize:11;font.italic:(playing) ? true:false;}
                 Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
             }
             MouseArea {
@@ -336,53 +429,19 @@ Window {
                 onClicked: {
 
                     list_view1.currentIndex = index
-                    parseClickedPlaylist(index);
-                }
-            }
-        }
-    }
-    Component{
-        id: albumtrackDelegate
-        Item {
-            id: itemItem
-            width: list_view1.width
-            height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: title; color:"white";font.pointSize:10}
-                Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-
-                    list_view1.currentIndex = index
-                    albumTrackClicked(index);
+                    if(!playing)
+                    {
+                        parseClickedPlaylist(index);
+                    }
+                    else{
+                        pageStack.push(currentsongpage);
+                    }
                 }
             }
         }
     }
 
-    Component{
-        id:artistDelegate
-        Item {
-            id: itemItem
-            width: list_view1.width
-            height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: artist; color:"white";font.pointSize:10}
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
 
-                    list_view1.currentIndex = index
-                    artistClicked(artist);
-                }
-            }
-        }
-    }
 
     Component{
         id:albumDelegate
@@ -390,16 +449,20 @@ Window {
             id: itemItem
             width: list_view1.width
             height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: title; color:"white";font.pointSize:10}
+            Rectangle {
+                color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
+                anchors.fill: parent
+                Row{
+                    id: topLayout
+                    Text { text: title; color:"white";font.pointSize:10; verticalAlignment: "AlignVCenter";}
+                }
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
 
                     list_view1.currentIndex = index
-                    albumClicked(title);
+                    albumClicked(artistname,title);
                 }
             }
         }
@@ -482,15 +545,14 @@ Window {
 
     }
 
-    Timer{
-        id:currentsongtimer
-        interval: 15000
-        repeat: false
-        onTriggered: {
-            if(pageStack.currentPage!==currentsongpage)
-            {
-                pageStack.push(currentsongpage);
-            }
-        }
+    InfoBanner{
+        id: infobanner
+        text: ""
+        iconSource: "popup-infobanner-normal"
     }
+    MouseArea {
+         anchors.fill: parent
+         enabled: pageStack.busy
+     }
+
 }

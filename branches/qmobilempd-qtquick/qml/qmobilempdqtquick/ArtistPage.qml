@@ -64,5 +64,30 @@ Page{
                               section.delegate: sectionHeading
         }
 
+        Component{
+            id:artistDelegate
+            Item {
+                id: itemItem
+                width: list_view1.width
+                height: topLayout.height
+                Rectangle{
+                    color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
+                    anchors.fill: parent
+                    Row{
+                        id: topLayout
+                        Text { text: artist; color:"white";font.pointSize:10}
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+
+                        list_view1.currentIndex = index
+                        artistClicked(artist);
+                    }
+                }
+            }
+        }
+
 
     }

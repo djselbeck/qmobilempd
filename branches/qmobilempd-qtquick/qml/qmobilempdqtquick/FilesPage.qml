@@ -7,6 +7,7 @@ Page{
     property string filepath;
     property variant model;
     property alias listmodel: files_list_view.model;
+    property bool first: true;
     tools: ToolBarLayout {
         id: filesTools
         ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
@@ -25,8 +26,13 @@ Page{
         console.debug("Playlist status changed: "+status);
         if(status==PageStatus.Activating)
         {
-            console.debug("File  reactivating: requesting path: "+filepath);
-            window.requestFiles((filepath=="")? "/":filepath);
+            if(first==false)
+            {
+                console.debug("File  reactivating: requesting path: "+filepath);
+                window.requestFilesModel((filepath=="")? "/":filepath);
+            //filesClicked((filepath=="")? "/":filepath);
+            }
+            first = false;
         }
     }
 
@@ -47,6 +53,10 @@ Page{
                         list_view1.currentIndex = index
                         console.log("File: "+prepath+name+" clicked");
                         filesClicked((prepath=="/"? "": prepath+"/")+name);
+                    }
+                    if(isFile) {
+                        console.debug("File clicked: "+title+":"+album);
+                        albumTrackClicked(title,album,artist,length,path);
                     }
                 }
             }

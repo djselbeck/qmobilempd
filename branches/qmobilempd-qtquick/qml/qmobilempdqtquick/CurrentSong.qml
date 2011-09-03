@@ -22,8 +22,7 @@ Page {
                 }
                 ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
                 ToolButton {
-                    //text: "Vol"
-                    iconSource: Qt.resolvedUrl("res/icon-m-toolbar-volume-white.png");
+                    iconSource: volumebuttoniconsource;
                     onClicked: {
                         if(volumeslider.visible)
                         {
@@ -37,20 +36,27 @@ Page {
                 }
             }
         }
-
-        Column {
-            anchors {left:parent.left; right: parent.right;}
-            Text{text: "Title:";color:"grey"}
-            Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Album:";color:"grey"}
-            Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Artist:";color:"grey"}
-            Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Length:";color:"grey"}
-            Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Bitrate:";color:"grey"}
-            Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            clip: true;
+        Flickable{
+            anchors {left:parent.left; right: parent.right;bottom:positionSlider.top;top: parent.top}
+            contentHeight: infocolumn.height
+            //contentWidth: infocolumn.width
+            clip: true
+            Column {
+                id: infocolumn
+                //anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
+                anchors {left:parent.left; right: parent.right;}
+                Text{text: "Title:";color:"grey"}
+                Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Album:";color:"grey"}
+                Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Artist:";color:"grey"}
+                Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Length:";color:"grey"}
+                Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Bitrate:";color:"grey"}
+                Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                clip: true;
+            }
         }
             Slider
             {

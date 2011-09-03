@@ -2,9 +2,8 @@ import QtQuick 1.0
 import com.nokia.symbian 1.0
 
 Page{
-        id: albumsongspage
-        property string albumname;
-        property string artistname;
+        id: playlistsongspage
+        property string playlistname;
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
             ButtonRow {
@@ -16,17 +15,12 @@ Page{
 //                }
 
                 ToolButton{ iconSource:"toolbar-add"; onClicked: {
-                        window.addAlbum([artistname,albumname]);
+                        window.addPlaylist(playlistname)
                     }}
-                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-                ToolButton {
-                    iconSource: playbuttoniconsource; onClicked: window.play()
-                }
-                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
 
 
             } }
-        property alias listmodel: albumsongs_list_view.model;
+        property alias listmodel: playlistsongs_list_view.model;
 
         Component.onCompleted: {
             console.debug("albumsongs completed");
@@ -44,14 +38,14 @@ Page{
             console.debug("albumsongs destroyed");
         }
         ListView{
-            id: albumsongs_list_view
-            delegate: albumtrackDelegate
+            id: playlistsongs_list_view
+            delegate: playlisttrackDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
         }
 
         Component{
-            id: albumtrackDelegate
+            id: playlisttrackDelegate
             Item {
                 id: itemItem
                 width: list_view1.width
