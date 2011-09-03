@@ -5,6 +5,7 @@ import com.nokia.symbian 1.0
 Page{
         id: albumspage
         property alias listmodel: albums_list_view.model;
+        property string artistname;
         tools: ToolBarLayout
         {
         ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
