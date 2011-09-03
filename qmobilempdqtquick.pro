@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     mpdalbum.cpp \
     commondebug.cpp \
     controller.cpp \
-    networkstatusupdater.cpp
+    qthreadex.cpp \
+    serverprofile.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -65,6 +66,9 @@ HEADERS += \
     commondebug.h \
     common.h \
     controller.h \
-    networkstatusupdater.h
+    qthreadex.h \
+    serverprofile.h
 
-RESOURCES +=
+
+
+
