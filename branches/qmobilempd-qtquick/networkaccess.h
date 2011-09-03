@@ -9,12 +9,14 @@
 #include "mpdfileentry.h"
 #include "common.h"
 #include "commondebug.h"
-#include "networkstatusupdater.h"
+#define READYREAD 5000
 
 class MpdAlbum;
 class MpdArtist;
 class MpdTrack;
 class MpdFileEntry;
+
+struct status_struct {quint32 playlistversion; qint32 id; quint16 bitrate;int tracknr;int albumtrackcount;quint8 percent; quint8 volume; QString info; QString title; QString album; QString artist;QString fileuri;quint8 playing; bool repeat; bool shuffle; quint32 length; quint32 currentpositiontime;quint32 playlistlength;};
 
 
 class NetworkAccess : public QThread
@@ -22,28 +24,21 @@ class NetworkAccess : public QThread
     Q_OBJECT
     
 public:
-    enum State {PAUSE,PLAYING,STOP};
+  enum State {PAUSE,PLAYING,STOP};
     explicit NetworkAccess(QObject *parent = 0);
     Q_INVOKABLE bool connectToHost(QString hostname, quint16 port,QString password);
-    bool savePlaylist(QString name);
-    QList<MpdAlbum*> *getAlbums();
-    QList<MpdArtist*> *getArtists();
-    QList<MpdTrack*> *getTracks();
-    QList<MpdAlbum*> *getArtistsAlbums(QString artist);
-    QList<MpdTrack*> *getAlbumTracks(QString album);
-    QList<MpdTrack*> *getAlbumTracks(QString album, QString cartist);
-    QList<MpdTrack*> *getCurrentPlaylistTracks();
-    QList<MpdTrack*> *getPlaylistTracks(QString name);
-    QStringList *getSavedPlaylists();
-    void addPlaylist(QString name);
+
+
+
+
     bool authenticate(QString passwort);
     void suspendUpdates();
     void resumeUpdates();
     void setUpdateInterval(quint16 ms);
-    QList<MpdFileEntry*> *getDirectory(QString path);
     Q_INVOKABLE bool connected();
     void seekPosition(int id,int pos);
     status_struct getStatus();
+    void setConnectParameters(QString hostname,int port, QString password);
 
 
 signals:
@@ -57,6 +52,9 @@ signals:
     void filesReady(QList<QObject*>*);
     void artistAlbumsReady(QList<QObject*>*);
     void albumTracksReady(QList<QObject*>*);
+    void userNotification(QVariant);
+    void savedPlaylistsReady(QStringList*);
+    void savedplaylistTracksReady(QList<QObject*>*);
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
@@ -74,8 +72,24 @@ public slots:
     void setRandom(bool);
     void setRepeat(bool);
     void disconnect();
+    void connectToHost();
     quint32 getPlayListVersion();
-
+    void getAlbums();
+    void getArtists();
+    void getTracks();
+    void getArtistsAlbums(QString artist);
+    void getAlbumTracks(QString album);
+    void getAlbumTracks(QString album, QString cartist);
+    //Variant [Artist,Album]
+    void getAlbumTracks(QVariant albuminfo);
+    void addArtistAlbumToPlaylist(QVariant albuminfo);
+    void getCurrentPlaylistTracks();
+    void getPlaylistTracks(QString name);
+    void getDirectory(QString path);
+    void getSavedPlaylists();
+    void seek(int pos);
+    void savePlaylist(QString name);
+    void addPlaylist(QString name);
 
 protected slots:
     void connectedtoServer();
@@ -97,11 +111,9 @@ private:
     QTimer *statusupdater;
     quint16 updateinterval;
     quint32 mPlaylistversion;
-    NetworkStatusUpdater *updater;
-
-
-
-
+    QList<MpdTrack*>* getAlbumTracks_prv(QString album);
+    QList<MpdTrack*>* getAlbumTracks_prv(QString album, QString cartist);
+    QList<MpdAlbum*>* getArtistsAlbums_prv(QString artist);
 };
 
 #endif // NETWORKACCESS_H

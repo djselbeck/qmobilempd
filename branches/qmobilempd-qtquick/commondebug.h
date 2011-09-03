@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #define DEBUG
+
 class CommonDebug : public QObject
 {
     Q_OBJECT

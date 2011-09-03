@@ -10,6 +10,9 @@
 #include <QDeclarativeListReference>
 #include "networkaccess.h"
 #include "commondebug.h"
+#include "qthreadex.h"
+#include "serverprofile.h"
+
 
 class Controller : public QObject
 {
@@ -30,12 +33,30 @@ public slots:
     void setPassword(QString password);
     void setPort(int port);
     void connectToServer();
+    void quit();
+    void newProfile();
+    void changeProfile(QVariant profile);
+    void deleteProfile(int index);
+    void connectProfile(int index);
+    void updateSavedPlaylistsModel(QStringList*);
+    void updateSavedPlaylistModel(QList<QObject*>* list);
 
 signals:
     void sendPopup(QVariant text);
     void sendStatus(QVariant status);
     void playlistUpdated();
-    void filesModelReady(QVariant modelid);
+    void filesModelReady();
+    void getFiles(QString path);
+    void requestConnect();
+    void requestDisconnect();
+    void albumsReady();
+    void artistsReady();
+    void albumTracksReady();
+    void artistAlbumsReady();
+    void savedPlaylistsReady();
+    void savedPlaylistReady();
+    void serverProfilesUpdated();
+
 
 
 private:
@@ -44,8 +65,12 @@ private:
     QString hostname,password;
     quint16 port;
     quint32 playlistversion;
-    quint32 currentsongid;
+    int currentsongid;
     QList<MpdTrack*> *playlist;
+    QThreadEx *networkthread;
+    QList<ServerProfile*> *serverprofiles;
+    void readSettings();
+    void writeSettings();
 
 private slots:
     void requestCurrentPlaylist();
@@ -53,10 +78,11 @@ private slots:
     void requestArtists();
     void requestArtistAlbums(QString artist);
     void requestAlbum(QVariant array);
-    void addAlbum(QVariant array);
-    void requestFiles(QString);
+    void requestFilePage(QString);
+    void requestFileModel(QString);
     void seek(int);
     void updateStatus(status_struct status);
+
 
 
 };
