@@ -46,12 +46,12 @@ Page{
                     }
                 }
 
-                ToolButton {
-                    iconSource: "toolbar-mediacontrol-stop"
-                    onClicked: {
-                        window.stop();
-                    }
-                }
+//                ToolButton {
+//                    iconSource: "toolbar-mediacontrol-stop"
+//                    onClicked: {
+//                        window.stop();
+//                    }
+//                }
                 ToolButton {
                     iconSource: playbuttoniconsource
                     onClicked: {
@@ -73,6 +73,8 @@ Page{
                 }
 
             } }
+
+
     ListView{
         id: playlist_list_view
         delegate: playlisttrackDelegate
@@ -100,5 +102,13 @@ Page{
             }}
         }
     }
+
+    ScrollBar
+    {
+        id:playlistscroll
+        flickableItem: playlist_list_view
+        anchors {right:playlist_list_view.right; top:playlist_list_view.top}
+    }
+
 
 }

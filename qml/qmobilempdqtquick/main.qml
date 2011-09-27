@@ -17,6 +17,8 @@ Window {
     property string artistname;
     property string albumname;
     property string playlistname;
+    property bool repeat;
+    property bool shuffle;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -53,6 +55,8 @@ Window {
     signal playSong(string uri);
     signal addSong(string uri);
     signal addPlaylist(string name);
+    signal setRepeat(bool rep);
+    signal setShuffle(bool shfl);
 
     signal quit();
 
@@ -72,7 +76,9 @@ Window {
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
         volumeslider.value = list[7];
-
+        console.debug("repeat:"+list[8]+ (list[8]===0 ?  false:true));
+        currentsongpage.repeat = (list[8]=="0" ?  false:true);
+        currentsongpage.shuffle = (list[9]=="0" ?  false:true);
     }
 
     function savedPlaylistClicked(modelData)
@@ -522,6 +528,15 @@ Window {
             popupblendout.start();
         }
     }
+
+    Timer{
+        id:updatevolumetimer
+        interval: 170
+        onTriggered: {
+            window.setVolume(volumeslider.value);
+        }
+    }
+
     Slider{
         id: volumeslider
         orientation: Qt.Vertical
@@ -536,7 +551,10 @@ Window {
         onValueChanged: {
             if(pressed)
             {
-                window.setVolume(value);
+                updatevolumetimer.start();
+            }
+            else{
+                updatevolumetimer.stop();
             }
         }
     }

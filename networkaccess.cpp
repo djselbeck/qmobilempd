@@ -1776,6 +1776,7 @@ void NetworkAccess::getDirectory(QString path)
             }
         }
     }
+    qSort(tempfiles->begin(),tempfiles->end(),MpdFileEntry::lessThan);
     emit filesReady((QList<QObject*>*)tempfiles);
 //    return tempfiles;
 }

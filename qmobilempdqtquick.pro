@@ -40,7 +40,9 @@ SOURCES += main.cpp \
     commondebug.cpp \
     controller.cpp \
     qthreadex.cpp \
-    serverprofile.cpp
+    serverprofile.cpp \
+    artistmodel.cpp \
+    albummodel.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -67,7 +69,17 @@ HEADERS += \
     common.h \
     controller.h \
     qthreadex.h \
-    serverprofile.h
+    serverprofile.h \
+    artistmodel.h \
+    albummodel.h
+
+
+
+
+
+
+
+
 
 
 

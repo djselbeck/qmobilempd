@@ -6,12 +6,16 @@
 #include "mpdtrack.h"
 
 #include "qmlapplicationviewer.h"
+#include <QtDeclarative>
 #include <QDeclarativeContext>
 #include <QDeclarativeListReference>
 #include "networkaccess.h"
 #include "commondebug.h"
 #include "qthreadex.h"
 #include "serverprofile.h"
+#include "artistmodel.h"
+#include "albummodel.h"
+
 
 
 class Controller : public QObject

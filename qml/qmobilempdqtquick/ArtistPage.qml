@@ -59,9 +59,11 @@ Page{
             delegate: artistDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
-            section.property: "artist";
-                     section.criteria: ViewSection.FirstCharacter
-                              section.delegate: sectionHeading
+            section.property: "sectionprop";
+            section.delegate: sectionHeading
+            onModelChanged: {
+                console.debug("MODEL count:"+model.count);
+            }
         }
 
         Component{
@@ -76,6 +78,7 @@ Page{
                     Row{
                         id: topLayout
                         Text { text: artist; color:"white";font.pointSize:10}
+
                     }
                 }
                 MouseArea {
@@ -87,6 +90,10 @@ Page{
                     }
                 }
             }
+        }
+
+        SectionScroller{
+            listView: artist_list_view
         }
 
 
