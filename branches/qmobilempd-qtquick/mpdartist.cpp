@@ -29,7 +29,7 @@ void MpdArtist::addAlbums(QList<MpdAlbum*> *albums)
 
 QString MpdArtist::getName()
 {
-    return this->name;
+   return this->name;
 }
 
 quint32 MpdArtist::albumCount()

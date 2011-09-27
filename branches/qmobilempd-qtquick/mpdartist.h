@@ -12,6 +12,7 @@ class MpdArtist : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString artist READ getName)
+    Q_PROPERTY(QString sectionprop READ getSection)
 public:
     explicit MpdArtist(QObject *parent = 0);
     MpdArtist(QObject *parent, QString name);
@@ -21,6 +22,7 @@ public:
     quint32 albumCount();
     MpdAlbum *getAlbum(quint32 i);
     QString getName();
+    QString getSection() { return (name=="" ? "" :QString(name[0]));}
     bool operator< (const MpdArtist& other) const { return (name < other.name); }
     bool operator==(MpdArtist & rhs) {return getName()==rhs.getName();}
     static bool lessThan(const MpdArtist *lhs, const MpdArtist* rhs) {

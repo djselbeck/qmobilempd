@@ -27,6 +27,19 @@ Page{
                 iconSource: playbuttoniconsource; onClicked: window.play()
             }
             ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+            ToolButton {
+                iconSource: volumebuttoniconsource;
+                onClicked: {
+                    if(volumeslider.visible)
+                    {
+                        volumeblendout.start();
+                    }
+                    else{
+                        volumeslider.visible=true;
+                        volumeblendin.start();
+                    }
+                }
+            }
 
 
         } }
@@ -63,9 +76,18 @@ Page{
             delegate: albumDelegate
             anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
             clip: true
-            section.property: "title";
-            section.criteria: ViewSection.FirstCharacter
+            section.property: "sectionprop";
+           // section.criteria: ViewSection.FirstCharacter
             section.delegate: sectionHeadingAlbum
+    onModelChanged: {
+        console.debug("MODEL count:"+model.count);
+    }
         }
+
+
+    SectionScroller{
+        listView: albums_list_view
+    }
+
 
     }

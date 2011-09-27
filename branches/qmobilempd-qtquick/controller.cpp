@@ -16,6 +16,8 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     playlist = 0;
     connectSignals();
     readSettings();
+    qmlRegisterType<MpdArtist>();
+    qmlRegisterType<MpdAlbum>();
 
 }
 
@@ -29,6 +31,7 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
        // viewer->rootContext()->setContextProperty("playlistModel",QVariant::fromValue(0));
         playlist=0;
     }
+    currentsongid = -1;
     playlist = (QList<MpdTrack*>*)(list);
     viewer->rootContext()->setContextProperty("playlistModel",QVariant::fromValue(*list));
     CommonDebug("Playlist length:"+QString::number(playlist->length())+"\n");
@@ -69,7 +72,10 @@ void Controller::updateSavedPlaylistModel(QList<QObject*>* list)
 void Controller::updateArtistsModel(QList<QObject*>* list)
 {
     CommonDebug("ARTISTS UPDATE REQUIRED");
-    viewer->rootContext()->setContextProperty("artistsModel",QVariant::fromValue(*list));
+
+    //ArtistModel *model = new ArtistModel((QList<MpdTrack*>*)list,this);
+    ArtistModel *model = new ArtistModel((QList<MpdArtist*>*)list);
+    viewer->rootContext()->setContextProperty("artistsModel",model);
     emit artistsReady();
 }
 
@@ -83,7 +89,9 @@ void Controller::updateArtistAlbumsModel(QList<QObject*>* list)
 void Controller::updateAlbumsModel(QList<QObject*>* list)
 {
     CommonDebug("ALBUMS UPDATE REQUIRED");
-    viewer->rootContext()->setContextProperty("albumsModel",QVariant::fromValue(*list));
+    AlbumModel *model = new AlbumModel((QList<MpdAlbum*>*)list);
+
+    viewer->rootContext()->setContextProperty("albumsModel",model);
     emit albumsReady();
 }
 
@@ -160,6 +168,8 @@ void Controller::connectSignals()
     connect(item,SIGNAL(addSong(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
     connect(item,SIGNAL(requestSavedPlaylist(QString)),netaccess,SLOT(getPlaylistTracks(QString)));
     connect(item,SIGNAL(addPlaylist(QString)),netaccess,SLOT(addPlaylist(QString)));
+    connect(item,SIGNAL(setShuffle(bool)),netaccess,SLOT(setRandom(bool)));
+    connect(item,SIGNAL(setRepeat(bool)),netaccess,SLOT(setRepeat(bool)));
 }
 
 void Controller::setPassword(QString password)
@@ -276,7 +286,8 @@ void Controller::updateStatus(status_struct status)
     default: strings.append("stop");
     }
     strings.append(QString::number(status.volume));
-
+    strings.append(QString::number(status.repeat));
+    strings.append(QString::number(status.shuffle));
     emit sendStatus(strings);
 }
 

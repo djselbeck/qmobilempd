@@ -10,7 +10,10 @@ Page {
         property alias lengthtext:lengthText.text;
         property alias position: positionSlider.value;
         property alias bitrate: bitrateText.text;
+        property alias shuffle: shufflebtn.checked;
+        property alias repeat: repeatbtn.checked;
         property bool playing;
+
 
         //tools: backTools
         tools: ToolBarLayout {
@@ -37,7 +40,7 @@ Page {
             }
         }
         Flickable{
-            anchors {left:parent.left; right: parent.right;bottom:positionSlider.top;top: parent.top}
+            anchors {left:parent.left; right: parent.right;bottom:bottomrow.top;top: parent.top}
             contentHeight: infocolumn.height
             //contentWidth: infocolumn.width
             clip: true
@@ -57,6 +60,28 @@ Page {
                 Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 clip: true;
             }
+        }
+        ButtonRow{
+            id:bottomrow
+            Button{
+                id: repeatbtn
+                text: "Repeat"
+                checkable: true
+                onClicked: {
+                    window.setRepeat(checked);
+                }
+            }
+            Button{
+                id: shufflebtn
+                text: "Shuffle"
+                checkable: true
+                onClicked: {
+                    window.setShuffle(checked);
+                }
+
+            }
+            anchors {left:parent.left; right: parent.right;bottom: positionSlider.top}
+
         }
             Slider
             {

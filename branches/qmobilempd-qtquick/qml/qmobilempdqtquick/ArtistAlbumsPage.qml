@@ -27,6 +27,19 @@ Page{
                 iconSource: playbuttoniconsource; onClicked: window.play()
             }
             ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+            ToolButton {
+                iconSource: volumebuttoniconsource;
+                onClicked: {
+                    if(volumeslider.visible)
+                    {
+                        volumeblendout.start();
+                    }
+                    else{
+                        volumeslider.visible=true;
+                        volumeblendin.start();
+                    }
+                }
+            }
 
 
         } }

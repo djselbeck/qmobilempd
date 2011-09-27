@@ -63,4 +63,11 @@ Page{
         }
     }
 
+    ScrollBar
+    {
+        id:filescrollbar
+        flickableItem: files_list_view
+        anchors {right:files_list_view.right; top:files_list_view.top}
+    }
+
 }

@@ -10,6 +10,7 @@ class MpdAlbum : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString title READ getTitle)
+    Q_PROPERTY(QString sectionprop READ getSection)
 public:
     explicit MpdAlbum(QObject *parent = 0);
     MpdAlbum(QObject *parent,QString title);
@@ -19,6 +20,7 @@ public:
     static bool lessThan(const MpdAlbum *lhs, const MpdAlbum* rhs) {
         return *lhs<*rhs;
     }
+    QString getSection(){ return (title=="" ? "" :QString(title[0]));}
 
 
 private:
