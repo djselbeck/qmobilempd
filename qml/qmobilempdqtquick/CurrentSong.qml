@@ -18,29 +18,27 @@ Page {
         //tools: backTools
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
-                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-                ToolButton {
-                    iconSource: playbuttoniconsource; onClicked: window.play()
-                }
-                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
-                ToolButton {
-                    iconSource: volumebuttoniconsource;
-                    onClicked: {
-                        if(volumeslider.visible)
-                        {
-                            volumeblendout.start();
-                        }
-                        else{
-                            volumeslider.visible=true;
-                            volumeblendin.start();
-                        }
+            ToolButton{ iconSource: "toolbar-home";onClicked: {
+                    pageStack.clear();
+                    pageStack.push(mainPage);
+                }}
+            ToolButton {
+                iconSource: volumebuttoniconsource;
+                onClicked: {
+                    if(volumeslider.visible)
+                    {
+                        volumeblendout.start();
+                    }
+                    else{
+                        volumeslider.visible=true;
+                        volumeblendin.start();
                     }
                 }
             }
+
         }
         Flickable{
-            anchors {left:parent.left; right: parent.right;bottom:bottomrow.top;top: parent.top}
+            anchors {left:parent.left; right: parent.right;bottom:positionSlider.top;top: parent.top}
             contentHeight: infocolumn.height
             //contentWidth: infocolumn.width
             clip: true
@@ -61,28 +59,41 @@ Page {
                 clip: true;
             }
         }
-        ButtonRow{
-            id:bottomrow
-            Button{
+        ToolBar{
+            id: controlrow
+            anchors {bottom: parent.bottom}
+
+            tools: ToolBarLayout {
+            ButtonRow {
+            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+
+            ToolButton {
+                iconSource: playbuttoniconsource; onClicked: window.play()
+            }
+            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+            ToolButton{
                 id: repeatbtn
-                text: "Repeat"
+                //text: "Repeat"
+                iconSource: "icons/icon-m-toolbar-repeat-white.png"
                 checkable: true
                 onClicked: {
                     window.setRepeat(checked);
                 }
             }
-            Button{
+            ToolButton{
                 id: shufflebtn
                 text: "Shuffle"
+                iconSource: "icons/icon-m-toolbar-shuffle-white.png"
                 checkable: true
                 onClicked: {
                     window.setShuffle(checked);
                 }
 
             }
-            anchors {left:parent.left; right: parent.right;bottom: positionSlider.top}
+            }
 
-        }
+        }}
+
             Slider
             {
                 id: positionSlider
@@ -98,7 +109,7 @@ Page {
                 }
                 onValueChanged: {valueIndicatorText=formatLength(value);}
 
-                anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
+                anchors {left:parent.left; right: parent.right; bottom:controlrow.top}
                 }
 //        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
 

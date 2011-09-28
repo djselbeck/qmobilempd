@@ -9,8 +9,10 @@ Page{
     property alias listmodel:savedplaylist_list_view.model
     tools:ToolBarLayout {
     ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-
-
+    ToolButton{ iconSource: "toolbar-home";onClicked: {
+            pageStack.clear();
+            pageStack.push(mainPage);
+        }}
 
             }
     ListView{

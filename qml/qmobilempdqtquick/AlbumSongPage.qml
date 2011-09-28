@@ -7,7 +7,11 @@ Page{
         property string artistname;
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
+            ToolButton{ iconSource: "toolbar-home";onClicked: {
+                    pageStack.clear();
+                    pageStack.push(mainPage);
+                }}
+        //    ButtonRow {
 //                ToolButton {
 //                    iconSource: "toolbar-mediacontrol-stop"
 //                    onClicked: {
@@ -18,11 +22,11 @@ Page{
                 ToolButton{ iconSource:"toolbar-add"; onClicked: {
                         window.addAlbum([artistname,albumname]);
                     }}
-                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-                ToolButton {
-                    iconSource: playbuttoniconsource; onClicked: window.play()
-                }
-                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+//                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+//                ToolButton {
+//                    iconSource: playbuttoniconsource; onClicked: window.play()
+//                }
+//                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
                 ToolButton {
                     iconSource: volumebuttoniconsource;
                     onClicked: {
@@ -38,7 +42,8 @@ Page{
                 }
 
 
-            } }
+//            }
+}
         property alias listmodel: albumsongs_list_view.model;
 
         Component.onCompleted: {

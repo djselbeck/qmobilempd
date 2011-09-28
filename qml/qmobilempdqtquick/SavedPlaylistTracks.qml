@@ -6,7 +6,11 @@ Page{
         property string playlistname;
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
+            ToolButton{ iconSource: "toolbar-home";onClicked: {
+                    pageStack.clear();
+                    pageStack.push(mainPage);
+                }}
+
 //                ToolButton {
 //                    iconSource: "toolbar-mediacontrol-stop"
 //                    onClicked: {
@@ -19,7 +23,7 @@ Page{
                     }}
 
 
-            } }
+            }
         property alias listmodel: playlistsongs_list_view.model;
 
         Component.onCompleted: {
@@ -65,5 +69,13 @@ Page{
                 }
             }
         }
+
+        ScrollBar
+        {
+            id:playlistscroll
+            flickableItem: playlistsongs_list_view
+            anchors {right:playlistsongs_list_view.right; top:playlistsongs_list_view.top}
+        }
+
 
     }

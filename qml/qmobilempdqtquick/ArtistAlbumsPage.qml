@@ -9,7 +9,11 @@ Page{
         tools: ToolBarLayout
         {
         ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-        ButtonRow {
+        ToolButton{ iconSource: "toolbar-home";onClicked: {
+                pageStack.clear();
+                pageStack.push(mainPage);
+            }}
+       // ButtonRow {
     //                ToolButton {
     //                    iconSource: "toolbar-mediacontrol-stop"
     //                    onClicked: {
@@ -22,11 +26,11 @@ Page{
                 onClicked: window.addArtist(artistname);
             }
 
-            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-            ToolButton {
-                iconSource: playbuttoniconsource; onClicked: window.play()
-            }
-            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+//            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+//            ToolButton {
+//                iconSource: playbuttoniconsource; onClicked: window.play()
+//            }
+//            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
             ToolButton {
                 iconSource: volumebuttoniconsource;
                 onClicked: {
@@ -42,7 +46,8 @@ Page{
             }
 
 
-        } }
+//        }
+}
         Component.onCompleted: {
             console.debug("albums completed");
         }

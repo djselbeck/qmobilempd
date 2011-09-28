@@ -55,6 +55,9 @@ signals:
     void userNotification(QVariant);
     void savedPlaylistsReady(QStringList*);
     void savedplaylistTracksReady(QList<QObject*>*);
+
+    void startupdateplaylist();
+    void finishupdateplaylist();
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);

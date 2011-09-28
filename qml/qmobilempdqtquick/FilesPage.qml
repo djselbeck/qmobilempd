@@ -11,6 +11,10 @@ Page{
     tools: ToolBarLayout {
         id: filesTools
         ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        ToolButton{ iconSource: "toolbar-home";onClicked: {
+                pageStack.clear();
+                pageStack.push(mainPage);
+            }}
         ToolButton { iconSource: "toolbar-add"; onClicked: {
                 window.addFiles(filepath);
                 console.log("FILEPATH:"+filepath);

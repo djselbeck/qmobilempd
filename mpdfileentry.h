@@ -49,7 +49,7 @@ public:
         if(track!=0)
             return getTrack()->getLengthFormated();
     }
-    bool operator< (const MpdFileEntry& other) const { return (name < other.name); }
+    bool operator< (const MpdFileEntry& other) const { return (name.compare(other.name,Qt::CaseInsensitive)<0?1:0); }
     bool operator==(MpdFileEntry & rhs) {return getName()==rhs.getName();}
     static bool lessThan(const MpdFileEntry *lhs, const MpdFileEntry* rhs) {
         return *lhs<*rhs;
