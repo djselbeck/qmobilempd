@@ -19,6 +19,7 @@ Window {
     property string playlistname;
     property bool repeat;
     property bool shuffle;
+    property bool quitbtnenabled;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -60,6 +61,13 @@ Window {
 
     signal quit();
 
+    function startupdateplaylist()
+    {
+        playlistbusyindicator.running=true;
+        playlistbusyindicator.visible=true;
+        blockinteraction.enabled=true;
+    }
+
     function settingsModelUpdated()
     {
         settingslist.listmodel = settingsModel;
@@ -76,7 +84,6 @@ Window {
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
         volumeslider.value = list[7];
-        console.debug("repeat:"+list[8]+ (list[8]===0 ?  false:true));
         currentsongpage.repeat = (list[8]=="0" ?  false:true);
         currentsongpage.shuffle = (list[9]=="0" ?  false:true);
     }
@@ -108,9 +115,11 @@ Window {
     {
         console.debug("Files clicked "+path + "/");
         //pageStack.currentPage.listmodel = filesModel;
-        popuptext.text = "Please wait";
-        infobanner.text = qsTr("Please Wait");
-        infobanner.open();
+//        popuptext.text = "Please wait";
+//        infobanner.text = qsTr("Please Wait");
+//        infobanner.open();
+        busyindicator.running=true;
+        busyindicator.visible=true;
 //        popuptext.visible = "true";
 //        popupblendin.start();
 //        var filescomponent = Qt.createComponent("FilesPage.qml");
@@ -125,6 +134,9 @@ Window {
     function updatePlaylist()
     {
         console.debug("Playlist model updated");
+        blockinteraction.enabled=false;
+        playlistbusyindicator.visible=false;
+        playlistbusyindicator.running=false;
         playlistpage.listmodel = playlistModel;
         if(pageStack.currentPage == playlistpage)
         {
@@ -139,6 +151,8 @@ Window {
         var albumpageobject = albumpagecomponent.createObject(window);
         albumpageobject.listmodel = albumsModel;
         albumpageobject.artistname = artistname;
+        busyindicator.running=false;
+        busyindicator.visible=false;
         pageStack.push(albumpageobject);
         infobanner.close();
     }
@@ -147,6 +161,8 @@ Window {
         var component = Qt.createComponent("ArtistPage.qml");
         var object = component.createObject(window);
         object.listmodel = artistsModel;
+        busyindicator.running=false;
+        busyindicator.visible=false;
         pageStack.push(object);
         infobanner.close();
     }
@@ -187,6 +203,8 @@ Window {
         filesobject.listmodel = filesModel;
         filesobject.filepath = lastpath;
         infobanner.close();
+        busyindicator.running=false;
+        busyindicator.visible=false;
         pageStack.push(filesobject);
 
     }
@@ -275,8 +293,8 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
-                infobanner.text = qsTr("Please Wait");
-                infobanner.open();
+                busyindicator.running=true;
+                busyindicator.visible=true;
                 artistname = "";
 
                 window.requestAlbums();
@@ -284,8 +302,8 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
-                infobanner.text = qsTr("Please Wait");
-                infobanner.open();
+                busyindicator.running=true;
+                busyindicator.visible=true;
                 window.requestArtists();
 
             }
@@ -343,7 +361,7 @@ Window {
 
     Page {
         id: mainPage
-        Text{id: hometext;color: "red"; text:qsTr("Home"); horizontalAlignment: "AlignHCenter";font.pointSize: 12
+        Text{id: hometext;color: "grey"; text:qsTr("QMobileMPD-QML"); horizontalAlignment: "AlignHCenter";font.pointSize: 12
         anchors {left: parent.left;right:parent.right;top:parent.top;}  }
                 ListView{
                     id: list_view1
@@ -364,6 +382,17 @@ Window {
                     ListElement { name: "Servers"; ident:"settings"}
                 }
 
+                onStatusChanged: {
+                    console.debug("Main status changed: "+status);
+                    if(status==PageStatus.Activating)
+                    {
+                        console.debug("artis activating");
+                        //window.requestArtists();
+                        quitbtnenabled = false;
+                        activatequitbuttontimer.start();
+
+                    }
+                }
 
                 Component{
                     id:itemDelegate
@@ -389,7 +418,9 @@ Window {
 
         tools: ToolBarLayout {
             id: pageSpecificTools
-            ToolButton { iconSource: "toolbar-back"; onClicked: window.quit() }
+            ToolButton { iconSource: enabled ? "toolbar-back":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
+
+            }
 
         //                ToolButton {
         //                    iconSource: "toolbar-mediacontrol-stop"
@@ -531,9 +562,19 @@ Window {
 
     Timer{
         id:updatevolumetimer
-        interval: 170
+        repeat: true
+        interval: 180
         onTriggered: {
+            console.debug("Volume timer triggered with value:"+volumeslider.value);
             window.setVolume(volumeslider.value);
+        }
+    }
+
+    Timer{
+        id: activatequitbuttontimer
+        interval: 1500
+        onTriggered: {
+            quitbtnenabled = true;
         }
     }
 
@@ -548,16 +589,30 @@ Window {
         inverted: true
         height: (window.height/3>100) ? 200 : window.height/3
         anchors {right:parent.right;bottom:commonToolBar.top;}
-        onValueChanged: {
+        valueIndicatorVisible: true
+
+        onPressedChanged: {
             if(pressed)
             {
+                console.debug("Pressed");
                 updatevolumetimer.start();
             }
             else{
+                console.debug("!Pressed");
+
+                window.setVolume(volumeslider.value);
                 updatevolumetimer.stop();
+
             }
         }
+            onValueChanged: {
+                if(pressed)
+                 //   updatevolumetimer.start();
+                valueIndicatorText = value+"%";
+            }
+
     }
+
 
     onFocusChanged: {
 
@@ -572,5 +627,29 @@ Window {
          anchors.fill: parent
          enabled: pageStack.busy
      }
+    MouseArea {
+        id:blockinteraction
+        anchors.fill: parent
+        enabled: false
+    }
+
+    BusyIndicator{
+        id: busyindicator
+        running:false
+        visible: false
+        anchors.centerIn: parent
+        width: 72
+        height: 72
+    }
+
+    BusyIndicator{
+        id: playlistbusyindicator
+        running:false
+        visible: false
+        anchors.centerIn: parent
+        width: 72
+        height: 72
+    }
+
 
 }

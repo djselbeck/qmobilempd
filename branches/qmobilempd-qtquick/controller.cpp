@@ -157,6 +157,7 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(userNotification(QVariant)),item,SLOT(slotShowPopup(QVariant)));
+    connect(netaccess,SIGNAL(startupdateplaylist()),item,SIGNAL(startupdateplaylist()));
     connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
     connect(this,SIGNAL(requestDisconnect()),netaccess,SLOT(disconnect()));
     connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));

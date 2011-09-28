@@ -8,7 +8,7 @@ Page{
         property alias listmodel: artist_list_view.model;
         tools: ToolBarLayout {
             ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-            ButtonRow {
+           /* ButtonRow {
 //                ToolButton {
 //                    iconSource: "toolbar-mediacontrol-stop"
 //                    onClicked: {
@@ -17,14 +17,28 @@ Page{
 //                }
 
 
-                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-                ToolButton {
-                    iconSource: playbuttoniconsource; onClicked: window.play()
+//                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+//                ToolButton {
+//                    iconSource: playbuttoniconsource; onClicked: window.play()
+//                }
+//                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+
+
+            }*/
+            ToolButton {
+                iconSource: volumebuttoniconsource;
+                onClicked: {
+                    if(volumeslider.visible)
+                    {
+                        volumeblendout.start();
+                    }
+                    else{
+                        volumeslider.visible=true;
+                        volumeblendin.start();
+                    }
                 }
-                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
-
-
-            } }
+            }
+        }
         Component.onCompleted: {
             console.debug("artis completed");
         }

@@ -553,6 +553,7 @@ void NetworkAccess::getCurrentPlaylistTracks()
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         emit userNotification(tr("Getting current playlist. Please standby"));
+        emit startupdateplaylist();
         QString response ="";
         MpdTrack *temptrack=NULL;
         QString title;

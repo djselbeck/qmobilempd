@@ -23,7 +23,7 @@ public:
     MpdAlbum *getAlbum(quint32 i);
     QString getName();
     QString getSection() { return (name=="" ? "" :QString(name[0]));}
-    bool operator< (const MpdArtist& other) const { return (name < other.name); }
+    bool operator< (const MpdArtist& other) const { return (name.compare(other.name,Qt::CaseInsensitive)<0?1:0); }
     bool operator==(MpdArtist & rhs) {return getName()==rhs.getName();}
     static bool lessThan(const MpdArtist *lhs, const MpdArtist* rhs) {
         return *lhs<*rhs;
