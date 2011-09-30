@@ -47,7 +47,7 @@ Page{
             height: topLayout.height
             Row{
                 id: topLayout
-                Text { text: name; color:"white";font.pointSize:10}
+                Text { text: name; color:"white";font.pointSize:listfontsize}
             }
             MouseArea {
                 anchors.fill: parent

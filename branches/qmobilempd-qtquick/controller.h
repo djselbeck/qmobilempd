@@ -15,6 +15,7 @@
 #include "serverprofile.h"
 #include "artistmodel.h"
 #include "albummodel.h"
+#include "mediakeysobserver.h"
 
 
 
@@ -60,21 +61,25 @@ signals:
     void savedPlaylistsReady();
     void savedPlaylistReady();
     void serverProfilesUpdated();
+    void setVolume(int);
 
 
 
 private:
     QmlApplicationViewer *viewer;
+    MediaKeysObserver *keyobserver;
     NetworkAccess *netaccess;
     QString hostname,password;
     quint16 port;
     quint32 playlistversion;
     int currentsongid;
+    int volume;
     QList<MpdTrack*> *playlist;
     QThreadEx *networkthread;
     QList<ServerProfile*> *serverprofiles;
     void readSettings();
     void writeSettings();
+    QTimer volDecTimer,volIncTimer;
 
 private slots:
     void requestCurrentPlaylist();
@@ -85,7 +90,12 @@ private slots:
     void requestFilePage(QString);
     void requestFileModel(QString);
     void seek(int);
+    void incVolume();
+    void decVolume();
     void updateStatus(status_struct status);
+    void mediaKeyHandle(int key);
+    void mediaKeyPressed(int key);
+    void mediaKeyReleased(int key);
 
 
 

@@ -84,17 +84,19 @@ Page{
             id:artistDelegate
             Item {
                 id: itemItem
-                width: list_view1.width
-                height: topLayout.height
-                Rectangle{
+                width: window.width
+                height: topLayout.height+liststretch
+                Rectangle {
                     color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
                     anchors.fill: parent
-                    Row{
+                    Text{
                         id: topLayout
-                        Text { text: artist; color:"white";font.pointSize:10}
-
+                        anchors {verticalCenter: parent.verticalCenter}
+                        text: artist; color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
+                        //Text {text:artist; color:"grey";font.pointSize:10;}
                     }
                 }
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {

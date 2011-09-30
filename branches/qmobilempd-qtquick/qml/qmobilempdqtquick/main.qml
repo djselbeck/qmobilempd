@@ -11,6 +11,8 @@ Window {
     property Page currentsongpage;
     property Page playlistpage;
     property Page settingslist;
+    property int listfontsize:12;
+    property int liststretch:20;
     property string playbuttoniconsource;
     property string volumebuttoniconsource;
     property string lastpath;
@@ -361,7 +363,7 @@ Window {
 
     Page {
         id: mainPage
-        Text{id: hometext;color: "grey"; text:qsTr("QMobileMPD-QML"); horizontalAlignment: "AlignHCenter";font.pointSize: 12
+        Text{id: hometext;color: "grey"; text:qsTr("QMobileMPD-QML"); horizontalAlignment: "AlignHCenter";font.pointSize: listfontsize
         anchors {left: parent.left;right:parent.right;top:parent.top;}  }
                 ListView{
                     id: list_view1
@@ -455,11 +457,16 @@ Window {
         Item {
             id: itemItem
             width: list_view1.width
-            height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: title; color:"white";font.pointSize:11;font.italic:(playing) ? true:false;}
-                Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
+            height: topLayout.height+liststretch
+            Rectangle {
+                color:"black"
+                anchors.fill: parent
+                Row{
+                    id: topLayout
+                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
+                    Text {clip: true; wrapMode: Text.WrapAnywhere; text: title; color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
+                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
+                }
             }
             MouseArea {
                 anchors.fill: parent
@@ -484,14 +491,16 @@ Window {
         id:albumDelegate
         Item {
             id: itemItem
-            width: list_view1.width
-            height: topLayout.height
+            width: window.width
+            height: topLayout.height+liststretch
             Rectangle {
                 color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
-                Row{
+                Text{
                     id: topLayout
-                    Text { text: title; color:"white";font.pointSize:10; verticalAlignment: "AlignVCenter";}
+                    anchors {verticalCenter: parent.verticalCenter}
+                    text: title; color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
+                    //Text {text:artist; color:"grey";font.pointSize:10;}
                 }
             }
             MouseArea {
@@ -621,7 +630,7 @@ Window {
     InfoBanner{
         id: infobanner
         text: ""
-        iconSource: "popup-infobanner-normal"
+        iconSource: "qtg_fr_popup_infobanner"
     }
     MouseArea {
          anchors.fill: parent

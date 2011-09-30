@@ -21,7 +21,11 @@ QT       += core gui network
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
 # Allow network access on Symbian
-symbian:TARGET.CAPABILITY += NetworkServices
+symbian {
+    TARGET.CAPABILITY += NetworkServices
+    LIBS += -lremconinterfacebase -lremconcoreapi
+    SOURCES += mediakeysobserver.cpp
+}
 
 # If your application uses the Qt Mobility libraries, uncomment the following
 # lines and add the respective components to the MOBILITY variable.
@@ -42,7 +46,7 @@ SOURCES += main.cpp \
     qthreadex.cpp \
     serverprofile.cpp \
     artistmodel.cpp \
-    albummodel.cpp
+    albummodel.cpp \
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -71,7 +75,10 @@ HEADERS += \
     qthreadex.h \
     serverprofile.h \
     artistmodel.h \
-    albummodel.h
+    albummodel.h \
+    mediakeysobserver.h
+
+
 
 
 
