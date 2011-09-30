@@ -44,11 +44,17 @@ Page{
         id:filesDelegate
         Item {
             id: itemItem
-            width: list_view1.width
-            height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: name; color:"white";font.pointSize:10}
+            width: window.width
+            height: topLayout.height+liststretch
+            Rectangle {
+                color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
+                anchors.fill: parent
+                Text{
+                    id: topLayout
+                    anchors {verticalCenter: parent.verticalCenter}
+                    Text { text: name; color:"white";font.pointSize:8}
+                    //Text {text:artist; color:"grey";font.pointSize:10;}
+                }
             }
             MouseArea {
                 anchors.fill: parent

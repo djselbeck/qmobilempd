@@ -82,7 +82,7 @@ Page {
             }
             ToolButton{
                 id: shufflebtn
-                text: "Shuffle"
+
                 iconSource: "icons/icon-m-toolbar-shuffle-white.png"
                 checkable: true
                 onClicked: {

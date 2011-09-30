@@ -6,6 +6,7 @@ Controller::Controller(QObject *parent) : QObject(parent)
 
 Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(parent),viewer(viewer),password(""),hostname(""),port(6600)
 {
+    keyobserver = new MediaKeysObserver(this);
     netaccess = new NetworkAccess(0);
     netaccess->setUpdateInterval(1000);
     networkthread = new QThreadEx(this);
@@ -18,6 +19,8 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     readSettings();
     qmlRegisterType<MpdArtist>();
     qmlRegisterType<MpdAlbum>();
+    volIncTimer.setInterval(250);
+    volDecTimer.setInterval(250);
 
 }
 
@@ -171,6 +174,12 @@ void Controller::connectSignals()
     connect(item,SIGNAL(addPlaylist(QString)),netaccess,SLOT(addPlaylist(QString)));
     connect(item,SIGNAL(setShuffle(bool)),netaccess,SLOT(setRandom(bool)));
     connect(item,SIGNAL(setRepeat(bool)),netaccess,SLOT(setRepeat(bool)));
+    connect(keyobserver,SIGNAL(mediaKeyClicked(int)),this,SLOT(mediaKeyHandle(int)));
+    connect(keyobserver,SIGNAL(mediaKeyPressed(int)),this,SLOT(mediaKeyPressed(int)));
+    connect(keyobserver,SIGNAL(mediaKeyReleased(int)),this,SLOT(mediaKeyReleased(int)));
+    connect(this,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
+    connect(&volDecTimer,SIGNAL(timeout()),this,SLOT(decVolume()));
+    connect(&volIncTimer,SIGNAL(timeout()),this,SLOT(incVolume()));
 }
 
 void Controller::setPassword(QString password)
@@ -289,6 +298,7 @@ void Controller::updateStatus(status_struct status)
     strings.append(QString::number(status.volume));
     strings.append(QString::number(status.repeat));
     strings.append(QString::number(status.shuffle));
+    volume = status.volume;
     emit sendStatus(strings);
 }
 
@@ -402,4 +412,43 @@ void Controller::connectProfile(int index)
         emit requestDisconnect();
     }
     connectToServer();
+}
+
+void Controller::incVolume()
+{
+    emit setVolume(volume+3);
+    volume +=3;
+}
+
+void Controller::decVolume()
+{
+    emit setVolume(volume-3);
+    volume -=3;
+}
+void Controller::mediaKeyHandle(int key)
+{
+    CommonDebug("GOT MediaKey");
+    if(key == MediaKeysObserver::EVolDecKey)
+        decVolume();
+    if(key == MediaKeysObserver::EVolIncKey)
+        incVolume();
+
+}
+
+void Controller::mediaKeyPressed(int key)
+{
+    CommonDebug("Mediakey pressed");
+    if(key == MediaKeysObserver::EVolDecKey)
+        volDecTimer.start();
+    if(key == MediaKeysObserver::EVolIncKey)
+        volIncTimer.start();
+}
+
+void Controller::mediaKeyReleased(int key)
+{
+    CommonDebug("Mediakey released");
+    if(key == MediaKeysObserver::EVolDecKey&&volDecTimer.isActive())
+        volDecTimer.stop();
+    if(key == MediaKeysObserver::EVolIncKey&&volIncTimer.isActive())
+        volIncTimer.stop();
 }

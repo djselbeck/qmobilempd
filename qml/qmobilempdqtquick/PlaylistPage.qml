@@ -25,11 +25,17 @@ Page{
 
     tools:ToolBarLayout {
     ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-        ButtonRow {
+       // ButtonRow {
                 ToolButton {
                     iconSource: "toolbar-delete"
                     onClicked: {
                         window.deletePlaylist();
+                    }
+                }
+                ToolButton {
+                    iconSource: playbuttoniconsource
+                    onClicked: {
+                        window.play();
                     }
                 }
                 ToolButton {
@@ -52,12 +58,7 @@ Page{
 //                        window.stop();
 //                    }
 //                }
-                ToolButton {
-                    iconSource: playbuttoniconsource
-                    onClicked: {
-                        window.play();
-                    }
-                }
+
                 ToolButton {
                     iconSource: volumebuttoniconsource;
                     onClicked: {
@@ -72,7 +73,8 @@ Page{
                     }
                 }
 
-            } }
+//            }
+}
 
 
     ListView{

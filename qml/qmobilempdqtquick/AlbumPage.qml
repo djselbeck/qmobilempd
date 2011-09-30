@@ -73,6 +73,7 @@ Page{
                      Text {
                          text: section
                          font.bold: true
+                        style: Text.Raised
                      }
                  }
              }
