@@ -80,7 +80,7 @@ Page{
         ListView{
             id: albums_list_view
             delegate: albumDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+            anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
             clip: true
             section.property: "sectionprop";
            // section.criteria: ViewSection.FirstCharacter
@@ -89,6 +89,18 @@ Page{
         console.debug("MODEL count:"+model.count);
     }
         }
+    Rectangle {
+        id:headingrect
+        anchors {left:parent.left;right:parent.right;}
+        height: artext.height
+        color: Qt.rgba(0.07, 0.07, 0.07, 1)
+        Text{
+            id: artext
+        text: (artistname==="" ? "Albums:" :artistname+":")
+            color: "white"
+            font.pointSize: 7
+        }
+    }
 
 
     SectionScroller{

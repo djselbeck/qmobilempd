@@ -73,6 +73,7 @@ Window {
     function settingsModelUpdated()
     {
         settingslist.listmodel = settingsModel;
+        selectserverdialog.model = settingsModel;
     }
 
     function updateCurrentPlaying(list)
@@ -194,7 +195,7 @@ Window {
 
 
     function receiveFilesModel()
-    {        
+    {
         console.debug("Files model updated");
     }
 
@@ -315,6 +316,16 @@ Window {
                 filesClicked("/");
 
             }
+            else if(list_view1.model.get(index).ident=="connectto"){
+                console.debug("Connect to clicked");
+                selectserverdialog.visible=true;
+                selectserverdialog.open();
+            }
+            else if(list_view1.model.get(index).ident=="about"){
+                console.debug("about to clicked");
+                aboutdialog.visible=true;
+                aboutdialog.open();
+            }
         }
     }
 
@@ -355,8 +366,8 @@ Window {
         id: commonToolBar
         anchors.bottom: parent.bottom
     }
-    
-  
+
+
 
 
 
@@ -382,6 +393,8 @@ Window {
                     ListElement { name: "Files"; ident:"files" ;}
                     ListElement { name: "Playlist"; ident:"playlist";}
                     ListElement { name: "Servers"; ident:"settings"}
+                    ListElement { name: "Connect"; ident:"connectto"}
+                    ListElement { name: "About"; ident:"about"}
                 }
 
                 onStatusChanged: {
@@ -499,7 +512,7 @@ Window {
                 Text{
                     id: topLayout
                     anchors {verticalCenter: parent.verticalCenter}
-                    text: title; color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
+                    text: (title===""? "No Album Tag":title); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
                     //Text {text:artist; color:"grey";font.pointSize:10;}
                 }
             }
@@ -535,20 +548,20 @@ Window {
             width: parent.width
         }
        // anchors { left: parent.left; right: parent.right; }
-        
+
     }
 
 
     PropertyAnimation {id: popupblendin; target: popuptext; properties: "opacity"; to: "0.8"; duration: 500}
     PropertyAnimation {id: popupblendout
-		target: popuptext
-		properties: "opacity"
-		to: "0"
-		duration: 500
+                target: popuptext
+                properties: "opacity"
+                to: "0"
+                duration: 500
     onCompleted: {
                 popuptext.visible=false;
-		}
-	}
+                }
+        }
 
     PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500}
     PropertyAnimation {id: volumeblendout
@@ -658,6 +671,40 @@ Window {
         anchors.centerIn: parent
         width: 72
         height: 72
+    }
+
+    SelectionDialog{
+        id: selectserverdialog
+        titleText: "Select server:"
+       // model: settingsModel
+        visible: false
+        delegate: serverSelectDelegate
+        onAccepted: window.connectProfile(selectedIndex);
+    }
+
+    Component {
+        id: serverSelectDelegate
+
+        MenuItem {
+            text: name
+            onClicked: {
+                selectedIndex = index
+                root.accept()
+            }
+        }
+    }
+
+    CommonDialog{
+        id:aboutdialog
+        titleText: "About:"
+        content: [ Text{color: "white"
+            text: "QMobileMPD-QML Copyright 2011 by Hendrik Borghorst"
+            wrapMode: "WordWrap"
+            //anchors {left:parent.left; right: parent.right;}
+            width: parent.width
+        }]
+        onClickedOutside: {aboutdialog.close();}
+
     }
 
 

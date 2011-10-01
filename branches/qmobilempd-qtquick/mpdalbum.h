@@ -20,7 +20,7 @@ public:
     static bool lessThan(const MpdAlbum *lhs, const MpdAlbum* rhs) {
         return *lhs<*rhs;
     }
-    QString getSection(){ return (title=="" ? "" :QString(title[0]));}
+    QString getSection(){ return (title=="" ? "" :QString(title.toUpper()[0]));}
 
 
 private:

@@ -15,12 +15,15 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     currentsongid=0;
     playlistversion = 0;
     playlist = 0;
+    artistlist = 0;
+    albumlist = 0;
     connectSignals();
     readSettings();
     qmlRegisterType<MpdArtist>();
     qmlRegisterType<MpdAlbum>();
     volIncTimer.setInterval(250);
     volDecTimer.setInterval(250);
+
 
 }
 
@@ -75,8 +78,13 @@ void Controller::updateSavedPlaylistModel(QList<QObject*>* list)
 void Controller::updateArtistsModel(QList<QObject*>* list)
 {
     CommonDebug("ARTISTS UPDATE REQUIRED");
-
+    if(artistlist!=0)
+    {
+        delete(artistlist);
+        artistlist=0;
+    }
     //ArtistModel *model = new ArtistModel((QList<MpdTrack*>*)list,this);
+    artistlist = (QList<MpdArtist*>*)list;
     ArtistModel *model = new ArtistModel((QList<MpdArtist*>*)list);
     viewer->rootContext()->setContextProperty("artistsModel",model);
     emit artistsReady();
