@@ -74,12 +74,14 @@ private:
     quint32 playlistversion;
     int currentsongid;
     int volume;
-    QList<MpdTrack*> *playlist;
     QThreadEx *networkthread;
     QList<ServerProfile*> *serverprofiles;
     void readSettings();
     void writeSettings();
     QTimer volDecTimer,volIncTimer;
+    QList<MpdAlbum*> *albumlist;
+    QList<MpdArtist*> *artistlist;
+    QList<MpdTrack*> *playlist;
 
 private slots:
     void requestCurrentPlaylist();

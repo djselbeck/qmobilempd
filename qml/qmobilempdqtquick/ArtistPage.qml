@@ -71,12 +71,24 @@ Page{
         ListView{
             id: artist_list_view
             delegate: artistDelegate
-            anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+            anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
             clip: true
             section.property: "sectionprop";
             section.delegate: sectionHeading
             onModelChanged: {
                 console.debug("MODEL count:"+model.count);
+            }
+        }
+        Rectangle {
+            id:headingrect
+            anchors {left:parent.left;right:parent.right;}
+            height: artext.height
+            color: Qt.rgba(0.07, 0.07, 0.07, 1)
+            Text{
+                id: artext
+                text: "Artists:"
+                color: "white"
+                font.pointSize: 7
             }
         }
 
@@ -92,7 +104,7 @@ Page{
                     Text{
                         id: topLayout
                         anchors {verticalCenter: parent.verticalCenter}
-                        text: artist; color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
+                        text: (artist===""? "No Artist Tag": artist); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
                         //Text {text:artist; color:"grey";font.pointSize:10;}
                     }
                 }

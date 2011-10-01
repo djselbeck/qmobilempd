@@ -23,9 +23,22 @@ Page{
     ListView{
         id: files_list_view
         delegate: filesDelegate
-        anchors { left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom }
+        anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
     }
+    Rectangle {
+        id:headingrect
+        anchors {left:parent.left;right:parent.right;}
+        height: artext.height
+        color: Qt.rgba(0.07, 0.07, 0.07, 1)
+        Text{
+            id: artext
+            text: (filepath===""? "Files:" : filepath+":")
+            color: "white"
+            font.pointSize: 7
+        }
+    }
+
     onStatusChanged: {
         console.debug("Playlist status changed: "+status);
         if(status==PageStatus.Activating)
