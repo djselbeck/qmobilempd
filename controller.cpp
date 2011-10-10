@@ -33,6 +33,10 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
     if(playlist==0){
         currentsongid=0;
     } else{
+        QList<MpdTrack*>::iterator i;
+        for(i = playlist->begin();i!=playlist->end();i++){
+            delete(*i);
+        }
         delete(playlist);
        // viewer->rootContext()->setContextProperty("playlistModel",QVariant::fromValue(0));
         playlist=0;
@@ -59,20 +63,15 @@ void Controller::updateFilesModel(QList<QObject*>* list)
 
 void Controller::updateSavedPlaylistsModel(QStringList *list)
 {
-    if(list->length()>0)
-    {
-        viewer->rootContext()->setContextProperty("savedPlaylistsModel",QVariant::fromValue(*list));
-        emit savedPlaylistsReady();
-    }
+    viewer->rootContext()->setContextProperty("savedPlaylistsModel",QVariant::fromValue(*list));
+    emit savedPlaylistsReady();
+
 }
 
 void Controller::updateSavedPlaylistModel(QList<QObject*>* list)
 {
-    if(list->length()>0)
-    {
-        viewer->rootContext()->setContextProperty("savedPlaylistModel",QVariant::fromValue(*list));
-        emit savedPlaylistReady();
-    }
+    viewer->rootContext()->setContextProperty("savedPlaylistModel",QVariant::fromValue(*list));
+    emit savedPlaylistReady();
 }
 
 void Controller::updateArtistsModel(QList<QObject*>* list)
@@ -152,6 +151,7 @@ void Controller::connectSignals()
     connect(item,SIGNAL(addArtist(QString)),netaccess,SLOT(addArtist(QString)));
     connect(item,SIGNAL(quit()),this,SLOT(quit()));
     connect(item,SIGNAL(savePlaylist(QString)),netaccess,SLOT(savePlaylist(QString)));
+    connect(item,SIGNAL(deleteSavedPlaylist(QString)),netaccess,SLOT(deletePlaylist(QString)));
     connect(item,SIGNAL(requestSavedPlaylists()),netaccess,SLOT(getSavedPlaylists()));
     connect(netaccess,SIGNAL(savedPlaylistsReady(QStringList*)),this,SLOT(updateSavedPlaylistsModel(QStringList*)));
     connect(netaccess,SIGNAL(savedplaylistTracksReady(QList<QObject*>*)),this,SLOT(updateSavedPlaylistModel(QList<QObject*>*)));
@@ -168,7 +168,8 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(userNotification(QVariant)),item,SLOT(slotShowPopup(QVariant)));
-    connect(netaccess,SIGNAL(startupdateplaylist()),item,SIGNAL(startupdateplaylist()));
+    connect(netaccess,SIGNAL(busy()),item,SIGNAL(busy()));
+    connect(netaccess,SIGNAL(ready()),item,SIGNAL(ready()));
     connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
     connect(this,SIGNAL(requestDisconnect()),netaccess,SLOT(disconnect()));
     connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));
@@ -306,6 +307,9 @@ void Controller::updateStatus(status_struct status)
     strings.append(QString::number(status.volume));
     strings.append(QString::number(status.repeat));
     strings.append(QString::number(status.shuffle));
+    strings.append(QString::number(status.tracknr));
+    strings.append(status.fileuri);
+    strings.append(QString::number(status.id));
     volume = status.volume;
     emit sendStatus(strings);
 }

@@ -17,6 +17,8 @@ class MpdFileEntry : public QObject
     Q_PROPERTY(QString path READ getPath)
     Q_PROPERTY(QString artist READ getArtist)
     Q_PROPERTY(QString length READ getLengthFormatted)
+    Q_PROPERTY(int tracknr READ getTrackNr)
+    Q_PROPERTY(QString year READ getYear)
 public:
     enum MpdFileType {MpdFileType_File,MpdFileType_Directory,MpdFileType_Playlist,MpdFileType_NR};
     explicit MpdFileEntry(QObject *parent = 0);
@@ -48,6 +50,14 @@ public:
     QString getLengthFormatted(){
         if(track!=0)
             return getTrack()->getLengthFormated();
+    }
+    QString getYear() {
+        if(track!=0)
+            return getTrack()->getYear();
+    }
+    int getTrackNr() {
+        if(track!=0)
+            return getTrack()->getTrackNr();
     }
     bool operator< (const MpdFileEntry& other) const { return (name.compare(other.name,Qt::CaseInsensitive)<0?1:0); }
     bool operator==(MpdFileEntry & rhs) {return getName()==rhs.getName();}

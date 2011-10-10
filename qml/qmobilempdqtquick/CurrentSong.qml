@@ -12,6 +12,8 @@ Page {
         property alias bitrate: bitrateText.text;
         property alias shuffle: shufflebtn.checked;
         property alias repeat: repeatbtn.checked;
+        property alias nr: nrText.text;
+        property alias uri: fileText.text;
         property bool playing;
 
 
@@ -54,8 +56,12 @@ Page {
                 Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 Text{text: "Length:";color:"grey"}
                 Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Nr.:";color:"grey"}
+                Text{id:nrText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 Text{text: "Bitrate:";color:"grey"}
                 Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "FileUri:";color:"grey"}
+                Text{id:fileText ;text: "";color:"white";font.pointSize:10;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
                 clip: true;
             }
         }

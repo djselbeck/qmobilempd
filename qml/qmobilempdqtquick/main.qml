@@ -49,6 +49,7 @@ Window {
     signal prev();
     signal stop();
     signal deletePlaylist();
+    signal deleteSavedPlaylist(string name);
     signal playPlaylistTrack(int index);
     signal seek(int position);
     signal newProfile();
@@ -63,11 +64,18 @@ Window {
 
     signal quit();
 
-    function startupdateplaylist()
+    function busy()
     {
         playlistbusyindicator.running=true;
         playlistbusyindicator.visible=true;
         blockinteraction.enabled=true;
+    }
+
+    function ready()
+    {
+        playlistbusyindicator.running=false;
+        playlistbusyindicator.visible=false;
+        blockinteraction.enabled=false;
     }
 
     function settingsModelUpdated()
@@ -89,6 +97,9 @@ Window {
         volumeslider.value = list[7];
         currentsongpage.repeat = (list[8]=="0" ?  false:true);
         currentsongpage.shuffle = (list[9]=="0" ?  false:true);
+        currentsongpage.nr = (list[10]===0? "":list[10]);
+        currentsongpage.uri = list[11];
+        playlistpage.songid = list[12];
     }
 
     function savedPlaylistClicked(modelData)
@@ -181,7 +192,7 @@ Window {
         pageStack.push(object);
     }
 
-    function albumTrackClicked(title,album,artist,lengthformatted,uri)
+    function albumTrackClicked(title,album,artist,lengthformatted,uri,year,tracknr)
     {
         var component = Qt.createComponent("SongPage.qml");
         var object = component.createObject(window);
@@ -190,6 +201,8 @@ Window {
         object.artist = artist;
         object.filename = uri;
         object.lengthtext = lengthformatted;
+        object.date = year;
+        object.nr = tracknr;
         pageStack.push(object);
     }
 
@@ -612,7 +625,7 @@ Window {
         height: (window.height/3>100) ? 200 : window.height/3
         anchors {right:parent.right;bottom:commonToolBar.top;}
         valueIndicatorVisible: true
-
+        valueIndicatorText: value+"%";
         onPressedChanged: {
             if(pressed)
             {
@@ -627,11 +640,7 @@ Window {
 
             }
         }
-            onValueChanged: {
-                if(pressed)
-                 //   updatevolumetimer.start();
-                valueIndicatorText = value+"%";
-            }
+
 
     }
 

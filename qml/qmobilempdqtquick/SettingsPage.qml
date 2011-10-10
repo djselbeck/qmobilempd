@@ -55,9 +55,15 @@ Page{
         Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white"}
         TextField{id: hostnameInput;  text: "192.168.2.51"; anchors { left: parent.left; right: parent.right}}
         Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-        TextField{id: portInput;text: "6600"; anchors { left: parent.left; right: parent.right}}
+        TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}}
         Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-        TextField{id: passwordInput; text:"nudelsuppe"; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}}
+        TextField{id: passwordInput; text:""; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}}
+    }
+
+    IntValidator{
+        id:portvalidator
+        top: 65536
+        bottom: 1
     }
 
 }

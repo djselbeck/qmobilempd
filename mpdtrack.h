@@ -2,6 +2,7 @@
 #define MPDTRACK_H
 
 #include <QObject>
+#include <QStringList>
 #include "mpdalbum.h"
 #include "mpdartist.h"
 
@@ -19,6 +20,9 @@ class MpdTrack : public QObject
     Q_PROPERTY(QString artist READ getArtist )
     Q_PROPERTY(QString album READ getAlbum )
     Q_PROPERTY(bool playing READ getPlaying NOTIFY playingchanged )
+    Q_PROPERTY(int tracknr READ getTrackNr)
+    Q_PROPERTY(QString year READ getYear)
+    Q_PROPERTY(QString filename READ getFileName)
 public:
     explicit MpdTrack(QObject *parent = 0);
     MpdTrack(QObject *parent,QString file,QString title, quint32 length);
@@ -32,20 +36,32 @@ public:
     QString getAlbum();
     QString getArtist();
     QString getLengthFormated();
+    QString getYear();
+    QString getFileName() {
+        QStringList splitted;
+        splitted = getFileUri().split('/');
+        return splitted.last();
+    }
+
+    int getTrackNr();
     void    setTitle(QString);
     void 	setFileUri(QString);
     void 	setLength(quint32 length);
     void 	setAlbum(QString);
     void	setArtist(QString);
+    void setYear(QString year);
+    void setTrackNr(int nr);
 
     bool getPlaying();
     void setPlaying(bool playing);
 private:
     QString title;
-    QString filename;
+    QString fileuri;
     quint32 length;
     QString artist;
     QString album;
+    int tracknr;
+    QString year;
     
     bool playing;
 

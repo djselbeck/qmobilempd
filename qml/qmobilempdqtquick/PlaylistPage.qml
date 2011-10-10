@@ -6,6 +6,7 @@ import com.nokia.extras 1.0
 
 Page{
     id: playlistpage
+    property alias songid: playlist_list_view.currentIndex
     property alias listmodel:playlist_list_view.model
     Component.onCompleted: {
         console.debug("Playlist completed");
@@ -42,6 +43,7 @@ Page{
                     iconSource: "icons/document-save.png"
                     onClicked: {
                         playlist_list_view.visible=false;
+
                         savenamecolumn.visible=true;
                     }
                 }
@@ -97,6 +99,7 @@ Page{
     }
     Column {
         id:savenamecolumn
+        onVisibleChanged: playlistname.text="";
         visible:false
         y: parent.height/2
         anchors {left: parent.left;right:parent.right}
