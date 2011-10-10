@@ -81,7 +81,9 @@ private:
     QTimer volDecTimer,volIncTimer;
     QList<MpdAlbum*> *albumlist;
     QList<MpdArtist*> *artistlist;
+    QList<MpdTrack*> *trackmodel;
     QList<MpdTrack*> *playlist;
+    QList<QList<MpdFileEntry*>*> *filemodels;
 
 private slots:
     void requestCurrentPlaylist();

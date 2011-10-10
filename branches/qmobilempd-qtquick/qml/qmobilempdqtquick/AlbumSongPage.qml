@@ -85,18 +85,24 @@ Page{
             Item {
                 id: itemItem
                 width: list_view1.width
-                height: topLayout.height
-                Row{
-                    id: topLayout
-                    Text { text: title; color:"white";font.pointSize:10}
-                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
+                height: topLayout.height+liststretch
+                Rectangle {
+                    color:"black"
+                    anchors.fill: parent
+                    Row{
+                        id: topLayout
+                        anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
+                        Text { text: ((tracknr===0 ? "":tracknr+"."));color:"white";font.pointSize: 8}
+                        Text { text: (title==="" ? filename : title); color:"white";font.pointSize:8}
+                        Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
+                    }
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
 
                         list_view1.currentIndex = index
-                        albumTrackClicked(title,album,artist,lengthformated,uri);
+                        albumTrackClicked(title,album,artist,lengthformated,uri,year,tracknr);
                     }
                 }
             }

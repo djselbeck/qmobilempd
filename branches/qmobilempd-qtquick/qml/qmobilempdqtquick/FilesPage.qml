@@ -25,6 +25,7 @@ Page{
         delegate: filesDelegate
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
+        spacing: 2
     }
     Rectangle {
         id:headingrect
@@ -60,7 +61,7 @@ Page{
             width: window.width
             height: topLayout.height+liststretch
             Rectangle {
-                color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
+                color: (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Text{
                     id: topLayout
@@ -79,7 +80,7 @@ Page{
                     }
                     if(isFile) {
                         console.debug("File clicked: "+title+":"+album);
-                        albumTrackClicked(title,album,artist,length,path);
+                        albumTrackClicked(title,album,artist,length,path,year,tracknr);
                     }
                 }
             }

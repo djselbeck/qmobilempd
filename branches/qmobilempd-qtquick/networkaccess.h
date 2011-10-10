@@ -9,7 +9,7 @@
 #include "mpdfileentry.h"
 #include "common.h"
 #include "commondebug.h"
-#define READYREAD 5000
+#define READYREAD 15000
 
 class MpdAlbum;
 class MpdArtist;
@@ -58,6 +58,8 @@ signals:
 
     void startupdateplaylist();
     void finishupdateplaylist();
+    void busy();
+    void ready();
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
@@ -93,6 +95,7 @@ public slots:
     void seek(int pos);
     void savePlaylist(QString name);
     void addPlaylist(QString name);
+    void deletePlaylist(QString name);
 
 protected slots:
     void connectedtoServer();

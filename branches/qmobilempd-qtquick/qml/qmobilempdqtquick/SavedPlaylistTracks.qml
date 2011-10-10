@@ -21,6 +21,15 @@ Page{
                 ToolButton{ iconSource:"toolbar-add"; onClicked: {
                         window.addPlaylist(playlistname)
                     }}
+                ToolButton {
+                    iconSource: "toolbar-delete"
+                    onClicked: {
+                        window.deleteSavedPlaylist(playlistname);
+                        pageStack.clear()
+                        pageStack.push([mainPage,playlistpage]);
+                        //window.requestSavedPlaylists();
+                    }
+                }
 
 
             }

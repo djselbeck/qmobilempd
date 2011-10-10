@@ -1,5 +1,5 @@
 #include "commondebug.h"
-//#define DEBUG
+#define DEBUG
 CommonDebug::CommonDebug(QString out)
 {
 #ifdef DEBUG
