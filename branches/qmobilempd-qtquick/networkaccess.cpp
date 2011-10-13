@@ -1465,7 +1465,7 @@ void NetworkAccess::addTrackToPlaylist(QString fileuri)
 
 
 //Replace song with uri and plays it back
-void NetworkAccess::playTrack(QString fileuri)
+void NetworkAccess::playFiles(QString fileuri)
 {
     clearPlaylist();
     CommonDebug("Play request:"+fileuri.toAscii());
@@ -1486,9 +1486,36 @@ void NetworkAccess::playTrack(QString fileuri)
         }
         //Get song id in playlist
 
-        
-        //playTrackByNumber(getStatus().playlistlength-1);
+
         playTrackByNumber(0);
+    }
+    updateStatusInternal();
+}
+
+
+// Append track to playlist and plays it.
+void NetworkAccess::playTrack(QString fileuri)
+{
+    CommonDebug("Play request:"+fileuri.toAscii());
+    if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+        QTextStream outstream(tcpsocket);
+        outstream.setCodec("UTF-8");
+        outstream << "add \"" << fileuri << "\"" << endl;
+        QString response ="";
+        //Clear read buffer
+        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
+        {
+            tcpsocket->waitForReadyRead(READYREAD);
+            while (tcpsocket->canReadLine())
+            {
+                response = QString::fromUtf8(tcpsocket->readLine());
+
+            }
+        }
+        //Get song id in playlist
+
+        
+        playTrackByNumber(getStatus().playlistlength-1);
     }
     updateStatusInternal();
 }

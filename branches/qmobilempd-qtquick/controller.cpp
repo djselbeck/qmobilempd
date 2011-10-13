@@ -24,8 +24,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     qmlRegisterType<MpdAlbum>();
     volIncTimer.setInterval(250);
     volDecTimer.setInterval(250);
-
-
+    viewer->rootContext()->setContextProperty("versionstring",QVariant::fromValue(QString("1.0.1")));
 }
 
 void Controller::updatePlaylistModel(QList<QObject*>* list)
@@ -181,6 +180,7 @@ void Controller::connectSignals()
     connect(item,SIGNAL(deleteProfile(int)),this,SLOT(deleteProfile(int)));
     connect(item,SIGNAL(connectProfile(int)),this,SLOT(connectProfile(int)));
     connect(item,SIGNAL(playSong(QString)),netaccess,SLOT(playTrack(QString)));
+    connect(item,SIGNAL(playFiles(QString)),netaccess,SLOT(playFiles(QString)));
     connect(item,SIGNAL(addSong(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
     connect(item,SIGNAL(requestSavedPlaylist(QString)),netaccess,SLOT(getPlaylistTracks(QString)));
     connect(item,SIGNAL(addPlaylist(QString)),netaccess,SLOT(addPlaylist(QString)));

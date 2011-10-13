@@ -135,7 +135,10 @@ Page{
             MenuItem {
                 text: filesMenu.directory ?  "Playback directory" : "Playback file"
                 onClicked: {
-                           window.playSong(filesMenu.filepath);
+                           if(filesMenu.directory)
+                               window.playFiles(filesMenu.filepath);
+                           else
+                               window.playSong(filesMenu.filepath);
                 }
             }
         }

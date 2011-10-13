@@ -67,7 +67,10 @@ Window {
     signal changeProfile(variant profile);
     signal deleteProfile(int index);
     signal connectProfile(int index);
+    //appends song to playlist
     signal playSong(string uri);
+    //Clears playlist before adding
+    signal playFiles(string uri);
 
     signal quit();
 
@@ -313,8 +316,9 @@ Window {
                 selectserverdialog.open();
             }
             else if(list_view1.model.get(index).ident=="about"){
-                console.debug("about to clicked");
+                console.debug("about to clicked:"+versionstring);
                 aboutdialog.visible=true;
+                aboutdialog.version = versionstring;
                 aboutdialog.open();
             }
         }
@@ -567,9 +571,10 @@ Window {
 
     CommonDialog{
         id:aboutdialog
+        property string version : "noversion";
         titleText: "About:"
         content: [ Text{color: "white"
-            text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst"
+            text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst. Version: "+aboutdialog.version
             wrapMode: "WordWrap"
             //anchors {left:parent.left; right: parent.right;}
             width: parent.width
