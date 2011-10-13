@@ -100,7 +100,8 @@ Window {
             currentsongpage.position = list[3];
         }
         currentsongpage.length = list[4];
-        currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
+        currentsongpage.lengthtextcurrent = formatLength(list[3]);
+        currentsongpage.lengthtextcomplete = formatLength(list[4]);
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
         if(volumeslider.pressed===false){
@@ -232,11 +233,11 @@ Window {
         sec = length-temphours*3600-min*60;
         if(temphours===0)
         {
-            temp=(min)+":"+(sec<10?"0":"")+(sec);
+            temp=((min<10?"0":"")+min)+":"+(sec<10?"0":"")+(sec);
         }
         else
         {
-            temp=(temphours)+":"+(min)+":"+(sec);
+            temp=((temphours<10?"0":"")+temphours)+":"+((min<10?"0":"")+min)+":"+(sec<10?"0":"")+(sec);
         }
        // console.debug("Length formatted:" + temp);
         return temp;
