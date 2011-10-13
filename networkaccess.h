@@ -69,6 +69,7 @@ public slots:
     void playArtistAlbum(QVariant albuminfo);
     void addArtist(QString artist);
     void playArtist(QString artist);
+    void playFiles(QString fileuri);
     void playTrack(QString fileuri);
     void playTrackByNumber(int nr);
     void deleteTrackByNumer(int nr);
