@@ -1411,10 +1411,33 @@ void NetworkAccess::addArtistAlbumToPlaylist(QString artist, QString album)
 //     updateStatusInternal();
 }
 
+
+
 void NetworkAccess::addArtistAlbumToPlaylist(QVariant albuminfo)
 {
     QStringList strings = albuminfo.toStringList();
     addArtistAlbumToPlaylist(strings[0],strings[1]);
+}
+
+void NetworkAccess::playArtistAlbum(QVariant albuminfo)
+{
+    clearPlaylist();
+    addArtistAlbumToPlaylist(albuminfo);
+    playTrackByNumber(0);
+}
+
+void NetworkAccess::playArtistAlbum(QString artist, QString album)
+{
+    clearPlaylist();
+    addArtistAlbumToPlaylist(artist,album);
+    playTrackByNumber(0);
+}
+
+void NetworkAccess::playAlbum(QString album)
+{
+    clearPlaylist();
+    addAlbumToPlaylist(album);
+    playTrackByNumber(0);
 }
 
 
@@ -1441,9 +1464,10 @@ void NetworkAccess::addTrackToPlaylist(QString fileuri)
 
 
 
-//Appends song with uri and plays it back
+//Replace song with uri and plays it back
 void NetworkAccess::playTrack(QString fileuri)
 {
+    clearPlaylist();
     CommonDebug("Play request:"+fileuri.toAscii());
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
@@ -1463,7 +1487,8 @@ void NetworkAccess::playTrack(QString fileuri)
         //Get song id in playlist
 
         
-	playTrackByNumber(getStatus().playlistlength-1);
+        //playTrackByNumber(getStatus().playlistlength-1);
+        playTrackByNumber(0);
     }
     updateStatusInternal();
 }
@@ -1475,6 +1500,27 @@ void NetworkAccess::playTrackByNumber(int nr)
         QTextStream outstream(tcpsocket);
         outstream.setCodec("UTF-8");
         outstream << "play " << QString::number(nr).toAscii() << endl;
+        QString response ="";
+        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
+        {
+            tcpsocket->waitForReadyRead(READYREAD);
+            while (tcpsocket->canReadLine())
+            {
+                response = QString::fromUtf8(tcpsocket->readLine());
+
+            }
+        }
+        updateStatusInternal();
+    }
+}
+
+void NetworkAccess::deleteTrackByNumer(int nr)
+{
+    CommonDebug("Request deletion of "+nr);
+    if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+        QTextStream outstream(tcpsocket);
+        outstream.setCodec("UTF-8");
+        outstream << "delete " << QString::number(nr).toAscii() << endl;
         QString response ="";
         while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
         {
@@ -1959,6 +2005,13 @@ void NetworkAccess::addArtist(QString artist)
 
         addArtistAlbumToPlaylist(artist,albums->at(i)->getTitle());
     }
+}
+
+void NetworkAccess::playArtist(QString artist)
+{
+    clearPlaylist();
+    addArtist(artist);
+    playTrackByNumber(0);
 }
 
 void NetworkAccess::setConnectParameters(QString hostname, int port, QString password)

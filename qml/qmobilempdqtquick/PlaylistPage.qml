@@ -128,6 +128,69 @@ Page{
         flickableItem: playlist_list_view
         anchors {right:playlist_list_view.right; top:playlist_list_view.top}
     }
+    Component{
+        id:playlisttrackDelegate
+        Item {
+            id: itemItem
+            width: list_view1.width
+            height: topLayout.height+liststretch
+            Rectangle {
+                color:"black"
+                anchors.fill: parent
+                Row{
+                    id: topLayout
+                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
+                    Text {clip: true; wrapMode: Text.WrapAnywhere; text: title; color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
+                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                    list_view1.currentIndex = index
+                    if(!playing)
+                    {
+                        parseClickedPlaylist(index);
+                    }
+                    else{
+                        pageStack.push(currentsongpage);
+                    }
+                }
+                onPressAndHold: {
+                    currentPlaylistMenu.id = index;
+                    currentPlaylistMenu.playing = playing;
+                    currentPlaylistMenu.open();
+                }
+            }
+        }
+    }
+
+    ContextMenu {
+        id: currentPlaylistMenu
+        property int id;
+        property bool playing:false;
+        MenuLayout {
+            MenuItem
+            {
+                text: "Show song information"
+                visible: currentPlaylistMenu.playing
+                onClicked: pageStack.push(currentsongpage);
+            }
+            MenuItem {
+                text: "Playback track"
+                onClicked: {
+                    window.playPlaylistTrack(currentPlaylistMenu.id);
+                }
+            }
+            MenuItem {
+                text: "Delete track from playlist"
+                onClicked: {
+                    window.deletePlaylistTrack(currentPlaylistMenu.id);
+                }
+            }
+        }
+    }
 
 
 }

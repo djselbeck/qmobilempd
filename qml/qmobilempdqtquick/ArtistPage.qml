@@ -116,12 +116,35 @@ Page{
                         list_view1.currentIndex = index
                         artistClicked(artist);
                     }
+                    onPressAndHold: {
+                        artistMenu.artistname = artist;
+                        artistMenu.open();
+                    }
                 }
             }
         }
 
         SectionScroller{
             listView: artist_list_view
+        }
+
+        ContextMenu {
+            id: artistMenu
+            property string artistname;
+            MenuLayout {
+                MenuItem {
+                    text: "Add Artist"
+                    onClicked: {console.debug("Add Artist:"+artistMenu.artistname);
+                                window.addArtist(artistMenu.artistname);
+                    }
+                }
+                MenuItem {
+                    text: "Play Artist"
+                    onClicked: {console.debug("Play Artist:"+artistMenu.artistname);
+                                window.playArtist(artistMenu.artistname);
+                    }
+                }
+            }
         }
 
 

@@ -34,6 +34,9 @@ Window {
     signal addFiles(string files);
     signal addSong(string uri);
     signal addPlaylist(string name);
+    signal playAlbum(variant album);
+    signal playArtist(string artist);
+
 
     signal requestSavedPlaylists();
     signal requestSavedPlaylist(string name);
@@ -47,7 +50,6 @@ Window {
 
     // Control signals
     signal play();
-    signal playAlbum(variant album);
     signal next();
     signal prev();
     signal stop();
@@ -60,6 +62,7 @@ Window {
     signal deletePlaylist();
     signal deleteSavedPlaylist(string name);
     signal playPlaylistTrack(int index);
+    signal deletePlaylistTrack(int index);
     signal newProfile();
     signal changeProfile(variant profile);
     signal deleteProfile(int index);
@@ -452,38 +455,7 @@ Window {
             }
 
     }
-    Component{
-        id:playlisttrackDelegate
-        Item {
-            id: itemItem
-            width: list_view1.width
-            height: topLayout.height+liststretch
-            Rectangle {
-                color:"black"
-                anchors.fill: parent
-                Row{
-                    id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                    Text {clip: true; wrapMode: Text.WrapAnywhere; text: title; color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
-                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
 
-                    list_view1.currentIndex = index
-                    if(!playing)
-                    {
-                        parseClickedPlaylist(index);
-                    }
-                    else{
-                        pageStack.push(currentsongpage);
-                    }
-                }
-            }
-        }
-    }
 
 
 
@@ -596,7 +568,7 @@ Window {
         id:aboutdialog
         titleText: "About:"
         content: [ Text{color: "white"
-            text: "QMobileMPD-QML Copyright 2011 by Hendrik Borghorst"
+            text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst"
             wrapMode: "WordWrap"
             //anchors {left:parent.left; right: parent.right;}
             width: parent.width

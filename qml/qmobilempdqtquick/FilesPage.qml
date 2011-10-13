@@ -83,6 +83,20 @@ Page{
                         albumTrackClicked(title,album,artist,length,path,year,tracknr);
                     }
                 }
+                onPressAndHold: {
+                        filesMenu.filepath = (prepath=="/"? "": prepath+"/")+name;
+                    filesMenu.directory = isDirectory;
+                    if(isFile){
+                        filesMenu.title = title;
+                        filesMenu.album = album;
+                        filesMenu.artist = artist;
+                        filesMenu.length = length;
+                        filesMenu.year = year;
+                        filesMenu.nr = tracknr;
+                    }
+                        filesMenu.open();
+
+                }
             }
         }
     }
@@ -92,6 +106,39 @@ Page{
         id:filescrollbar
         flickableItem: files_list_view
         anchors {right:files_list_view.right; top:files_list_view.top}
+    }
+
+    ContextMenu {
+        id: filesMenu
+        property string filepath;
+        property string title;
+        property string album;
+        property string artist;
+        property string length;
+        property string year;
+        property int nr;
+        property bool directory:false;
+        MenuLayout {
+            MenuItem {
+                text: "Show song information"
+                visible: !filesMenu.directory
+                onClicked: {
+                    albumTrackClicked(filesMenu.title,filesMenu.album,filesMenu.artist,filesMenu.length,filesMenu.filepath,filesMenu.year,filesMenu.nr);
+                }
+            }
+            MenuItem {
+                text: filesMenu.directory ?  "Add directory" : "Add file"
+                onClicked: {
+                    window.addFiles(filesMenu.filepath);
+                }
+            }
+            MenuItem {
+                text: filesMenu.directory ?  "Playback directory" : "Playback file"
+                onClicked: {
+                           window.playSong(filesMenu.filepath);
+                }
+            }
+        }
     }
 
 }
