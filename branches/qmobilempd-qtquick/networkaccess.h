@@ -62,10 +62,16 @@ signals:
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
+    void playAlbum(QString album);
     void addArtistAlbumToPlaylist(QString artist,QString album);
+    void addArtistAlbumToPlaylist(QVariant albuminfo);
+    void playArtistAlbum(QString artist, QString album);
+    void playArtistAlbum(QVariant albuminfo);
     void addArtist(QString artist);
+    void playArtist(QString artist);
     void playTrack(QString fileuri);
     void playTrackByNumber(int nr);
+    void deleteTrackByNumer(int nr);
     void socketConnected();
     void pause();
     void next();
@@ -86,7 +92,6 @@ public slots:
     void getAlbumTracks(QString album, QString cartist);
     //Variant [Artist,Album]
     void getAlbumTracks(QVariant albuminfo);
-    void addArtistAlbumToPlaylist(QVariant albuminfo);
     void getCurrentPlaylistTracks();
     void getPlaylistTracks(QString name);
     void getDirectory(QString path);

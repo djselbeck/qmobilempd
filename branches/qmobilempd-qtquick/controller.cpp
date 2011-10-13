@@ -134,6 +134,7 @@ void Controller::connectSignals()
     connect(item,SIGNAL(requestFilesModel(QString)),this,SLOT(requestFileModel(QString)));
   //  connect(item,SIGNAL(requestCurrentPlaylist()),this,SLOT(requestCurrentPlaylist()));
     connect(item,SIGNAL(playPlaylistTrack(int)),netaccess,SLOT(playTrackByNumber(int)));
+    connect(item,SIGNAL(deletePlaylistTrack(int)),netaccess,SLOT(deleteTrackByNumer(int)));
     connect(item,SIGNAL(requestAlbum(QVariant)),netaccess,SLOT(getAlbumTracks(QVariant)));
     connect(item,SIGNAL(stop()),netaccess,SLOT(stop()));
     connect(item,SIGNAL(play()),netaccess,SLOT(pause()));
@@ -141,6 +142,7 @@ void Controller::connectSignals()
     connect(item,SIGNAL(prev()),netaccess,SLOT(previous()));
     connect(item,SIGNAL(deletePlaylist()),netaccess,SLOT(clearPlaylist()));
     connect(item,SIGNAL(addAlbum(QVariant)),netaccess,SLOT(addArtistAlbumToPlaylist(QVariant)));
+    connect(item,SIGNAL(playAlbum(QVariant)),netaccess,SLOT(playArtistAlbum(QVariant)));
     connect(item,SIGNAL(addFiles(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
     connect(item,SIGNAL(seek(int)),netaccess,SLOT(seek(int)));
     connect(this,SIGNAL(albumsReady()),item,SLOT(updateAlbumsModel()));
@@ -150,6 +152,7 @@ void Controller::connectSignals()
     connect(this,SIGNAL(savedPlaylistReady()),item,SLOT(updateSavedPlaylistModel()));
     connect(item,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
     connect(item,SIGNAL(addArtist(QString)),netaccess,SLOT(addArtist(QString)));
+    connect(item,SIGNAL(playArtist(QString)),netaccess,SLOT(playArtist(QString)));
     connect(item,SIGNAL(quit()),this,SLOT(quit()));
     connect(item,SIGNAL(savePlaylist(QString)),netaccess,SLOT(savePlaylist(QString)));
     connect(item,SIGNAL(deleteSavedPlaylist(QString)),netaccess,SLOT(deletePlaylist(QString)));
