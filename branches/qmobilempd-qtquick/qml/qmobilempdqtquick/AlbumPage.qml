@@ -83,7 +83,6 @@ Page{
             anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
             clip: true
             section.property: "sectionprop";
-           // section.criteria: ViewSection.FirstCharacter
             section.delegate: sectionHeadingAlbum
     onModelChanged: {
         console.debug("MODEL count:"+model.count);
@@ -105,6 +104,32 @@ Page{
 
     SectionScroller{
         listView: albums_list_view
+    }
+
+    Component{
+        id:albumDelegate
+        Item {
+            id: itemItem
+            width: window.width
+            height: topLayout.height+liststretch
+            Rectangle {
+                color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
+                anchors.fill: parent
+                Text{
+                    id: topLayout
+                    anchors {verticalCenter: parent.verticalCenter}
+                    text: (title===""? "No Album Tag":title); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+
+                    list_view1.currentIndex = index
+                    albumClicked(artistname,title);
+                }
+            }
+        }
     }
 
 

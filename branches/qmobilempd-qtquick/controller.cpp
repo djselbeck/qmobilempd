@@ -17,6 +17,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     playlist = 0;
     artistlist = 0;
     albumlist = 0;
+    lastplaybackstate = NetworkAccess::STOP;
     connectSignals();
     readSettings();
     qmlRegisterType<MpdArtist>();
@@ -167,7 +168,6 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(filesReady(QList<QObject*>*)),this,SLOT(updateFilesModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
-    connect(netaccess,SIGNAL(userNotification(QVariant)),item,SLOT(slotShowPopup(QVariant)));
     connect(netaccess,SIGNAL(busy()),item,SIGNAL(busy()));
     connect(netaccess,SIGNAL(ready()),item,SIGNAL(ready()));
     connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
@@ -276,6 +276,15 @@ void Controller::updateStatus(status_struct status)
             playlist->at(status.id)->setPlaying(true);
         }
     }
+    if(lastplaybackstate!=status.playing)
+    {
+        CommonDebug("Playback state changed");
+        if(status.playing==NetworkAccess::STOP&&playlist!=0&&currentsongid>=0&&currentsongid<playlist->length())
+        {
+            playlist->at(currentsongid)->setPlaying(false);
+        }
+    }
+    lastplaybackstate = status.playing;
     currentsongid = status.id;
     if(playlist==0)
         currentsongid = -1;
@@ -428,14 +437,17 @@ void Controller::connectProfile(int index)
 
 void Controller::incVolume()
 {
-    emit setVolume(volume+3);
-    volume +=3;
+    emit setVolume((volume+3>100 ? 100 : volume+3));
+    volume =(volume+3>100 ? 100 : volume+3);
+    emit sendPopup("Volume: "+ QString::number(volume)+"%");
 }
 
 void Controller::decVolume()
 {
-    emit setVolume(volume-3);
-    volume -=3;
+    emit setVolume((volume-3<0 ? 0 : volume-3));
+    volume = (volume-3<0 ? 0 : volume-3);
+    emit sendPopup("Volume: "+ QString::number(volume)+"%");
+
 }
 void Controller::mediaKeyHandle(int key)
 {

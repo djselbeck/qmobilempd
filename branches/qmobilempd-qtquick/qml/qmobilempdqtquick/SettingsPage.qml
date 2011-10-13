@@ -10,18 +10,12 @@ Page{
     property int index;
     tools:ToolBarLayout {
         id: settingsTools
-//            ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-        //ToolButton { iconSource: "toolbar-cancel"; onClicked: pageStack.pop()  }
             ToolButton { iconSource: "toolbar-back" ;onClicked: {
-//                        netaccess.connectToHost(hostnameInput.text,portInput.text);
-//                    window.setHostname(hostnameInput.text);
-//                    window.setPassword(passwordInput.text);
-//                    window.setPort(portInput.text);
-//                    window.connectToServer();
                     console.debug("Change settings profile index:" +index);
                     window.changeProfile([index,profilename,hostname,password,port]);
                     pageStack.pop();
-                } }
+                }
+            }
             ToolButton {text: "Connect"; onClicked: {
                     window.changeProfile([index,profilename,hostname,password,port]);
                     window.connectProfile(index);
@@ -65,5 +59,4 @@ Page{
         top: 65536
         bottom: 1
     }
-
 }

@@ -26,41 +26,45 @@ Window {
     signal setPort(int port);
     signal setPassword(string password);
     signal setVolume(int volume);
-    signal connectToServer();
-    signal requestCurrentPlaylist();
-    signal requestArtists();
-    signal requestArtistAlbums(string artist);
     signal setCurrentArtist(string artist);
+    signal connectToServer();
     //Variant in format [artistname,albumname]
-    signal requestAlbum(variant album);
     signal addAlbum(variant album);
     signal addArtist(string artist);
-    signal playAlbum(variant album);
-    signal savePlaylist(string name);
+    signal addFiles(string files);
+    signal addSong(string uri);
+    signal addPlaylist(string name);
+
     signal requestSavedPlaylists();
     signal requestSavedPlaylist(string name);
-
     signal requestAlbums();
+    signal requestAlbum(variant album);
+    signal requestArtists();
+    signal requestArtistAlbums(string artist);
     signal requestFilesPage(string files);
     signal requestFilesModel(string files);
-    signal addFiles(string files);
+    signal requestCurrentPlaylist();
+
+    // Control signals
     signal play();
+    signal playAlbum(variant album);
     signal next();
     signal prev();
     signal stop();
+    signal seek(int position);
+    signal setRepeat(bool rep);
+    signal setShuffle(bool shfl);
+
+    //Playlist signals
+    signal savePlaylist(string name);
     signal deletePlaylist();
     signal deleteSavedPlaylist(string name);
     signal playPlaylistTrack(int index);
-    signal seek(int position);
     signal newProfile();
     signal changeProfile(variant profile);
     signal deleteProfile(int index);
     signal connectProfile(int index);
     signal playSong(string uri);
-    signal addSong(string uri);
-    signal addPlaylist(string name);
-    signal setRepeat(bool rep);
-    signal setShuffle(bool shfl);
 
     signal quit();
 
@@ -89,12 +93,16 @@ Window {
         currentsongpage.title = list[0];
         currentsongpage.album = list[1];
         currentsongpage.artist = list[2];
-        currentsongpage.position = list[3];
+        if(currentsongpage.pospressed===false) {
+            currentsongpage.position = list[3];
+        }
         currentsongpage.length = list[4];
         currentsongpage.lengthtext = "("+formatLength(list[3])+"/"+formatLength(list[4])+")";
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
-        volumeslider.value = list[7];
+        if(volumeslider.pressed===false){
+            volumeslider.value = list[7];
+        }
         currentsongpage.repeat = (list[8]=="0" ?  false:true);
         currentsongpage.shuffle = (list[9]=="0" ?  false:true);
         currentsongpage.nr = (list[10]===0? "":list[10]);
@@ -128,19 +136,6 @@ Window {
     function filesClicked(path)
     {
         console.debug("Files clicked "+path + "/");
-        //pageStack.currentPage.listmodel = filesModel;
-//        popuptext.text = "Please wait";
-//        infobanner.text = qsTr("Please Wait");
-//        infobanner.open();
-        busyindicator.running=true;
-        busyindicator.visible=true;
-//        popuptext.visible = "true";
-//        popupblendin.start();
-//        var filescomponent = Qt.createComponent("FilesPage.qml");
-//        var filesobject = filescomponent.createObject(window);
-
-//        pageStack.push(filesobject);
-//        pageStack.currentPage.filepath = path;
         lastpath = path;
         window.requestFilesPage(path);
     }
@@ -149,8 +144,6 @@ Window {
     {
         console.debug("Playlist model updated");
         blockinteraction.enabled=false;
-        playlistbusyindicator.visible=false;
-        playlistbusyindicator.running=false;
         playlistpage.listmodel = playlistModel;
         if(pageStack.currentPage == playlistpage)
         {
@@ -165,8 +158,6 @@ Window {
         var albumpageobject = albumpagecomponent.createObject(window);
         albumpageobject.listmodel = albumsModel;
         albumpageobject.artistname = artistname;
-        busyindicator.running=false;
-        busyindicator.visible=false;
         pageStack.push(albumpageobject);
         infobanner.close();
     }
@@ -175,8 +166,6 @@ Window {
         var component = Qt.createComponent("ArtistPage.qml");
         var object = component.createObject(window);
         object.listmodel = artistsModel;
-        busyindicator.running=false;
-        busyindicator.visible=false;
         pageStack.push(object);
         infobanner.close();
     }
@@ -219,8 +208,6 @@ Window {
         filesobject.listmodel = filesModel;
         filesobject.filepath = lastpath;
         infobanner.close();
-        busyindicator.running=false;
-        busyindicator.visible=false;
         pageStack.push(filesobject);
 
     }
@@ -271,17 +258,8 @@ Window {
     function slotShowPopup(string)
     {
         console.debug("POPUP: "+string+" requested");
-        popuptext.text=string;
         infobanner.text=string;
         infobanner.open();
-//        popuptext.visible=true;
-//        //popuptext.textwidth = popuptext.textpaintedwidth;
-////        if(popuptext.textwidth>window.width)
-////        {
-////            popuptext.textwidth = window.width;
-////        }
-//        popupblendin.start();
-//        popupanimationtimer.start();
     }
 
     function parseClickedPlaylist(index)
@@ -309,8 +287,6 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
-                busyindicator.running=true;
-                busyindicator.visible=true;
                 artistname = "";
 
                 window.requestAlbums();
@@ -318,8 +294,6 @@ Window {
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
-                busyindicator.running=true;
-                busyindicator.visible=true;
                 window.requestArtists();
 
             }
@@ -513,69 +487,6 @@ Window {
 
 
 
-    Component{
-        id:albumDelegate
-        Item {
-            id: itemItem
-            width: window.width
-            height: topLayout.height+liststretch
-            Rectangle {
-                color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
-                anchors.fill: parent
-                Text{
-                    id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter}
-                    text: (title===""? "No Album Tag":title); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
-                    //Text {text:artist; color:"grey";font.pointSize:10;}
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-
-                    list_view1.currentIndex = index
-                    albumClicked(artistname,title);
-                }
-            }
-        }
-    }
-
-    Rectangle{
-        id: popuptext
-        property alias text: textoutput.text
-        color: "white"
-        width: window.width
-        height: textoutput.height
-                x:0
-        y: 0
-        opacity: 0
-        visible: false
-        Text{
-            id: textoutput
-            text: "TEST POPUP"
-            color: "black"
-            font.pointSize: 10
-            horizontalAlignment: "AlignHCenter"
-            wrapMode: "WrapAnywhere"
-            //anchors.fill: parent
-            width: parent.width
-        }
-       // anchors { left: parent.left; right: parent.right; }
-
-    }
-
-
-    PropertyAnimation {id: popupblendin; target: popuptext; properties: "opacity"; to: "0.8"; duration: 500}
-    PropertyAnimation {id: popupblendout
-                target: popuptext
-                properties: "opacity"
-                to: "0"
-                duration: 500
-    onCompleted: {
-                popuptext.visible=false;
-                }
-        }
-
     PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500}
     PropertyAnimation {id: volumeblendout
                 target: volumeslider
@@ -587,18 +498,11 @@ Window {
                 }
         }
 
-    Timer{
-        id: popupanimationtimer;
-        interval: 3000;
-        onTriggered: {
-            popupblendout.start();
-        }
-    }
 
     Timer{
         id:updatevolumetimer
         repeat: true
-        interval: 180
+        interval: 200
         onTriggered: {
             console.debug("Volume timer triggered with value:"+volumeslider.value);
             window.setVolume(volumeslider.value);
@@ -644,15 +548,9 @@ Window {
 
     }
 
-
-    onFocusChanged: {
-
-    }
-
     InfoBanner{
         id: infobanner
         text: ""
-        iconSource: "qtg_fr_popup_infobanner"
     }
     MouseArea {
          anchors.fill: parent
@@ -662,15 +560,6 @@ Window {
         id:blockinteraction
         anchors.fill: parent
         enabled: false
-    }
-
-    BusyIndicator{
-        id: busyindicator
-        running:false
-        visible: false
-        anchors.centerIn: parent
-        width: 72
-        height: 72
     }
 
     BusyIndicator{
@@ -713,6 +602,7 @@ Window {
             width: parent.width
         }]
         onClickedOutside: {aboutdialog.close();}
+
 
     }
 
