@@ -7,7 +7,8 @@ Page {
         property alias album: albumText.text;
         property alias artist: artistText.text;
         property alias length: positionSlider.maximumValue;
-        property alias lengthtext:lengthText.text;
+        property alias lengthtextcurrent:lengthTextcurrent.text;
+        property alias lengthtextcomplete:lengthTextcomplete.text;
         property alias position: positionSlider.value;
         property alias bitrate: bitrateText.text;
         property alias shuffle: shufflebtn.checked;
@@ -57,8 +58,6 @@ Page {
                 Text{id:albumText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 Text{text: "Artist:";color:"grey";font.pointSize: fontsizegrey}
                 Text{id:artistText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Length:";color:"grey";font.pointSize: fontsizegrey}
-                Text{id:lengthText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 Text{text: "Nr.:";color:"grey";font.pointSize: fontsizegrey}
                 Text{id:nrText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
                 Text{text: "Bitrate:";color:"grey";font.pointSize: fontsizegrey}
@@ -109,6 +108,7 @@ Page {
                 stepSize: 1;
                 orientation: Qt.Horizontal
                 valueIndicatorVisible: true
+                valueIndicatorText:formatLength(value)
                 onPressedChanged: {
                     if(!pressed)
                     {
@@ -116,10 +116,21 @@ Page {
 
                     }
                 }
-                onValueChanged: {valueIndicatorText=formatLength(value);}
 
-                anchors {left:parent.left; right: parent.right; bottom:controlrow.top}
+                anchors {left:parent.left; right: parent.right; bottom:positionfield.top}
+                Text{id:lengthTextcurrent ;text: "";color:"white";font.pointSize:7;wrapMode: "WordWrap";anchors {left:parent.left; bottom:parent.bottom}}
+                Text{id:lengthTextcomplete ; text: "";color:"white";font.pointSize:7;wrapMode: "WordWrap";anchors {right: parent.right; bottom:parent.bottom}}
                 }
+            Rectangle
+            {
+                id:positionfield
+                color: "black"
+                height: childrenRect.height
+                anchors {left:parent.left; right: parent.right; bottom:controlrow.top}
+//                Text{id:lengthTextcurrent ;text: "";color:"white";font.pointSize:7;wrapMode: "WordWrap";anchors {left:parent.left;}}
+//                Text{id:lengthTextcomplete ;text: "";color:"white";font.pointSize:7;wrapMode: "WordWrap";anchors {right: parent.right;}}
+            }
+
 //        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
 
     }

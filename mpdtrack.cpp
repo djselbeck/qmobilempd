@@ -88,11 +88,11 @@ QString MpdTrack::getLengthFormated()
     sec = length-hours*3600-min*60;
     if(hours==0)
     {
-        temp=QString::number(min)+":"+(sec<10?"0":"")+QString::number(sec);
+        temp=(min<10?"0":"")+QString::number(min)+":"+(sec<10?"0":"")+QString::number(sec);
     }
     else
     {
-        temp=QString::number(hours)+":"+QString::number(min)+":"+QString::number(sec);
+        temp=(hours<10?"0":"")+QString::number(hours)+":"+(min<10?"0":"")+QString::number(min)+":"+(sec<10?"0":"")+QString::number(sec);
     }
     return temp;
 }
