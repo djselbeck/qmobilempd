@@ -60,7 +60,6 @@ bool NetworkAccess::connectToHost(QString hostname, quint16 port,QString passwor
 
     }
     emit ready();
-    emit userNotification(tr("Could not connect to Server"));
     return false;
 }
 
@@ -616,7 +615,6 @@ void NetworkAccess::getCurrentPlaylistTracks()
     emit busy();
     QList<MpdTrack*> *temptracks = new QList<MpdTrack*>();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
-        emit userNotification(tr("Getting current playlist. Please standby"));
         emit startupdateplaylist();
         QString response ="";
         MpdTrack *temptrack=NULL;
@@ -1598,12 +1596,10 @@ void NetworkAccess::savePlaylist(QString name)
         {
             CommonDebug("Playlist "+ name +" saved");
             emit ready();
-            emit userNotification(tr("Playlist saved successfully"));
             return;
         }
         else {
             emit ready();
-            emit userNotification(tr("There was an error during saving of current playlist"));
             return;
         }
 
@@ -1630,11 +1626,9 @@ void NetworkAccess::deletePlaylist(QString name)
         if (response.left(2)=="OK")
         {
             CommonDebug("Playlist "+ name +" saved");
-            emit userNotification(tr("Playlist removed successfully"));
             return;
         }
         else {
-            emit userNotification(tr("There was an error during removal of current playlist"));
             return;
         }
 
@@ -1950,8 +1944,6 @@ bool NetworkAccess::connected()
     } else {
         return false;
     }
-
-
 }
 
 void NetworkAccess::errorHandle()

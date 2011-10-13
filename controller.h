@@ -74,6 +74,7 @@ private:
     quint32 playlistversion;
     int currentsongid;
     int volume;
+    int lastplaybackstate;
     QThreadEx *networkthread;
     QList<ServerProfile*> *serverprofiles;
     void readSettings();

@@ -14,7 +14,10 @@ Page {
         property alias repeat: repeatbtn.checked;
         property alias nr: nrText.text;
         property alias uri: fileText.text;
+        property alias pospressed: positionSlider.pressed;
         property bool playing;
+        property int fontsize:8;
+        property int fontsizegrey:7;
 
 
         //tools: backTools
@@ -48,20 +51,20 @@ Page {
                 id: infocolumn
                 //anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
                 anchors {left:parent.left; right: parent.right;}
-                Text{text: "Title:";color:"grey"}
-                Text{id:titleText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Album:";color:"grey"}
-                Text{id:albumText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Artist:";color:"grey"}
-                Text{id:artistText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Length:";color:"grey"}
-                Text{id:lengthText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Nr.:";color:"grey"}
-                Text{id:nrText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "Bitrate:";color:"grey"}
-                Text{id:bitrateText ;text: "";color:"white";font.pointSize:10;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-                Text{text: "FileUri:";color:"grey"}
-                Text{id:fileText ;text: "";color:"white";font.pointSize:10;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Title:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:titleText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Album:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:albumText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Artist:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:artistText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Length:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:lengthText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Nr.:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:nrText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "Bitrate:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:bitrateText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+                Text{text: "FileUri:";color:"grey";font.pointSize: fontsizegrey}
+                Text{id:fileText ;text: "";color:"white";font.pointSize:fontsize;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
                 clip: true;
             }
         }

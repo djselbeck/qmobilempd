@@ -84,6 +84,8 @@ Page{
         delegate: playlisttrackDelegate
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
+        highlightMoveDuration: 300
+
     }
     Rectangle {
         id:headingrect

@@ -52,7 +52,6 @@ signals:
     void filesReady(QList<QObject*>*);
     void artistAlbumsReady(QList<QObject*>*);
     void albumTracksReady(QList<QObject*>*);
-    void userNotification(QVariant);
     void savedPlaylistsReady(QStringList*);
     void savedplaylistTracksReady(QList<QObject*>*);
 
