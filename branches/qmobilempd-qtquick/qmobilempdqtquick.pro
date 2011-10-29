@@ -25,7 +25,7 @@ symbian {
     TARGET.CAPABILITY += NetworkServices
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
-    ICON = icon.svg
+    ICON = icon_converted.svg
     vendor_info += "Hendrik Borghorst"
 }
 
