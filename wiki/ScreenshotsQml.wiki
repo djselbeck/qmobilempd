@@ -1,0 +1,29 @@
+#QML Screenshots
+
+=Symbian Qml/QT Quick Screenshots=
+
+
+===MainMenu==
+
+http://qmobilempd.googlecode.com/files/MainMenu.jpg
+
+
+===Current Song===
+
+http://qmobilempd.googlecode.com/files/CurrentSong.jpg
+
+===Server selection===
+
+http://qmobilempd.googlecode.com/files/SelectServer.jpg
+
+===Context Menu===
+
+http://qmobilempd.googlecode.com/files/ContextMenu.jpg
+
+===Server settings===
+
+http://qmobilempd.googlecode.com/files/ServerSettings.jpg
+
+===Filebrowser===
+
+http://qmobilempd.googlecode.com/files/FileBrowser.jpg
