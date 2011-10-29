@@ -23,6 +23,8 @@ Window {
     property bool shuffle;
     property bool quitbtnenabled;
     property bool connected;
+    //property string selectcolor: "#000077";
+    property string selectcolor: "red";
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -74,7 +76,19 @@ Window {
     //Clears playlist before adding
     signal playFiles(string uri);
 
+
     signal quit();
+
+    function slotConnected()
+    {
+        connected = true;
+        console.debug("Slot connected called");
+    }
+
+    function slotDisconnected()
+    {
+        connected = false;
+    }
 
     function busy()
     {
@@ -106,7 +120,7 @@ Window {
         }
         currentsongpage.length = list[4];
         currentsongpage.lengthtextcurrent = formatLength(list[3]);
-        currentsongpage.lengthtextcomplete = formatLength(list[4]);
+        currentsongpage.lengthtextcomplete = list[4]==0 ? "": formatLength(list[4]);
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
         if(volumeslider.pressed===false){
@@ -117,6 +131,7 @@ Window {
         currentsongpage.nr = (list[10]===0? "":list[10]);
         currentsongpage.uri = list[11];
         playlistpage.songid = list[12];
+        console.debug("connected:"+connected);
     }
 
     function savedPlaylistClicked(modelData)
@@ -374,7 +389,7 @@ Window {
 
     Page {
         id: mainPage
-        Text{id: hometext;color: "grey"; text:qsTr("QMobileMPD-QML"); horizontalAlignment: "AlignHCenter";font.pointSize: listfontsize
+        Text{id: hometext;color: "grey"; text:(connected ? " Connected" : "Disconnected"); horizontalAlignment: "AlignHCenter";font.pointSize: listfontsize
         anchors {left: parent.left;right:parent.right;top:parent.top;}  }
                 ListView{
                     id: list_view1
@@ -414,11 +429,18 @@ Window {
                     id:itemDelegate
                     Item {
                         id: itemItem
+                        property alias color:rectangle.color
                         width: list_view1.width
                         height: 50
-                        Row{
-                            id: topLayout
-                            Text { text: name; color:"white";font.pointSize:12;}
+                        enabled: (ident ==="updatedb"? (connected) : true)
+                        Rectangle {
+                            id: rectangle
+                            color:"black"
+                            anchors.fill: parent
+                            Row{
+                                id: topLayout
+                                Text { text: name; color:(ident ==="updatedb"? (connected ? "white" : "darkgrey") : "white");font.pointSize:12;}
+                            }
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -427,8 +449,18 @@ Window {
                                 list_view1.currentIndex = index
                                 parseClicked(index);
                             }
+                            onPressed: {
+                                itemItem.color = selectcolor;
+                            }
+                            onReleased: {
+                                itemItem.color = "black";
+                            }
+                            onCanceled: {
+                                itemItem.color = "black";
+                            }
                         }
                     }
+
                 }
 
 

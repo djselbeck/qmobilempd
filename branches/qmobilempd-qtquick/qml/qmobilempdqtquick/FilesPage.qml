@@ -60,7 +60,9 @@ Page{
             id: itemItem
             width: window.width
             height: topLayout.height+liststretch
+            property alias color: rectangle.color
             Rectangle {
+                id: rectangle
                 color: (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Text{
@@ -96,6 +98,15 @@ Page{
                     }
                         filesMenu.open();
 
+                }
+                onPressed: {
+                    itemItem.color = selectcolor;
+                }
+                onReleased: {
+                    itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
+                }
+                onCanceled: {
+                    itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
             }
         }

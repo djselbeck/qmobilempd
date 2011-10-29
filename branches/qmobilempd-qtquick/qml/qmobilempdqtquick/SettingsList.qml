@@ -58,9 +58,15 @@ Page{
             id: itemItem
             width: list_view1.width
             height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: name; color:"white";font.pointSize:listfontsize}
+            property alias color:rectangle.color
+            Rectangle {
+                id: rectangle
+                color:"black"
+                anchors.fill: parent
+                Row{
+                    id: topLayout
+                    Text { text: name; color:"white";font.pointSize:listfontsize}
+                }
             }
             MouseArea {
                 anchors.fill: parent
@@ -75,6 +81,15 @@ Page{
                     object.index = settings_list_view.currentIndex;
                     console.debug("Loaded settings index "+index);
                     pageStack.push(object);
+                }
+                onPressed: {
+                    itemItem.color = selectcolor;
+                }
+                onReleased: {
+                    itemItem.color = "black";
+                }
+                onCanceled: {
+                    itemItem.color = "black";
                 }
             }
         }

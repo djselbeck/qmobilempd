@@ -86,7 +86,9 @@ Page{
                 id: itemItem
                 width: list_view1.width
                 height: topLayout.height+liststretch
+                property alias color:rectangle.color
                 Rectangle {
+                    id: rectangle
                     color:"black"
                     anchors.fill: parent
                     Row{
@@ -94,7 +96,7 @@ Page{
                         anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
                         Text { text: ((tracknr===0 ? "":tracknr+"."));color:"white";font.pointSize: 8}
                         Text { text: (title==="" ? filename : title); color:"white";font.pointSize:8}
-                        Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
+                        Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
                     }
                 }
                 MouseArea {
@@ -103,6 +105,15 @@ Page{
 
                         list_view1.currentIndex = index
                         albumTrackClicked(title,album,artist,lengthformated,uri,year,tracknr);
+                    }
+                    onPressed: {
+                        itemItem.color = selectcolor;
+                    }
+                    onReleased: {
+                        itemItem.color = "black";
+                    }
+                    onCanceled: {
+                        itemItem.color = "black";
                     }
                 }
             }

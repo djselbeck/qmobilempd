@@ -16,7 +16,7 @@ class MpdTrack : public QObject
     Q_PROPERTY(QString title READ getTitle )
     Q_PROPERTY(QString uri READ getFileUri )
     Q_PROPERTY(QString lengthformated READ getLengthFormated )
-    Q_PROPERTY(QString length READ getLength )
+    Q_PROPERTY(int length READ getLength )
     Q_PROPERTY(QString artist READ getArtist )
     Q_PROPERTY(QString album READ getAlbum )
     Q_PROPERTY(bool playing READ getPlaying NOTIFY playingchanged )
@@ -40,7 +40,7 @@ public:
     QString getFileName() {
         QStringList splitted;
         splitted = getFileUri().split('/');
-        return splitted.last();
+        return (splitted.last() !="" ? splitted.last() : getFileUri());
     }
 
     int getTrackNr();

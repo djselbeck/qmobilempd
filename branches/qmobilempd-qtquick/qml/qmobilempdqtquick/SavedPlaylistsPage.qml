@@ -39,15 +39,30 @@ Page{
             id: itemItem
             width: list_view1.width
             height: topLayout.height
-            Row{
-                id: topLayout
-                Text { text: modelData; color:"white";font.pointSize:10;}
+            property alias color:rectangle.color
+            Rectangle {
+                id: rectangle
+                color:"black"
+                anchors.fill: parent
+                Row{
+                    id: topLayout
+                    Text { text: modelData; color:"white";font.pointSize:10;}
+                }
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
                     console.debug("Playlist:"+modelData+" clicked");
                     window.savedPlaylistClicked(modelData);
+                }
+                onPressed: {
+                    itemItem.color = selectcolor;
+                }
+                onReleased: {
+                    itemItem.color = "black";
+                }
+                onCanceled: {
+                    itemItem.color = "black";
                 }
             }
         }
