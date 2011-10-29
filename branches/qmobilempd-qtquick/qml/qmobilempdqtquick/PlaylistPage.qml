@@ -40,7 +40,7 @@ Page{
                     }
                 }
                 ToolButton {
-                    iconSource: "icons/document-save.png"
+                    iconSource: "icons/document-save.svg"
                     onClicked: {
                         playlist_list_view.visible=false;
 
@@ -48,7 +48,7 @@ Page{
                     }
                 }
                 ToolButton{
-                    iconSource: "icons/document-open.png"
+                    iconSource: "icons/playlist.svg"
                     onClicked: {
                         window.requestSavedPlaylists();
                     }
@@ -142,7 +142,7 @@ Page{
                 Row{
                     id: topLayout
                     anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                    Text {clip: true; wrapMode: Text.WrapAnywhere; text: title; color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
+                    Text {clip: true; wrapMode: Text.WrapAnywhere; text:  (title==="" ? filename : title); color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
                     Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
                 }
             }

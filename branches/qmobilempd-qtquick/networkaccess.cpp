@@ -2018,7 +2018,7 @@ void NetworkAccess::suspendUpdates()
     }
 }
 
-void NetworkAccess::setUpdateInterval(quint16 ms)
+void NetworkAccess::setUpdateInterval(int ms)
 {
     updateinterval = ms;
     if (statusupdater->isActive())

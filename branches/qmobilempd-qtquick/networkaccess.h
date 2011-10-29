@@ -102,6 +102,8 @@ public slots:
     void savePlaylist(QString name);
     void addPlaylist(QString name);
     void deletePlaylist(QString name);
+    void setUpdateInterval(int ms);
+
 
 protected slots:
     void connectedtoServer();
