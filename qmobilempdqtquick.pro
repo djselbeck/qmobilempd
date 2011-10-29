@@ -25,7 +25,8 @@ symbian {
     TARGET.CAPABILITY += NetworkServices
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
-    vendor_info = "Hendrik Borghorst"
+    ICON = icon.svg
+    vendor_info += "Hendrik Borghorst"
 }
 
 # If your application uses the Qt Mobility libraries, uncomment the following
@@ -82,7 +83,7 @@ HEADERS += \
 
 
 
-VERSION = 1.0.2
+VERSION = 1.0.3
 
 
 

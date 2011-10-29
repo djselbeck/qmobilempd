@@ -82,7 +82,7 @@ Page {
             ToolButton{
                 id: repeatbtn
                 //text: "Repeat"
-                iconSource: "icons/icon-m-toolbar-repeat-white.png"
+                iconSource: "icons/repeat.svg"
                 checkable: true
                 onClicked: {
                     window.setRepeat(checked);
@@ -91,7 +91,7 @@ Page {
             ToolButton{
                 id: shufflebtn
 
-                iconSource: "icons/icon-m-toolbar-shuffle-white.png"
+                iconSource: "icons/shuffle.svg"
                 checkable: true
                 onClicked: {
                     window.setShuffle(checked);

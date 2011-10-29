@@ -23,8 +23,7 @@ Window {
     property bool shuffle;
     property bool quitbtnenabled;
     property bool connected;
-    //property string selectcolor: "#000077";
-    property string selectcolor: "red";
+    property string selectcolor: "#000077";
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -131,7 +130,6 @@ Window {
         currentsongpage.nr = (list[10]===0? "":list[10]);
         currentsongpage.uri = list[11];
         playlistpage.songid = list[12];
-        console.debug("connected:"+connected);
     }
 
     function savedPlaylistClicked(modelData)
@@ -359,7 +357,7 @@ Window {
         var pobject = pcomponent.createObject(window);
         playlistpage = pobject;
         playbuttoniconsource = "toolbar-mediacontrol-play";
-        volumebuttoniconsource = "icons/audio-volume-high.png"
+        volumebuttoniconsource = "icons/volume.svg"
         var component = Qt.createComponent("SettingsList.qml");
         var object = component.createObject(window);
         settingslist = object;
@@ -466,7 +464,7 @@ Window {
 
         tools: ToolBarLayout {
             id: pageSpecificTools
-            ToolButton { iconSource: enabled ? "toolbar-back":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
+            ToolButton { iconSource: enabled ? "icons/close_stop.svg":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
 
             }
 

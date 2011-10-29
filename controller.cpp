@@ -197,6 +197,7 @@ void Controller::connectSignals()
     connect(&volDecTimer,SIGNAL(timeout()),this,SLOT(decVolume()));
     connect(&volIncTimer,SIGNAL(timeout()),this,SLOT(incVolume()));
     connect(QApplication::instance(),SIGNAL(focusChanged(QWidget*,QWidget*)),this,SLOT(focusChanged(QWidget*,QWidget*)));
+    connect(this,SIGNAL(setUpdateInterval(int)),netaccess,SLOT(setUpdateInterval(int)));
 }
 
 void Controller::setPassword(QString password)
@@ -505,10 +506,10 @@ void Controller::focusChanged(QWidget *old, QWidget *now){
     if(now==0)
     {
         CommonDebug("Focus lost");
-        netaccess->setUpdateInterval(25000);
+        emit setUpdateInterval(25000);
     }
     else{
         CommonDebug("Focus gained");
-        netaccess->setUpdateInterval(1000);
+        emit setUpdateInterval(1000);
     }
 }

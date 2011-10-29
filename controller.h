@@ -46,6 +46,7 @@ signals:
     void savedPlaylistReady();
     void serverProfilesUpdated();
     void setVolume(int);
+    void setUpdateInterval(int);
 
 
 

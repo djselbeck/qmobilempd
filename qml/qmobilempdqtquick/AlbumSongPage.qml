@@ -115,6 +115,30 @@ Page{
                     onCanceled: {
                         itemItem.color = "black";
                     }
+                    onPressAndHold: {
+                        itemItem.color = "black";
+                        songmenu.uri = uri;
+                        songmenu.open();
+                    }
+                }
+            }
+        }
+
+        ContextMenu {
+            id: songmenu
+            property string uri;
+            MenuLayout {
+                MenuItem {
+                    text: "Playback track"
+                    onClicked: {
+                        window.playSong(songmenu.uri);
+                    }
+                }
+                MenuItem {
+                    text: "Add track to playlist"
+                    onClicked: {
+                        window.addSong(songmenu.uri);
+                    }
                 }
             }
         }
