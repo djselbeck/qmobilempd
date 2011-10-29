@@ -112,7 +112,9 @@ Component{
         id: itemItem
         width: window.width
         height: topLayout.height+liststretch
+        property alias color:rectangle.color
         Rectangle {
+            id: rectangle
             color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
             anchors.fill: parent
             Text{
@@ -133,6 +135,15 @@ Component{
                 albumMenu.albumtitle = title;
                 albumMenu.artistname = artistname;
                 albumMenu.open();
+            }
+            onPressed: {
+                itemItem.color = selectcolor;
+            }
+            onReleased: {
+                itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
+            }
+            onCanceled: {
+                itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
             }
 
         }

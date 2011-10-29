@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QWidget>
 #include "mpdtrack.h"
 
 #include "qmlapplicationviewer.h"
@@ -27,6 +28,7 @@ public:
     Controller(QmlApplicationViewer *viewer,QObject *parent = 0);
     void connectSignals();
 public slots:
+    void focusChanged(QWidget *old, QWidget *now);
 
 signals:
     void sendPopup(QVariant text);
@@ -103,6 +105,9 @@ private slots:
     void connectProfile(int index);
     void updateSavedPlaylistsModel(QStringList*);
     void updateSavedPlaylistModel(QList<QObject*>* list);
+    void applicationActivate();
+    void applicationDeactivate();
+
 
 
 

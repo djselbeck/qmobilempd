@@ -74,18 +74,35 @@ Page{
             Item {
                 id: itemItem
                 width: list_view1.width
-                height: topLayout.height
-                Row{
-                    id: topLayout
-                    Text { text: title; color:"white";font.pointSize:10}
-                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:10}
+                height: topLayout.height+liststretch
+
+                property alias color:rectangle.color
+                Rectangle {
+                    id: rectangle
+                    color:"black"
+                    anchors.fill: parent
+                    Row{
+                        id: topLayout
+                        anchors {verticalCenter: parent.verticalCenter}
+                        Text { text: (title==="" ? filename : title); color:"white";font.pointSize:8}
+                        Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
+                    }
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
 
                         list_view1.currentIndex = index
-                        albumTrackClicked(title,album,artist,lengthformated,uri);
+                        albumTrackClicked(title,album,artist,lengthformated,uri,year,tracknr);
+                    }
+                    onPressed: {
+                        itemItem.color = selectcolor;
+                    }
+                    onReleased: {
+                        itemItem.color = "black";
+                    }
+                    onCanceled: {
+                        itemItem.color = "black";
                     }
                 }
             }

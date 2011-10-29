@@ -134,20 +134,21 @@ Page{
             id: itemItem
             width: list_view1.width
             height: topLayout.height+liststretch
+            property alias color:rectangle.color
             Rectangle {
+                id: rectangle
                 color:"black"
                 anchors.fill: parent
                 Row{
                     id: topLayout
                     anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
                     Text {clip: true; wrapMode: Text.WrapAnywhere; text: title; color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
-                    Text { text: " ("+lengthformated+")"; color:"white";font.pointSize:8}
+                    Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
                 }
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-
                     list_view1.currentIndex = index
                     if(!playing)
                     {
@@ -158,10 +159,21 @@ Page{
                     }
                 }
                 onPressAndHold: {
+                    itemItem.color = "black";
                     currentPlaylistMenu.id = index;
                     currentPlaylistMenu.playing = playing;
                     currentPlaylistMenu.open();
                 }
+                onPressed: {
+                    itemItem.color = selectcolor;
+                }
+                onReleased: {
+                    itemItem.color = "black";
+                }
+                onCanceled: {
+                    itemItem.color = "black";
+                }
+
             }
         }
     }

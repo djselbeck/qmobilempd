@@ -170,6 +170,8 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(filesReady(QList<QObject*>*)),this,SLOT(updateFilesModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
     connect(netaccess,SIGNAL(disconnected()),this,SLOT(disconnectedToServer()));
+    connect(netaccess,SIGNAL(connectionestablished()),item,SLOT(slotConnected()));
+    connect(netaccess,SIGNAL(disconnected()),item,SLOT(slotDisconnected()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(busy()),item,SIGNAL(busy()));
     connect(netaccess,SIGNAL(ready()),item,SIGNAL(ready()));
@@ -194,6 +196,7 @@ void Controller::connectSignals()
     connect(this,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
     connect(&volDecTimer,SIGNAL(timeout()),this,SLOT(decVolume()));
     connect(&volIncTimer,SIGNAL(timeout()),this,SLOT(incVolume()));
+    connect(QApplication::instance(),SIGNAL(focusChanged(QWidget*,QWidget*)),this,SLOT(focusChanged(QWidget*,QWidget*)));
 }
 
 void Controller::setPassword(QString password)
@@ -257,14 +260,11 @@ void Controller::requestAlbum(QVariant array)
 
 void Controller::connectedToServer()
 {
-    viewer->rootContext()->setContextProperty("connected",QVariant::fromValue(true));
     emit sendPopup(tr("Connected to server"));
 }
 
 void Controller::disconnectedToServer()
-{
-    viewer->rootContext()->setContextProperty("connected",QVariant::fromValue(false));
-    emit sendPopup(tr("Disconnected from server"));
+{    emit sendPopup(tr("Disconnected from server"));
 }
 
 void Controller::updateStatus(status_struct status)
@@ -487,4 +487,28 @@ void Controller::mediaKeyReleased(int key)
         volDecTimer.stop();
     if(key == MediaKeysObserver::EVolIncKey&&volIncTimer.isActive())
         volIncTimer.stop();
+}
+void Controller::applicationActivate()
+{
+    CommonDebug("Application activate");
+    netaccess->setUpdateInterval(25000);
+
+}
+
+void Controller::applicationDeactivate()
+{
+    CommonDebug("Application deactivate");
+    netaccess->setUpdateInterval(1000);
+}
+
+void Controller::focusChanged(QWidget *old, QWidget *now){
+    if(now==0)
+    {
+        CommonDebug("Focus lost");
+        netaccess->setUpdateInterval(25000);
+    }
+    else{
+        CommonDebug("Focus gained");
+        netaccess->setUpdateInterval(1000);
+    }
 }

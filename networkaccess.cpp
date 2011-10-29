@@ -825,7 +825,7 @@ void NetworkAccess::getPlaylistTracks(QString name)
         if (temptrack!=NULL)
         {
             temptracks->append(temptrack);
-            CommonDebug("add Track:");
+            CommonDebug("add Trackk:"+temptrack->getFileName());
         }
     }
     emit ready();
