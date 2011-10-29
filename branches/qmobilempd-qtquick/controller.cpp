@@ -24,7 +24,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     qmlRegisterType<MpdAlbum>();
     volIncTimer.setInterval(250);
     volDecTimer.setInterval(250);
-    viewer->rootContext()->setContextProperty("versionstring",QVariant::fromValue(QString("1.0.1")));
+    viewer->rootContext()->setContextProperty("versionstring",QVariant::fromValue(QString(VERSION)));
 }
 
 void Controller::updatePlaylistModel(QList<QObject*>* list)
@@ -169,6 +169,7 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(albumTracksReady(QList<QObject*>*)),this,SLOT(updateAlbumTracksModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(filesReady(QList<QObject*>*)),this,SLOT(updateFilesModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(connectionestablished()),this,SLOT(connectedToServer()));
+    connect(netaccess,SIGNAL(disconnected()),this,SLOT(disconnectedToServer()));
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(busy()),item,SIGNAL(busy()));
     connect(netaccess,SIGNAL(ready()),item,SIGNAL(ready()));
@@ -186,6 +187,7 @@ void Controller::connectSignals()
     connect(item,SIGNAL(addPlaylist(QString)),netaccess,SLOT(addPlaylist(QString)));
     connect(item,SIGNAL(setShuffle(bool)),netaccess,SLOT(setRandom(bool)));
     connect(item,SIGNAL(setRepeat(bool)),netaccess,SLOT(setRepeat(bool)));
+    connect(item,SIGNAL(updateDB()),netaccess,SLOT(updateDB()));
     connect(keyobserver,SIGNAL(mediaKeyClicked(int)),this,SLOT(mediaKeyHandle(int)));
     connect(keyobserver,SIGNAL(mediaKeyPressed(int)),this,SLOT(mediaKeyPressed(int)));
     connect(keyobserver,SIGNAL(mediaKeyReleased(int)),this,SLOT(mediaKeyReleased(int)));
@@ -255,7 +257,14 @@ void Controller::requestAlbum(QVariant array)
 
 void Controller::connectedToServer()
 {
+    viewer->rootContext()->setContextProperty("connected",QVariant::fromValue(true));
     emit sendPopup(tr("Connected to server"));
+}
+
+void Controller::disconnectedToServer()
+{
+    viewer->rootContext()->setContextProperty("connected",QVariant::fromValue(false));
+    emit sendPopup(tr("Disconnected from server"));
 }
 
 void Controller::updateStatus(status_struct status)

@@ -27,24 +27,6 @@ public:
     Controller(QmlApplicationViewer *viewer,QObject *parent = 0);
     void connectSignals();
 public slots:
-    void updateAlbumsModel(QList<QObject*>* list);
-    void updateArtistsModel(QList<QObject*>* list);
-    void updateArtistAlbumsModel(QList<QObject*>* list);
-    void updatePlaylistModel(QList<QObject*>* list);
-    void updateFilesModel(QList<QObject*>* list);
-    void updateAlbumTracksModel(QList<QObject*>* list);
-    void connectedToServer();
-    void setHostname(QString hostname);
-    void setPassword(QString password);
-    void setPort(int port);
-    void connectToServer();
-    void quit();
-    void newProfile();
-    void changeProfile(QVariant profile);
-    void deleteProfile(int index);
-    void connectProfile(int index);
-    void updateSavedPlaylistsModel(QStringList*);
-    void updateSavedPlaylistModel(QList<QObject*>* list);
 
 signals:
     void sendPopup(QVariant text);
@@ -101,6 +83,28 @@ private slots:
     void mediaKeyHandle(int key);
     void mediaKeyPressed(int key);
     void mediaKeyReleased(int key);
+    /*Privates*/
+    void connectedToServer();
+    void disconnectedToServer();
+    void updateAlbumsModel(QList<QObject*>* list);
+    void updateArtistsModel(QList<QObject*>* list);
+    void updateArtistAlbumsModel(QList<QObject*>* list);
+    void updatePlaylistModel(QList<QObject*>* list);
+    void updateFilesModel(QList<QObject*>* list);
+    void updateAlbumTracksModel(QList<QObject*>* list);
+    void setHostname(QString hostname);
+    void setPassword(QString password);
+    void setPort(int port);
+    void connectToServer();
+    void quit();
+    void newProfile();
+    void changeProfile(QVariant profile);
+    void deleteProfile(int index);
+    void connectProfile(int index);
+    void updateSavedPlaylistsModel(QStringList*);
+    void updateSavedPlaylistModel(QList<QObject*>* list);
+
+
 
 
 

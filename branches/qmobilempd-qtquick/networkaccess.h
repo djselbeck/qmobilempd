@@ -78,6 +78,7 @@ public slots:
     void next();
     void previous();
     void stop();
+    void updateDB();
     void clearPlaylist();
     void setVolume(int volume);
     void setRandom(bool);

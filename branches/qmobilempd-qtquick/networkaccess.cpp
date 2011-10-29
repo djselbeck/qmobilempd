@@ -1296,6 +1296,25 @@ void NetworkAccess::stop()
     }
 }
 
+void NetworkAccess::updateDB()
+{
+    if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
+        QTextStream outstream(tcpsocket);
+        outstream << "update" << endl;
+        QString response ="";
+        while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
+        {
+            tcpsocket->waitForReadyRead(READYREAD);
+            while (tcpsocket->canReadLine())
+            {
+                response = QString::fromUtf8(tcpsocket->readLine());
+
+            }
+        }
+        updateStatusInternal();
+    }
+}
+
 void NetworkAccess::next()
 {
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {

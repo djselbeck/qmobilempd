@@ -22,6 +22,7 @@ Window {
     property bool repeat;
     property bool shuffle;
     property bool quitbtnenabled;
+    property bool connected;
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -56,6 +57,7 @@ Window {
     signal seek(int position);
     signal setRepeat(bool rep);
     signal setShuffle(bool shfl);
+    signal updateDB();
 
     //Playlist signals
     signal savePlaylist(string name);
@@ -321,6 +323,9 @@ Window {
                 aboutdialog.version = versionstring;
                 aboutdialog.open();
             }
+            else if(list_view1.model.get(index).ident=="updatedb"){
+                window.updateDB();
+            }
         }
     }
 
@@ -387,6 +392,7 @@ Window {
                     ListElement { name: "Albums"; ident:"albums";}
                     ListElement { name: "Files"; ident:"files" ;}
                     ListElement { name: "Playlist"; ident:"playlist";}
+                    ListElement { name: "Update database"; ident:"updatedb"; }
                     ListElement { name: "Servers"; ident:"settings"}
                     ListElement { name: "Connect"; ident:"connectto"}
                     ListElement { name: "About"; ident:"about"}
