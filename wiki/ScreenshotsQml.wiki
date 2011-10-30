@@ -12,6 +12,11 @@ http://qmobilempd.googlecode.com/files/MainMenu.jpg
 
 http://qmobilempd.googlecode.com/files/CurrentSong.jpg
 
+
+===Playlist===
+
+http://qmobilempd.googlecode.com/files/PlaylistQml.jpg
+
 ===Server selection===
 
 http://qmobilempd.googlecode.com/files/SelectServer.jpg
