@@ -27,6 +27,7 @@ Page{
         delegate: settingsDelegate
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
+        spacing: 2
     }
     Rectangle {
         id:headingrect
@@ -47,16 +48,18 @@ Page{
         Item {
             id: itemItem
             width: list_view1.width
-            height: topLayout.height
+            height: topLayout.height+liststretch
             property alias color:rectangle.color
             property alias gradient: rectangle.gradient
             Rectangle {
                 id: rectangle
-                color:"black"
+                color:Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Row{
                     id: topLayout
-                    Text { text: name; color:"white";font.pointSize:listfontsize}
+                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
+                    Text { text: name; color:"white";font.pointSize:12
+                    }
                 }
             }
             MouseArea {
@@ -77,11 +80,11 @@ Page{
                     itemItem.gradient = selectiongradient;                }
                 onReleased: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = "black";
+                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
                 onCanceled: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = "black";
+                    itemItem.color =Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
             }
         }

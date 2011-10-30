@@ -8,21 +8,6 @@ Page{
     id: playlistpage
     property alias songid: playlist_list_view.currentIndex
     property alias listmodel:playlist_list_view.model
-    Component.onCompleted: {
-        console.debug("Playlist completed");
-    }
-
-    onStatusChanged: {
-        console.debug("Playlist status changed: "+status);
-        if(status==PageStatus.Activating)
-        {
-            console.debug("Playlist activating");
-
-        }
-    }
-    Component.onDestruction: {
-        console.debug("Playlist destroyed");
-    }
 
     tools:ToolBarLayout {
     ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
@@ -54,12 +39,6 @@ Page{
                     }
                 }
 
-//                ToolButton {
-//                    iconSource: "toolbar-mediacontrol-stop"
-//                    onClicked: {
-//                        window.stop();
-//                    }
-//                }
 
                 ToolButton {
                     iconSource: volumebuttoniconsource;
@@ -139,13 +118,14 @@ Page{
             property alias gradient: rectangle.gradient
             Rectangle {
                 id: rectangle
-                color:Qt.rgba(0.07, 0.07, 0.07, 1)
+                color:playing ? "#8cb2ff" : Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Row{
                     id: topLayout
                     anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                    Text {clip: true; wrapMode: Text.WrapAnywhere; text:  (title==="" ? filename : title); color:"white";font.pointSize:8;font.italic:(playing) ? true:false;}
-                    Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
+                    Text {text: (index+1)+". ";color: playing ? "black" :"white";font.pointSize: 8}
+                    Text {clip: true; wrapMode: Text.WrapAnywhere; text:  (title==="" ? filename : title); color:playing ? "black" :"white";font.pointSize:8;font.italic:(playing) ? true:false;}
+                    Text { text: (length===0 ? "": " ("+lengthformated+")"); color:playing ? "black" :"white";font.pointSize:8}
                 }
             }
             MouseArea {
@@ -161,7 +141,7 @@ Page{
                     }
                 }
                 onPressAndHold: {
-                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
+                   // itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                     currentPlaylistMenu.id = index;
                     currentPlaylistMenu.playing = playing;
                     currentPlaylistMenu.open();
@@ -171,11 +151,11 @@ Page{
                 }
                 onReleased: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
+                   // itemItem.color = playing ? "#c7e0ff" : Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
                 onCanceled: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
+                    //itemItem.color = playing ? "#c7e0ff" : Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
 
             }

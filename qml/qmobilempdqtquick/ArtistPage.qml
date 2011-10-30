@@ -47,9 +47,6 @@ Page{
             clip: true
             section.property: "sectionprop";
             section.delegate: sectionHeading
-            onModelChanged: {
-                console.debug("MODEL count:"+model.count);
-            }
         }
         Rectangle {
             id:headingrect
@@ -80,7 +77,6 @@ Page{
                         id: topLayout
                         anchors {verticalCenter: parent.verticalCenter}
                         text: (artist===""? "No Artist Tag": artist); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
-                        //Text {text:artist; color:"grey";font.pointSize:10;}
                     }
                 }
 
@@ -120,13 +116,13 @@ Page{
             MenuLayout {
                 MenuItem {
                     text: "Add Artist"
-                    onClicked: {console.debug("Add Artist:"+artistMenu.artistname);
-                                window.addArtist(artistMenu.artistname);
+                    onClicked: {
+                        window.addArtist(artistMenu.artistname);
                     }
                 }
                 MenuItem {
                     text: "Play Artist"
-                    onClicked: {console.debug("Play Artist:"+artistMenu.artistname);
+                    onClicked: {
                                 window.playArtist(artistMenu.artistname);
                     }
                 }
