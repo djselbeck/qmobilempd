@@ -56,9 +56,7 @@ ListView{
     clip: true
     section.property: "sectionprop";
     section.delegate: sectionHeadingAlbum
-    onModelChanged: {
-        console.debug("MODEL count:"+model.count);
-    }
+
 }
 Rectangle {
     id:headingrect
@@ -133,14 +131,14 @@ ContextMenu {
     MenuLayout {
         MenuItem {
             text: "Add Album"
-            onClicked: {console.debug("Add album:"+albumMenu.albumtitle+":"+albumMenu.artistname);
-                        window.addAlbum([albumMenu.artistname,albumMenu.albumtitle]);
+            onClicked: {
+                window.addAlbum([albumMenu.artistname,albumMenu.albumtitle]);
             }
         }
         MenuItem {
             text: "Play Album"
-            onClicked: {console.debug("Play album:"+albumMenu.albumtitle+":"+albumMenu.artistname);
-                        window.playAlbum([albumMenu.artistname,albumMenu.albumtitle]);
+            onClicked: {
+                window.playAlbum([albumMenu.artistname,albumMenu.albumtitle]);
             }
         }
     }

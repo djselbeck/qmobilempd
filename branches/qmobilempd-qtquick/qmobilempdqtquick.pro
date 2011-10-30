@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH = qml/qmobilempdqtquick
 
-symbian:TARGET.UID3 = 0xE8E76261
+symbian:
 
 CONFIG += qt-components
 
@@ -23,10 +23,19 @@ QT       += core gui network
 # Allow network access on Symbian
 symbian {
     TARGET.CAPABILITY += NetworkServices
+#    TARGET.UID3 = 0xE8E76261
+    TARGET.UID3 = 0xE8E76261
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
     ICON = icon_converted.svg
-    vendor_info = ":\"Hendrik Borghorst\""
+
+    my_deployment.pkg_prerules += vendorinfo
+
+    DEPLOYMENT += my_deployment
+
+    DEPLOYMENT.display_name += qmobilempd
+
+    vendorinfo += "%{\"Hendrik Borghorst\"}" ":\"Hendrik Borghorst\""
 }
 
 # If your application uses the Qt Mobility libraries, uncomment the following

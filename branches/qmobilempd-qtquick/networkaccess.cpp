@@ -1859,14 +1859,15 @@ void NetworkAccess::getDirectory(QString path)
 
         MpdTrack *temptrack;
         MpdFileEntry *tempfile;
-        QString title;
-        QString artist;
-        QString albumstring;
-        QString datestring;
-        int nr,albumnrs;
-        QString file;
-        QString filename;
-        QString prepath;
+        QString title="";
+        QString artist="";
+        QString albumstring="";
+        QString datestring = "";
+        int nr=0;
+        int albumnrs=0;
+        QString file="";
+        QString filename="";
+        QString prepath="";
         QStringList tempsplitter;
         quint8 filetype=-1;
         quint32 length=0;
@@ -1878,7 +1879,7 @@ void NetworkAccess::getDirectory(QString path)
                 response = QString::fromUtf8(tcpsocket->readLine());
                 //New file: so new track begins in mpds output
                 if (response.left(6)==QString("file: ")) {
-                    if (file!=""&&title!=""&&length!=0)
+                    if (file!=""&&length!=0)
                     {
                         tempsplitter = file.split("/");
                         if (tempsplitter.length()>0)
@@ -1907,6 +1908,9 @@ void NetworkAccess::getDirectory(QString path)
                         CommonDebug("got File:"+file.toAscii());
                         filename="";
                         filetype = -1;
+                        nr=0;
+                        datestring="";
+                        albumnrs=0;
                     }
                     file = response.right(response.length()-6);
                     file.chop(1);

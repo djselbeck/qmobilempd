@@ -161,22 +161,14 @@ Window {
 
     function filesClicked(path)
     {
-        console.debug("Files clicked "+path + "/");
         lastpath = path;
         window.requestFilesPage(path);
     }
 
     function updatePlaylist()
     {
-        console.debug("Playlist model updated");
         blockinteraction.enabled=false;
         playlistpage.listmodel = playlistModel;
-        if(pageStack.currentPage == playlistpage)
-        {
-            //pageStack.replace(playlistpage);
-
-        }
-
     }
 
     function updateAlbumsModel(){
@@ -224,7 +216,6 @@ Window {
 
     function receiveFilesModel()
     {
-        console.debug("Files model updated");
     }
 
     function receiveFilesPage()
@@ -244,7 +235,6 @@ Window {
         var min = 0;
         var sec = 0;
         var temp="";
-       // console.debug("Length format");
         if(temphours>1)
         {
             min=(length-(3600*temphours))/60;
@@ -261,13 +251,11 @@ Window {
         {
             temp=((temphours<10?"0":"")+temphours)+":"+((min<10?"0":"")+min)+":"+(sec<10?"0":"")+(sec);
         }
-       // console.debug("Length formatted:" + temp);
         return temp;
     }
 
     function albumClicked(artist,albumstring)
     {
-        console.debug("Currentartist: "+artist + " album: "+ albumstring +"clicked");
         window.requestAlbum([artist,albumstring]);
         artistname = artist;
         this.albumname = albumstring;
@@ -275,7 +263,6 @@ Window {
 
     function artistalbumClicked(artist, album)
     {
-        console.debug("Currentartist: "+artist + " album: "+ album +"clicked");
         window.requestAlbum([artist,album]);
         artistname = artistname;
         albumname = album;
@@ -283,7 +270,6 @@ Window {
 
     function slotShowPopup(string)
     {
-        console.debug("POPUP: "+string+" requested");
         infobanner.text=string;
         infobanner.open();
     }
@@ -295,49 +281,41 @@ Window {
     function parseClicked(index)
     {
         if(pageStack.currentPage==mainPage){
-            console.debug("parseClicked("+index+")")
             if(list_view1.model.get(index).ident=="playlist"){
                 if(connected)
                     pageStack.push(playlistpage);
             }
             else if(list_view1.model.get(index).ident=="settings"){
-                console.debug("Settings clicked");
                 pageStack.push(Qt.resolvedUrl("SettingsList.qml"));
 
                 //pageStack.push(settingslist);
 
             }
             else if(list_view1.model.get(index).ident=="currentsong"){
-                console.debug("Current song clicked");
                 if(connected)
                     pageStack.push(currentsongpage);
             }
             else if(list_view1.model.get(index).ident=="albums"){
-                console.debug("Albums clicked");
                 artistname = "";
                 if(connected)
                     window.requestAlbums();
 
             }
             else if(list_view1.model.get(index).ident=="artists"){
-                console.debug("Artists clicked");
                 if(connected)
                     window.requestArtists();
 
             }
             else if(list_view1.model.get(index).ident=="files"){
-                console.debug("Files clicked");
                 if(connected)
                     filesClicked("/");
 
             }
             else if(list_view1.model.get(index).ident=="connectto"){
-                console.debug("Connect to clicked");
                 selectserverdialog.visible=true;
                 selectserverdialog.open();
             }
-            else if(list_view1.model.get(index).ident=="about"){
-                console.debug("about to clicked:"+versionstring);
+            else if(list_view1.model.get(index).ident=="about"){ 
                 aboutdialog.visible=true;
                 aboutdialog.version = versionstring;
                 aboutdialog.open();
@@ -351,7 +329,6 @@ Window {
 
     function artistClicked(item)
     {
-        console.debug("Artist "+item+" clicked");
         this.artistname = item;
         window.requestArtistAlbums(item);
     }
@@ -400,17 +377,27 @@ Window {
             id: mainflickable
             contentHeight: maincolumn.height
             anchors {top:hometext.bottom;left:parent.left; right: parent.right; bottom:parent.bottom}
+            MouseArea {
+                x: titletext.x
+                y: titletext.y
+                width: parent.width
+                height: titletext.height+albumtext.height+artisttext.height
+                onClicked: {
+                    if(connected)
+                        pageStack.push(currentsongpage);
+                }
+            }
             Column{
-                anchors {left:parent.left; right: parent.right;}
+                anchors {top:parent.top;left:parent.left; right: parent.right;}
                 id: maincolumn
-                Text{visible: playing;id: titletext;color: "white"; text:currentsongpage.title; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;top:hometext.bottom;}
+                Text{visible: playing&&text!=="";id: titletext;color: "white"; text:currentsongpage.title; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;}
                 }
-                Text{visible: playing;id: artisttext;color: "white"; text:currentsongpage.artist; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;top:titletext.bottom;}
+                Text{visible: playing&&text!=="";id: artisttext;color: "white"; text:currentsongpage.artist; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;}
                 }
-                Text{id: albumtext;visible: playing;color: "white"; text:currentsongpage.album; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;top:artisttext.bottom;}
+                Text{id: albumtext;visible: playing&&text!=="";color: "white"; text:currentsongpage.album; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;}
                 }
                 Rectangle {
                     color: Qt.rgba(0.13,0.13,0.13,1)
@@ -435,6 +422,7 @@ Window {
             }
             clip: true
         }
+
 
                 ListModel {
                     id: mainMenuModel
@@ -474,6 +462,7 @@ Window {
                             anchors.fill: parent
                             Row{
                                 id: topLayout
+                                anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
                                 Text { text: name; color:"white";font.pointSize:12;}
                             }
                         }

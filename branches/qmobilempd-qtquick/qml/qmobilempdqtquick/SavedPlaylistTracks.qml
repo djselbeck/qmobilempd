@@ -77,6 +77,7 @@ Page{
                 height: topLayout.height+liststretch
 
                 property alias color:rectangle.color
+                property alias gradient:rectangle.gradient
                 Rectangle {
                     id: rectangle
                     color:"black"
@@ -97,11 +98,14 @@ Page{
                     }
                     onPressed: {
                         itemItem.color = selectcolor;
+                        itemItem.gradient = selectiongradient;
                     }
                     onReleased: {
+                        itemItem.gradient = fillgradient;
                         itemItem.color = "black";
                     }
                     onCanceled: {
+                        itemItem.gradient = fillgradient;
                         itemItem.color = "black";
                     }
                 }

@@ -79,6 +79,13 @@ Page {
                 iconSource: playbuttoniconsource; onClicked: window.play()
             }
             ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+                            ToolButton {
+                                iconSource: "toolbar-mediacontrol-stop"
+                                onClicked: {
+                                    window.stop();
+                                }
+                            }
+
             ToolButton{
                 id: repeatbtn
                 //text: "Repeat"
