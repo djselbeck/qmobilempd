@@ -40,6 +40,7 @@ Page{
             width: list_view1.width
             height: topLayout.height
             property alias color:rectangle.color
+            property alias gradient:rectangle.gradient
             Rectangle {
                 id: rectangle
                 color:"black"
@@ -56,12 +57,14 @@ Page{
                     window.savedPlaylistClicked(modelData);
                 }
                 onPressed: {
-                    itemItem.color = selectcolor;
+                    itemItem.gradient = selectiongradient;
                 }
                 onReleased: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = "black";
                 }
                 onCanceled: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = "black";
                 }
             }

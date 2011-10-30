@@ -11,22 +11,11 @@ Page{
                     pageStack.clear();
                     pageStack.push(mainPage);
                 }}
-        //    ButtonRow {
-//                ToolButton {
-//                    iconSource: "toolbar-mediacontrol-stop"
-//                    onClicked: {
-//                        window.stop();
-//                    }
-//                }
 
                 ToolButton{ iconSource:"toolbar-add"; onClicked: {
                         window.addAlbum([artistname,albumname]);
                     }}
-//                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-//                ToolButton {
-//                    iconSource: playbuttoniconsource; onClicked: window.play()
-//                }
-//                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+
                 ToolButton {
                     iconSource: volumebuttoniconsource;
                     onClicked: {
@@ -42,30 +31,16 @@ Page{
                 }
 
 
-//            }
+
 }
         property alias listmodel: albumsongs_list_view.model;
 
-        Component.onCompleted: {
-            console.debug("albumsongs completed");
-        }
-
-        onStatusChanged: {
-            console.debug("albumsongs status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("albumsongs activating");
-                //artistalbums_list_view.model = albumsModel;
-            }
-        }
-        Component.onDestruction: {
-            console.debug("albumsongs destroyed");
-        }
         ListView{
             id: albumsongs_list_view
             delegate: albumtrackDelegate
             anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
             clip: true
+            spacing: 2
         }
 
         Rectangle {
@@ -87,9 +62,10 @@ Page{
                 width: list_view1.width
                 height: topLayout.height+liststretch
                 property alias color:rectangle.color
+                property alias gradient: rectangle.gradient
                 Rectangle {
                     id: rectangle
-                    color:"black"
+                    color:Qt.rgba(0.07, 0.07, 0.07, 1)
                     anchors.fill: parent
                     Row{
                         id: topLayout
@@ -107,17 +83,24 @@ Page{
                         albumTrackClicked(title,album,artist,lengthformated,uri,year,tracknr);
                     }
                     onPressed: {
-                        itemItem.color = selectcolor;
+
+                        itemItem.gradient = selectiongradient;
+
                     }
                     onReleased: {
-                        itemItem.color = "black";
+                        itemItem.gradient = fillgradient;
+                        itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                     }
                     onCanceled: {
-                        itemItem.color = "black";
+                        itemItem.gradient = fillgradient;
+                        itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                     }
                     onPressAndHold: {
-                        itemItem.color = "black";
+                        itemItem.gradient = fillgradient;
+                        itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                         songmenu.uri = uri;
+                        songmenu.artistname = artistname
+                        songmenu.albumtitle = albumname
                         songmenu.open();
                     }
                 }
@@ -127,9 +110,11 @@ Page{
         ContextMenu {
             id: songmenu
             property string uri;
+            property string albumtitle;
+            property string artistname;
             MenuLayout {
                 MenuItem {
-                    text: "Playback track"
+                    text: "Play track"
                     onClicked: {
                         window.playSong(songmenu.uri);
                     }
@@ -138,6 +123,16 @@ Page{
                     text: "Add track to playlist"
                     onClicked: {
                         window.addSong(songmenu.uri);
+                    }
+                }
+                MenuItem {
+                    text: "Play Album"
+                    onClicked: { window.playAlbum([songmenu.artistname,songmenu.albumtitle]);
+                    }
+                }
+                MenuItem {
+                    text: "Add Album to playlist"
+                    onClicked: {window.addAlbum([songmenu.artistname,songmenu.albumtitle]);
                     }
                 }
             }

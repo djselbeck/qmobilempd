@@ -13,24 +13,12 @@ Page{
             pageStack.clear();
             pageStack.push(mainPage);
         }}
-    //        ButtonRow {
-    //                ToolButton {
-    //                    iconSource: "toolbar-mediacontrol-stop"
-    //                    onClicked: {
-    //                        window.stop();
-    //                    }
-    //                }
-
     ToolButton {
         iconSource: "toolbar-add"
         onClicked: window.addArtist(artistname);
     }
 
-    //            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-    //            ToolButton {
-    //                iconSource: playbuttoniconsource; onClicked: window.play()
-    //            }
-    //            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+
     ToolButton {
         iconSource: volumebuttoniconsource;
         onClicked: {
@@ -45,24 +33,8 @@ Page{
         }
     }
 
-
-    //}
-}
-Component.onCompleted: {
-    console.debug("albums completed");
 }
 
-onStatusChanged: {
-    console.debug("albums status changed: "+status);
-    if(status==PageStatus.Activating)
-    {
-        console.debug("albums activating");
-
-    }
-}
-Component.onDestruction: {
-    console.debug("albums destroyed");
-}
 Component {
     id: sectionHeadingAlbum
     Rectangle {
@@ -113,6 +85,7 @@ Component{
         width: window.width
         height: topLayout.height+liststretch
         property alias color:rectangle.color
+        property alias gradient: rectangle.gradient
         Rectangle {
             id: rectangle
             color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
@@ -137,12 +110,14 @@ Component{
                 albumMenu.open();
             }
             onPressed: {
-                itemItem.color = selectcolor;
+                itemItem.gradient = selectiongradient;
             }
             onReleased: {
+                itemItem.gradient = fillgradient;
                 itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
             }
             onCanceled: {
+                itemItem.gradient = fillgradient;
                 itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
             }
 

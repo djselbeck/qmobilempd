@@ -54,7 +54,7 @@ private:
     QmlApplicationViewer *viewer;
     MediaKeysObserver *keyobserver;
     NetworkAccess *netaccess;
-    QString hostname,password;
+    QString hostname,password,profilename;
     quint16 port;
     quint32 playlistversion;
     int currentsongid;
