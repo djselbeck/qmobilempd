@@ -26,7 +26,7 @@ symbian {
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
     ICON = icon_converted.svg
-    vendor_info += "Hendrik Borghorst"
+    vendor_info = ":\"Hendrik Borghorst\""
 }
 
 # If your application uses the Qt Mobility libraries, uncomment the following
@@ -83,7 +83,7 @@ HEADERS += \
 
 
 
-VERSION = 1.0.3
+VERSION = 1.0.4
 
 
 

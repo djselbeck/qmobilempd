@@ -61,6 +61,7 @@ Page{
             width: window.width
             height: topLayout.height+liststretch
             property alias color: rectangle.color
+            property alias gradient: rectangle.gradient
             Rectangle {
                 id: rectangle
                 color: (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
@@ -87,6 +88,7 @@ Page{
                 }
                 onPressAndHold: {
                         filesMenu.filepath = (prepath=="/"? "": prepath+"/")+name;
+                    filesMenu.currentfilepath = filepath;
                     filesMenu.directory = isDirectory;
                     if(isFile){
                         filesMenu.title = title;
@@ -100,12 +102,14 @@ Page{
 
                 }
                 onPressed: {
-                    itemItem.color = selectcolor;
+                    itemItem.gradient = selectiongradient;
                 }
                 onReleased: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
                 onCanceled: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
             }
@@ -122,6 +126,7 @@ Page{
     ContextMenu {
         id: filesMenu
         property string filepath;
+        property string currentfilepath;
         property string title;
         property string album;
         property string artist;
@@ -150,6 +155,18 @@ Page{
                                window.playFiles(filesMenu.filepath);
                            else
                                window.playSong(filesMenu.filepath);
+                }
+            }
+            MenuItem {
+                text: "Add current folder"
+                onClicked: {
+                               window.addFiles(filesMenu.currentfilepath);
+                }
+            }
+            MenuItem {
+                text: "Play current folder"
+                onClicked: {
+                               window.playFiles(filesMenu.currentfilepath);
                 }
             }
         }

@@ -4,26 +4,24 @@ import com.nokia.symbian 1.0
 
 Page{
     id: settings
-    property alias listmodel:settings_list_view.model
     property int currentindex:-1;
-    Component.onCompleted: {
-        console.debug("Playlist completed");
+
+    ListModel {
+        id: settingsModel
+        ListElement { name: "Update database"; ident:"updatedb"; }
+        ListElement { name: "Servers"; ident:"servers"}
+        ListElement { name: "Connect"; ident:"connectto"}
+        ListElement { name: "About"; ident:"about"}
     }
 
-    onStatusChanged: {
-        console.debug("Playlist status changed: "+status);
-        if(status==PageStatus.Activating)
-        {
-            console.debug("Playlist activating");
 
-        }
-    }
-    Component.onDestruction: {
-        console.debug("Playlist destroyed");
-    }
 
     tools:ToolBarLayout {
     ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+    ToolButton{ iconSource: "toolbar-home";onClicked: {
+            pageStack.clear();
+            pageStack.push(mainPage);
+        }}
     ToolButton { iconSource: "toolbar-add";
 
         onClicked:{
@@ -37,6 +35,7 @@ Page{
         delegate: settingsDelegate
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
+        model: settingsModel
     }
     Rectangle {
         id:headingrect
@@ -45,7 +44,7 @@ Page{
         color: Qt.rgba(0.07, 0.07, 0.07, 1)
         Text{
             id: artext
-            text: "Server list:"
+            text: "Settings:"
             color: "white"
             font.pointSize: 7
         }
@@ -59,6 +58,7 @@ Page{
             width: list_view1.width
             height: topLayout.height
             property alias color:rectangle.color
+            property alias gradient: rectangle.gradient
             Rectangle {
                 id: rectangle
                 color:"black"
@@ -71,28 +71,48 @@ Page{
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    var component = Qt.createComponent("SettingsPage.qml");
-                    var object = component.createObject(window);
-                    object.hostname = hostname;
-                    object.port = port;
-                    object.profilename = name;
-                    object.password = password;
-                    settings_list_view.currentIndex = index;
-                    object.index = settings_list_view.currentIndex;
-                    console.debug("Loaded settings index "+index);
-                    pageStack.push(object);
+
+                    list_view1.currentIndex = index
+                    parseClickedSettings(index);
                 }
                 onPressed: {
-                    itemItem.color = selectcolor;
+                    itemItem.gradient = selectiongradient;
                 }
                 onReleased: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = "black";
                 }
                 onCanceled: {
+                    itemItem.gradient = fillgradient;
                     itemItem.color = "black";
                 }
             }
         }
     }
+    function parseClickedSettings(index)
+    {
+            console.debug("parseClickedSettings("+index+")")
+            if(settingsModel.get(index).ident=="updatedb"){
+                window.updateDB();
+            }
+            else if(settingsModel.get(index).ident=="servers"){
+                console.debug("Servers clicked");
+                pageStack.push(serverlist);
+            }
+            else if(settingsModel.get(index).ident=="about"){
+                console.debug("about to clicked:"+versionstring);
+                aboutdialog.visible=true;
+                aboutdialog.version = versionstring;
+                aboutdialog.open();
+            }
+            else if(settingsModel.get(index).ident=="connectto"){
+                console.debug("Connect to clicked");
+                selectserverdialog.visible=true;
+                selectserverdialog.open();
+            }
+    }
 
 }
+
+
+

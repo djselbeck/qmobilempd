@@ -85,6 +85,7 @@ Page{
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
         highlightMoveDuration: 300
+        spacing: 2
 
     }
     Rectangle {
@@ -135,9 +136,10 @@ Page{
             width: list_view1.width
             height: topLayout.height+liststretch
             property alias color:rectangle.color
+            property alias gradient: rectangle.gradient
             Rectangle {
                 id: rectangle
-                color:"black"
+                color:Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Row{
                     id: topLayout
@@ -159,19 +161,21 @@ Page{
                     }
                 }
                 onPressAndHold: {
-                    itemItem.color = "black";
+                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                     currentPlaylistMenu.id = index;
                     currentPlaylistMenu.playing = playing;
                     currentPlaylistMenu.open();
                 }
                 onPressed: {
-                    itemItem.color = selectcolor;
+                    itemItem.gradient = selectiongradient;
                 }
                 onReleased: {
-                    itemItem.color = "black";
+                    itemItem.gradient = fillgradient;
+                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
                 onCanceled: {
-                    itemItem.color = "black";
+                    itemItem.gradient = fillgradient;
+                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                 }
 
             }

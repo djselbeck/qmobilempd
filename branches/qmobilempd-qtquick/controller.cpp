@@ -261,7 +261,7 @@ void Controller::requestAlbum(QVariant array)
 
 void Controller::connectedToServer()
 {
-    emit sendPopup(tr("Connected to server"));
+    emit sendPopup(tr("Connected to: ")+ profilename);
 }
 
 void Controller::disconnectedToServer()
@@ -441,6 +441,11 @@ void Controller::connectProfile(int index)
     setHostname(profile->getHostname());
     setPort(profile->getPort());
     setPassword(profile->getPassword());
+    hostname = profile->getHostname();
+    port =  profile->getPort();
+    password = profile->getPassword();
+    profilename = profile->getName();
+    viewer->rootContext()->setContextProperty("profilename",QVariant::fromValue(QString(profilename)));
     if(netaccess->connected())
     {
         emit requestDisconnect();

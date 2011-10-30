@@ -10,7 +10,7 @@ Window {
     property string password;
     property Page currentsongpage;
     property Page playlistpage;
-    property Page settingslist;
+    property Page serverlist;
     property int listfontsize:12;
     property int liststretch:20;
     property string playbuttoniconsource;
@@ -23,7 +23,8 @@ Window {
     property bool shuffle;
     property bool quitbtnenabled;
     property bool connected;
-    property string selectcolor: "#000077";
+    property bool playing:false;
+    property string selectcolor: "lightblue";
     signal setHostname(string hostname);
     signal setPort(int port);
     signal setPassword(string password);
@@ -81,12 +82,14 @@ Window {
     function slotConnected()
     {
         connected = true;
-        console.debug("Slot connected called");
+        console.debug("Profilename:" + profilename);
     }
 
     function slotDisconnected()
     {
         connected = false;
+        profilename = "";
+        playing = false;
     }
 
     function busy()
@@ -105,7 +108,7 @@ Window {
 
     function settingsModelUpdated()
     {
-        settingslist.listmodel = settingsModel;
+        serverlist.listmodel = settingsModel;
         selectserverdialog.model = settingsModel;
     }
 
@@ -122,6 +125,7 @@ Window {
         currentsongpage.lengthtextcomplete = list[4]==0 ? "": formatLength(list[4]);
         currentsongpage.bitrate = list[5]+"kbps";
         playbuttoniconsource = (list[6]=="playing") ? "toolbar-mediacontrol-pause" : "toolbar-mediacontrol-play";
+        playing = (list[6]=="playing") ? true : false;
         if(volumeslider.pressed===false){
             volumeslider.value = list[7];
         }
@@ -293,36 +297,38 @@ Window {
         if(pageStack.currentPage==mainPage){
             console.debug("parseClicked("+index+")")
             if(list_view1.model.get(index).ident=="playlist"){
-
-                pageStack.push(playlistpage);
+                if(connected)
+                    pageStack.push(playlistpage);
             }
             else if(list_view1.model.get(index).ident=="settings"){
                 console.debug("Settings clicked");
-                //pageStack.push(Qt.resolvedUrl("SettingsList.qml"));
+                pageStack.push(Qt.resolvedUrl("SettingsList.qml"));
 
-                pageStack.push(settingslist);
+                //pageStack.push(settingslist);
 
             }
             else if(list_view1.model.get(index).ident=="currentsong"){
                 console.debug("Current song clicked");
-                pageStack.push(currentsongpage);
+                if(connected)
+                    pageStack.push(currentsongpage);
             }
             else if(list_view1.model.get(index).ident=="albums"){
                 console.debug("Albums clicked");
                 artistname = "";
-
-                window.requestAlbums();
+                if(connected)
+                    window.requestAlbums();
 
             }
             else if(list_view1.model.get(index).ident=="artists"){
                 console.debug("Artists clicked");
-                window.requestArtists();
+                if(connected)
+                    window.requestArtists();
 
             }
             else if(list_view1.model.get(index).ident=="files"){
                 console.debug("Files clicked");
-
-                filesClicked("/");
+                if(connected)
+                    filesClicked("/");
 
             }
             else if(list_view1.model.get(index).ident=="connectto"){
@@ -340,6 +346,7 @@ Window {
                 window.updateDB();
             }
         }
+
     }
 
     function artistClicked(item)
@@ -358,9 +365,9 @@ Window {
         playlistpage = pobject;
         playbuttoniconsource = "toolbar-mediacontrol-play";
         volumebuttoniconsource = "icons/volume.svg"
-        var component = Qt.createComponent("SettingsList.qml");
+        var component = Qt.createComponent("ServerList.qml");
         var object = component.createObject(window);
-        settingslist = object;
+        serverlist = object;
         pageStack.push(mainPage);
     }
 
@@ -387,28 +394,57 @@ Window {
 
     Page {
         id: mainPage
-        Text{id: hometext;color: "grey"; text:(connected ? " Connected" : "Disconnected"); horizontalAlignment: "AlignHCenter";font.pointSize: listfontsize
+        Text{id: hometext;color: "grey"; text:(connected ? " Connected to: " + profilename : "Disconnected"); horizontalAlignment: "AlignHCenter";font.pointSize: 7
         anchors {left: parent.left;right:parent.right;top:parent.top;}  }
+        Flickable {
+            id: mainflickable
+            contentHeight: maincolumn.height
+            anchors {top:hometext.bottom;left:parent.left; right: parent.right; bottom:parent.bottom}
+            Column{
+                anchors {left:parent.left; right: parent.right;}
+                id: maincolumn
+                Text{visible: playing;id: titletext;color: "white"; text:currentsongpage.title; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;top:hometext.bottom;}
+                }
+                Text{visible: playing;id: artisttext;color: "white"; text:currentsongpage.artist; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;top:titletext.bottom;}
+                }
+                Text{id: albumtext;visible: playing;color: "white"; text:currentsongpage.album; horizontalAlignment: "AlignHCenter";font.pointSize: 7
+                anchors {left: parent.left;right:parent.right;top:artisttext.bottom;}
+                }
+                Rectangle {
+                    color: Qt.rgba(0.13,0.13,0.13,1)
+                    height: 2
+                    width: parent.width
+                }
+
                 ListView{
                     id: list_view1
                     model: mainMenuModel
                     delegate: itemDelegate
                     signal playlistClicked
                     onPlaylistClicked: console.log("Send playlistClicked signal")
-                    anchors { left: parent.left; right: parent.right; top: hometext.bottom; bottom: parent.bottom }
+
+                    height: count*50+25;
+                    width: parent.width
+                   //anchors { left: parent.left; right: parent.right; top: mainflickable.bottom; bottom: parent.bottom }
                     clip: true
+                    interactive: false
+                    spacing:2
                 }
+            }
+            clip: true
+        }
+
                 ListModel {
                     id: mainMenuModel
-                    ListElement { name: "Current song"; ident:"currentsong"; }
+                    ListElement { name: "Song information"; ident:"currentsong"; }
                     ListElement { name: "Artists"; ident:"artists"; }
                     ListElement { name: "Albums"; ident:"albums";}
                     ListElement { name: "Files"; ident:"files" ;}
                     ListElement { name: "Playlist"; ident:"playlist";}
-                    ListElement { name: "Update database"; ident:"updatedb"; }
-                    ListElement { name: "Servers"; ident:"settings"}
                     ListElement { name: "Connect"; ident:"connectto"}
-                    ListElement { name: "About"; ident:"about"}
+                    ListElement { name: "Settings"; ident:"settings"}
                 }
 
                 onStatusChanged: {
@@ -428,16 +464,17 @@ Window {
                     Item {
                         id: itemItem
                         property alias color:rectangle.color
+                        property alias gradient: rectangle.gradient
                         width: list_view1.width
                         height: 50
-                        enabled: (ident ==="updatedb"? (connected) : true)
                         Rectangle {
                             id: rectangle
-                            color:"black"
+                            color:Qt.rgba(0.07, 0.07, 0.07, 1)
+                            gradient: Gradient{}
                             anchors.fill: parent
                             Row{
                                 id: topLayout
-                                Text { text: name; color:(ident ==="updatedb"? (connected ? "white" : "darkgrey") : "white");font.pointSize:12;}
+                                Text { text: name; color:"white";font.pointSize:12;}
                             }
                         }
                         MouseArea {
@@ -448,13 +485,15 @@ Window {
                                 parseClicked(index);
                             }
                             onPressed: {
-                                itemItem.color = selectcolor;
+                                itemItem.gradient = selectiongradient;
                             }
                             onReleased: {
-                                itemItem.color = "black";
+                                itemItem.gradient = fillgradient;
+                                itemItem.color =Qt.rgba(0.07, 0.07, 0.07, 1);
                             }
                             onCanceled: {
-                                itemItem.color = "black";
+                                itemItem.gradient = fillgradient;
+                                itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
                             }
                         }
                     }
@@ -467,13 +506,6 @@ Window {
             ToolButton { iconSource: enabled ? "icons/close_stop.svg":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
 
             }
-
-        //                ToolButton {
-        //                    iconSource: "toolbar-mediacontrol-stop"
-        //                    onClicked: {
-        //                        window.stop();
-        //                    }
-        //                }
                 ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
                 ToolButton {
                     iconSource: playbuttoniconsource; onClicked: window.play()
@@ -489,6 +521,7 @@ Window {
                         else{
                             volumeslider.visible=true;
                             volumeblendin.start();
+
                         }
                     }
                 }
@@ -500,7 +533,11 @@ Window {
 
 
 
-    PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500}
+    PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500
+        onCompleted: {
+            hidevolumeslidertimer.start();
+        }
+    }
     PropertyAnimation {id: volumeblendout
                 target: volumeslider
                 properties: "opacity"
@@ -519,6 +556,15 @@ Window {
         onTriggered: {
             console.debug("Volume timer triggered with value:"+volumeslider.value);
             window.setVolume(volumeslider.value);
+        }
+    }
+
+    Timer{
+        id:hidevolumeslidertimer
+        repeat: false
+        interval: 2500
+        onTriggered: {
+            volumeblendout.start();
         }
     }
 
@@ -548,12 +594,18 @@ Window {
             {
                 console.debug("Pressed");
                 updatevolumetimer.start();
+                if(hidevolumeslidertimer.running)
+                {
+                    console.debug("Hidevolume slider stopped");
+                    hidevolumeslidertimer.stop();
+                }
             }
             else{
                 console.debug("!Pressed");
 
                 window.setVolume(volumeslider.value);
                 updatevolumetimer.stop();
+                hidevolumeslidertimer.start();
 
             }
         }
@@ -590,7 +642,9 @@ Window {
        // model: settingsModel
         visible: false
         delegate: serverSelectDelegate
-        onAccepted: window.connectProfile(selectedIndex);
+        onAccepted: {window.connectProfile(selectedIndex);
+
+        }
     }
 
     Component {
@@ -618,6 +672,16 @@ Window {
         onClickedOutside: {aboutdialog.close();}
 
 
+    }
+
+    Gradient {
+        id: selectiongradient
+        GradientStop { position:0.0;color:"#1180dd"}
+        GradientStop { position:1.0;color:"#52a3e6"}
+    }
+
+    Gradient {
+        id: fillgradient
     }
 
 
