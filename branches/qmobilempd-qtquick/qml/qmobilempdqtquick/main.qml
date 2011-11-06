@@ -52,6 +52,8 @@ Window {
     signal requestFilesPage(string files);
     signal requestFilesModel(string files);
     signal requestCurrentPlaylist();
+    signal popfilemodelstack();
+    signal cleanFileStack();
 
     // Control signals
     signal play();

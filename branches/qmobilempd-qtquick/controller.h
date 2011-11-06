@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QWidget>
+#include <QStack>
 #include "mpdtrack.h"
 
 #include "qmlapplicationviewer.h"
@@ -71,8 +72,7 @@ private:
     AlbumModel *albumsmodelold;
     QList<MpdTrack*> *trackmodel;
     QList<MpdTrack*> *playlist;
-    QList<MpdFileEntry*> *filelistold;
-    QList<QList<MpdFileEntry*>*> *filemodels;
+    QStack<QList<QObject*>*> *filemodels;
 
 private slots:
     void requestCurrentPlaylist();
@@ -111,6 +111,8 @@ private slots:
     void updateSavedPlaylistModel(QList<QObject*>* list);
     void applicationActivate();
     void applicationDeactivate();
+    void fileStackPop();
+    void cleanFileStack();
 
 
 
