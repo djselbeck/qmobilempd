@@ -10,10 +10,14 @@ Page{
     property bool first: true;
     tools: ToolBarLayout {
         id: filesTools
-        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        ToolButton { iconSource: "toolbar-back"; onClicked: {pageStack.pop();
+                popfilemodelstack();
+            }
+        }
         ToolButton{ iconSource: "toolbar-home";onClicked: {
                 pageStack.clear();
                 pageStack.push(mainPage);
+                window.cleanFileStack();
             }}
         ToolButton { iconSource: "toolbar-add"; onClicked: {
                 window.addFiles(filepath);
@@ -44,13 +48,13 @@ Page{
         console.debug("Playlist status changed: "+status);
         if(status==PageStatus.Activating)
         {
-            if(first==false)
-            {
-                console.debug("File  reactivating: requesting path: "+filepath);
-                window.requestFilesModel((filepath=="")? "/":filepath);
-            //filesClicked((filepath=="")? "/":filepath);
-            }
-            first = false;
+//            if(first==false)
+//            {
+//                console.debug("File  reactivating: requesting path: "+filepath);
+//                window.requestFilesModel((filepath=="")? "/":filepath);
+//            //filesClicked((filepath=="")? "/":filepath);
+//            }
+//            first = false;
         }
     }
 

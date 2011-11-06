@@ -19,7 +19,6 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     albumlist = 0;
     artistmodelold = 0;
     albumsmodelold = 0;
-    filelistold = 0;
     lastplaybackstate = NetworkAccess::STOP;
     connectSignals();
     readSettings();
@@ -27,6 +26,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     qmlRegisterType<MpdAlbum>();
     volIncTimer.setInterval(250);
     volDecTimer.setInterval(250);
+    filemodels = new QStack<QList<QObject*>*>();
     viewer->rootContext()->setContextProperty("versionstring",QVariant::fromValue(QString(VERSION)));
 }
 
@@ -54,19 +54,10 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
 void Controller::updateFilesModel(QList<QObject*>* list)
 {
     CommonDebug("FILES UPDATE REQUIRED");
-    if(filelistold!=0)
-    {
-        for(int i=0;i<filelistold->length();i++)
-        {
-            delete(filelistold->at(i));
-        }
-        delete(filelistold);
-        filelistold = 0;
-    }
     if(list->length()>0)
     {
         viewer->rootContext()->setContextProperty("filesModel",QVariant::fromValue(*list));
-        filelistold = (QList<MpdFileEntry*>*)list;
+        filemodels->push(list);
         emit filesModelReady();
     }
 
@@ -160,11 +151,6 @@ void Controller::connectSignals()
     connect(item,SIGNAL(playAlbum(QVariant)),netaccess,SLOT(playArtistAlbum(QVariant)));
     connect(item,SIGNAL(addFiles(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
     connect(item,SIGNAL(seek(int)),netaccess,SLOT(seek(int)));
-    connect(this,SIGNAL(albumsReady()),item,SLOT(updateAlbumsModel()));
-    connect(this,SIGNAL(artistsReady()),item,SLOT(updateArtistModel()));
-    connect(this,SIGNAL(albumTracksReady()),item,SLOT(updateAlbumModel()));
-    connect(this,SIGNAL(savedPlaylistsReady()),item,SLOT(updateSavedPlaylistsModel()));
-    connect(this,SIGNAL(savedPlaylistReady()),item,SLOT(updateSavedPlaylistModel()));
     connect(item,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
     connect(item,SIGNAL(addArtist(QString)),netaccess,SLOT(addArtist(QString)));
     connect(item,SIGNAL(playArtist(QString)),netaccess,SLOT(playArtist(QString)));
@@ -174,10 +160,6 @@ void Controller::connectSignals()
     connect(item,SIGNAL(requestSavedPlaylists()),netaccess,SLOT(getSavedPlaylists()));
     connect(netaccess,SIGNAL(savedPlaylistsReady(QStringList*)),this,SLOT(updateSavedPlaylistsModel(QStringList*)));
     connect(netaccess,SIGNAL(savedplaylistTracksReady(QList<QObject*>*)),this,SLOT(updateSavedPlaylistModel(QList<QObject*>*)));
-    connect(this,SIGNAL(sendPopup(QVariant)),item,SLOT(slotShowPopup(QVariant)));
-    connect(this,SIGNAL(sendStatus(QVariant)),item,SLOT(updateCurrentPlaying(QVariant)));
-    connect(this,SIGNAL(playlistUpdated()),item,SLOT(updatePlaylist()));
-    connect(this,SIGNAL(getFiles(QString)),netaccess,SLOT(getDirectory(QString)));
     connect(netaccess,SIGNAL(currentPlayListReady(QList<QObject*>*)),this,SLOT(updatePlaylistModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(albumsReady(QList<QObject*>*)),this,SLOT(updateAlbumsModel(QList<QObject*>*)));
     connect(netaccess,SIGNAL(artistsReady(QList<QObject*>*)),this,SLOT(updateArtistsModel(QList<QObject*>*)));
@@ -191,9 +173,6 @@ void Controller::connectSignals()
     connect(netaccess,SIGNAL(statusUpdate(status_struct)),this,SLOT(updateStatus(status_struct)));
     connect(netaccess,SIGNAL(busy()),item,SIGNAL(busy()));
     connect(netaccess,SIGNAL(ready()),item,SIGNAL(ready()));
-    connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
-    connect(this,SIGNAL(requestDisconnect()),netaccess,SLOT(disconnect()));
-    connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));
     connect(item,SIGNAL(newProfile()),this,SLOT(newProfile()));
     connect(item,SIGNAL(changeProfile(QVariant)),this,SLOT(changeProfile(QVariant)));
     connect(item,SIGNAL(deleteProfile(int)),this,SLOT(deleteProfile(int)));
@@ -206,13 +185,27 @@ void Controller::connectSignals()
     connect(item,SIGNAL(setShuffle(bool)),netaccess,SLOT(setRandom(bool)));
     connect(item,SIGNAL(setRepeat(bool)),netaccess,SLOT(setRepeat(bool)));
     connect(item,SIGNAL(updateDB()),netaccess,SLOT(updateDB()));
+    connect(item,SIGNAL(popfilemodelstack()),this,SLOT(fileStackPop()));
+    connect(item,SIGNAL(cleanFileStack()),this,SLOT(cleanFileStack()));
     connect(keyobserver,SIGNAL(mediaKeyClicked(int)),this,SLOT(mediaKeyHandle(int)));
     connect(keyobserver,SIGNAL(mediaKeyPressed(int)),this,SLOT(mediaKeyPressed(int)));
     connect(keyobserver,SIGNAL(mediaKeyReleased(int)),this,SLOT(mediaKeyReleased(int)));
-    connect(this,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
     connect(&volDecTimer,SIGNAL(timeout()),this,SLOT(decVolume()));
     connect(&volIncTimer,SIGNAL(timeout()),this,SLOT(incVolume()));
     connect(QApplication::instance(),SIGNAL(focusChanged(QWidget*,QWidget*)),this,SLOT(focusChanged(QWidget*,QWidget*)));
+    connect(this,SIGNAL(albumsReady()),item,SLOT(updateAlbumsModel()));
+    connect(this,SIGNAL(artistsReady()),item,SLOT(updateArtistModel()));
+    connect(this,SIGNAL(albumTracksReady()),item,SLOT(updateAlbumModel()));
+    connect(this,SIGNAL(savedPlaylistsReady()),item,SLOT(updateSavedPlaylistsModel()));
+    connect(this,SIGNAL(savedPlaylistReady()),item,SLOT(updateSavedPlaylistModel()));
+    connect(this,SIGNAL(sendPopup(QVariant)),item,SLOT(slotShowPopup(QVariant)));
+    connect(this,SIGNAL(sendStatus(QVariant)),item,SLOT(updateCurrentPlaying(QVariant)));
+    connect(this,SIGNAL(playlistUpdated()),item,SLOT(updatePlaylist()));
+    connect(this,SIGNAL(getFiles(QString)),netaccess,SLOT(getDirectory(QString)));
+    connect(this,SIGNAL(setVolume(int)),netaccess,SLOT(setVolume(int)));
+    connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
+    connect(this,SIGNAL(requestDisconnect()),netaccess,SLOT(disconnect()));
+    connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));
     connect(this,SIGNAL(setUpdateInterval(int)),netaccess,SLOT(setUpdateInterval(int)));
 }
 
@@ -532,5 +525,34 @@ void Controller::focusChanged(QWidget *old, QWidget *now){
     else{
         CommonDebug("Focus gained");
         emit setUpdateInterval(1000);
+    }
+}
+
+void Controller::fileStackPop()
+{
+    QList<MpdFileEntry*> *list = (QList<MpdFileEntry*>*)filemodels->pop();
+    for(int i=0;i<list->length();i++)
+    {
+        delete(list->at(i));
+    }
+    delete(list);
+    if(!filemodels->empty())
+    {
+        viewer->rootContext()->setContextProperty("filesModel",QVariant::fromValue(*(filemodels->top())));
+    }
+}
+
+void Controller::cleanFileStack()
+{
+    QList<MpdFileEntry*> *list;
+    while(!filemodels->empty())
+    {
+        CommonDebug("Cleaning file stack");
+            list = (QList<MpdFileEntry*>*)filemodels->pop();
+            for(int i=0;i<list->length();i++)
+            {
+                delete(list->at(i));
+            }
+            delete(list);
     }
 }
