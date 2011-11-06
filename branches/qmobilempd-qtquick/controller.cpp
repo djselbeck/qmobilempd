@@ -19,6 +19,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     albumlist = 0;
     artistmodelold = 0;
     albumsmodelold = 0;
+    filelistold = 0;
     lastplaybackstate = NetworkAccess::STOP;
     connectSignals();
     readSettings();
@@ -53,11 +54,19 @@ void Controller::updatePlaylistModel(QList<QObject*>* list)
 void Controller::updateFilesModel(QList<QObject*>* list)
 {
     CommonDebug("FILES UPDATE REQUIRED");
+    if(filelistold!=0)
+    {
+        for(int i=0;i<filelistold->length();i++)
+        {
+            delete(filelistold->at(i));
+        }
+        delete(filelistold);
+        filelistold = 0;
+    }
     if(list->length()>0)
     {
-        MpdFileEntry *file = dynamic_cast<MpdFileEntry*>(list->at(0));
-
         viewer->rootContext()->setContextProperty("filesModel",QVariant::fromValue(*list));
+        filelistold = (QList<MpdFileEntry*>*)list;
         emit filesModelReady();
     }
 
