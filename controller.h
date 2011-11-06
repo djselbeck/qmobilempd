@@ -71,6 +71,7 @@ private:
     AlbumModel *albumsmodelold;
     QList<MpdTrack*> *trackmodel;
     QList<MpdTrack*> *playlist;
+    QList<MpdFileEntry*> *filelistold;
     QList<QList<MpdFileEntry*>*> *filemodels;
 
 private slots:
