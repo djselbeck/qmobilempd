@@ -11,6 +11,8 @@ Window {
     property Page currentsongpage;
     property Page playlistpage;
     property Page serverlist;
+    property Page artistspage;
+    property Page albumspage;
     property int listfontsize:12;
     property int liststretch:20;
     property string playbuttoniconsource;
@@ -144,19 +146,12 @@ Window {
 
     function updateSavedPlaylistModel()
     {
-        var component = Qt.createComponent("SavedPlaylistTracks.qml");
-        var object = component.createObject(window);
-        object.listmodel = savedPlaylistModel;
-        object.playlistname = playlistname;
-        pageStack.push(object);
+        pageStack.push(Qt.resolvedUrl("SavedPlaylistTracks.qml"),{listmodel:savedPlaylistModel,playlistname:playlistname});
     }
 
     function updateSavedPlaylistsModel()
     {
-        var component = Qt.createComponent("SavedPlaylistsPage.qml");
-        var object = component.createObject(window);
-        object.listmodel = savedPlaylistsModel;
-        pageStack.push(object);
+        pageStack.push(Qt.resolvedUrl("SavedPlaylistsPage.qml"),{listmodel:savedPlaylistsModel});
     }
 
     function filesClicked(path)
@@ -172,45 +167,23 @@ Window {
     }
 
     function updateAlbumsModel(){
-        var albumpagecomponent = Qt.createComponent("AlbumPage.qml");
-        var albumpageobject = albumpagecomponent.createObject(window);
-        albumpageobject.listmodel = albumsModel;
-        albumpageobject.artistname = artistname;
-        pageStack.push(albumpageobject);
+        pageStack.push(Qt.resolvedUrl("AlbumPage.qml"),{listmodel:albumsModel,artistname:artistname});
         infobanner.close();
     }
 
     function updateArtistModel(){
-        var component = Qt.createComponent("ArtistPage.qml");
-        var object = component.createObject(window);
-        object.listmodel = artistsModel;
-        pageStack.push(object);
+        pageStack.push(Qt.resolvedUrl("ArtistPage.qml"),{listmodel:artistsModel});
         infobanner.close();
     }
 
     function updateAlbumModel()
     {
-        var component = Qt.createComponent("AlbumSongPage.qml");
-
-        var object = component.createObject(window);
-        object.artistname = artistname;
-        object.albumname = albumname;
-        object.listmodel= albumTracksModel;
-        pageStack.push(object);
+        pageStack.push(Qt.resolvedUrl("AlbumSongPage.qml"),{artistname:artistname,albumname:albumname,listmodel:albumTracksModel});
     }
 
     function albumTrackClicked(title,album,artist,lengthformatted,uri,year,tracknr)
     {
-        var component = Qt.createComponent("SongPage.qml");
-        var object = component.createObject(window);
-        object.title = title;
-        object.album = album;
-        object.artist = artist;
-        object.filename = uri;
-        object.lengthtext = lengthformatted;
-        object.date = year;
-        object.nr = tracknr;
-        pageStack.push(object);
+        pageStack.push(Qt.resolvedUrl("SongPage.qml"),{title:title,album:album,artist:artist,filename:uri,lengthtext:lengthformatted,date:year,nr:tracknr});
     }
 
 
@@ -220,12 +193,8 @@ Window {
 
     function receiveFilesPage()
     {
-        var filescomponent = Qt.createComponent("FilesPage.qml");
-        var filesobject = filescomponent.createObject(window);
-        filesobject.listmodel = filesModel;
-        filesobject.filepath = lastpath;
         infobanner.close();
-        pageStack.push(filesobject);
+        pageStack.push(Qt.resolvedUrl("FilesPage.qml"), {listmodel: filesModel,filepath :lastpath});
 
     }
 
@@ -443,6 +412,8 @@ Window {
                         //window.requestArtists();
                         quitbtnenabled = false;
                         activatequitbuttontimer.start();
+
+
 
                     }
                 }

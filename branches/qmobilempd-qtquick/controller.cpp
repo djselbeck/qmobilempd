@@ -17,6 +17,8 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     playlist = 0;
     artistlist = 0;
     albumlist = 0;
+    artistmodelold = 0;
+    albumsmodelold = 0;
     lastplaybackstate = NetworkAccess::STOP;
     connectSignals();
     readSettings();
@@ -77,29 +79,34 @@ void Controller::updateSavedPlaylistModel(QList<QObject*>* list)
 void Controller::updateArtistsModel(QList<QObject*>* list)
 {
     CommonDebug("ARTISTS UPDATE REQUIRED");
-    if(artistlist!=0)
+    if(artistmodelold!=0)
     {
-        delete(artistlist);
-        artistlist=0;
+        delete(artistmodelold);
     }
     //ArtistModel *model = new ArtistModel((QList<MpdTrack*>*)list,this);
     artistlist = (QList<MpdArtist*>*)list;
     ArtistModel *model = new ArtistModel((QList<MpdArtist*>*)list);
+    artistmodelold = model;
     viewer->rootContext()->setContextProperty("artistsModel",model);
     emit artistsReady();
 }
 
-void Controller::updateArtistAlbumsModel(QList<QObject*>* list)
-{
-    CommonDebug("ARTIST ALBUMS UPDATE REQUIRED");
-    viewer->rootContext()->setContextProperty("albumsModel",QVariant::fromValue(*list));
-    emit artistAlbumsReady();
-}
+//void Controller::updateArtistAlbumsModel(QList<QObject*>* list)
+//{
+//    CommonDebug("ARTIST ALBUMS UPDATE REQUIRED");
+//    viewer->rootContext()->setContextProperty("albumsModel",QVariant::fromValue(*list));
+//    emit artistAlbumsReady();
+//}
 
 void Controller::updateAlbumsModel(QList<QObject*>* list)
 {
     CommonDebug("ALBUMS UPDATE REQUIRED");
+    if(albumsmodelold!=0)
+    {
+        delete(albumsmodelold);
+    }
     AlbumModel *model = new AlbumModel((QList<MpdAlbum*>*)list);
+    albumsmodelold = model;
 
     viewer->rootContext()->setContextProperty("albumsModel",model);
     emit albumsReady();

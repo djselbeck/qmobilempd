@@ -3,7 +3,7 @@ import com.nokia.symbian 1.0
 
 
 Page{
-    id: albumspage
+    id: albumslistpage
     property alias listmodel: albums_list_view.model;
     property string artistname;
     tools: ToolBarLayout

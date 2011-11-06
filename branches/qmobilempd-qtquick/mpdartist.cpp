@@ -8,43 +8,46 @@ MpdArtist::MpdArtist(QObject *parent) :
 MpdArtist::MpdArtist(QObject *parent, QString name)
 {
     this->name = name;
-    this->albums = new QList<MpdAlbum*>();
-    this->tracks = new QList<MpdTrack*>();
 }
 
-void MpdArtist::addAlbum(MpdAlbum *album)
-{
-    albums->append(album);
-}
+//void MpdArtist::addAlbum(MpdAlbum *album)
+//{
+//    albums->append(album);
+//}
 
-void MpdArtist::addTrack(MpdTrack *track)
-{
-    tracks->append(track);
-}
+//void MpdArtist::addTrack(MpdTrack *track)
+//{
+//    tracks->append(track);
+//}
 
-void MpdArtist::addAlbums(QList<MpdAlbum*> *albums)
-{
-   this->albums->append(*albums);
-}
+//void MpdArtist::addAlbums(QList<MpdAlbum*> *albums)
+//{
+//   this->albums->append(*albums);
+//}
 
 QString MpdArtist::getName()
 {
    return this->name;
 }
 
-quint32 MpdArtist::albumCount()
-{
-    if(albums!=NULL)
-    {
-        return albums->length();
-    }
-}
+//quint32 MpdArtist::albumCount()
+//{
+//    if(albums!=NULL)
+//    {
+//        return albums->length();
+//    }
+//}
 
-MpdAlbum *MpdArtist::getAlbum(quint32 i)
+//MpdAlbum *MpdArtist::getAlbum(quint32 i)
+//{
+//    if(albums!=NULL&&i>=0&&i<albums->length())
+//    {
+//        return albums->at(i);
+//    }
+//    return NULL;
+//}
+
+MpdArtist::~MpdArtist()
 {
-    if(albums!=NULL&&i>=0&&i<albums->length())
-    {
-        return albums->at(i);
-    }
-    return NULL;
+    CommonDebug("Artist destructed");
 }
