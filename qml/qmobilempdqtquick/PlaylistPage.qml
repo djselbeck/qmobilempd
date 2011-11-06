@@ -112,7 +112,7 @@ Page{
         id:playlisttrackDelegate
         Item {
             id: itemItem
-            width: list_view1.width
+            width: parent.width
             height: topLayout.height+liststretch
             property alias color:rectangle.color
             property alias gradient: rectangle.gradient
@@ -122,7 +122,7 @@ Page{
                 anchors.fill: parent
                 Row{
                     id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
+                    anchors {verticalCenter: parent.verticalCenter}
                     Text {text: (index+1)+". ";color: playing ? "black" :"white";font.pointSize: 8}
                     Text {clip: true; wrapMode: Text.WrapAnywhere; text:  (title==="" ? filename : title); color:playing ? "black" :"white";font.pointSize:8;font.italic:(playing) ? true:false;}
                     Text { text: (length===0 ? "": " ("+lengthformated+")"); color:playing ? "black" :"white";font.pointSize:8}

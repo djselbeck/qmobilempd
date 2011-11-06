@@ -67,6 +67,8 @@ private:
     QTimer volDecTimer,volIncTimer;
     QList<MpdAlbum*> *albumlist;
     QList<MpdArtist*> *artistlist;
+    ArtistModel *artistmodelold;
+    AlbumModel *albumsmodelold;
     QList<MpdTrack*> *trackmodel;
     QList<MpdTrack*> *playlist;
     QList<QList<MpdFileEntry*>*> *filemodels;
@@ -91,7 +93,7 @@ private slots:
     void disconnectedToServer();
     void updateAlbumsModel(QList<QObject*>* list);
     void updateArtistsModel(QList<QObject*>* list);
-    void updateArtistAlbumsModel(QList<QObject*>* list);
+//    void updateArtistAlbumsModel(QList<QObject*>* list);
     void updatePlaylistModel(QList<QObject*>* list);
     void updateFilesModel(QList<QObject*>* list);
     void updateAlbumTracksModel(QList<QObject*>* list);
