@@ -74,7 +74,7 @@ Page{
                     settings_list_view.currentIndex = index;
 //                    object.index = settings_list_view.currentIndex;
 //                    console.debug("Loaded settings index "+index);
-                    pageStack.push(Qt.resolvedUrl("SettingsPage.qml"),{hostname:hostname,port:port,profilename:name,password:password,index:index});
+                    pageStack.push(Qt.resolvedUrl("SettingsPage.qml"),{hostname:hostname,port:port,profilename:name,password:password,index:index,autoconnect:autoconnect});
                 }
                 onPressed: {
                     itemItem.gradient = selectiongradient;                }

@@ -454,6 +454,9 @@ void Controller::changeProfile(QVariant profile)
         }
         serverprofiles->at(i)->setAutoconnect(true);
     }
+    else{
+        serverprofiles->at(i)->setAutoconnect(false);
+    }
     emit serverProfilesUpdated();
     writeSettings();
 }
