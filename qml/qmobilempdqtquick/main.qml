@@ -418,6 +418,10 @@ Window {
 
 
                     }
+                    if(status==PageStatus.Active)
+                    {
+                        window.cleanFileStack();
+                    }
                 }
 
                 Component{

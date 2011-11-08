@@ -5,12 +5,13 @@ ServerProfile::ServerProfile(QObject *parent) :
 {
 }
 
-ServerProfile::ServerProfile(QString hostname, QString password, int port, QString name)
+ServerProfile::ServerProfile(QString hostname, QString password, int port, QString name, bool autocon)
 {
     this->hostname = hostname;
     this->password = password;
     this->port = port;
     this->name = name;
+    this->autoconnect = autocon;
 }
 
 void ServerProfile::setHostname(QString hostname)
@@ -35,4 +36,9 @@ void ServerProfile::setPort(int port)
 {
     this->port = port;
     emit valueChanged();
+}
+
+void ServerProfile::setAutoconnect(bool autoconnect)
+{
+    this->autoconnect = autoconnect;
 }
