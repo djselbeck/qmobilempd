@@ -53,7 +53,7 @@ Page{
             Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white"}
             TextField{id: nameInput;  text: "enter name"; anchors { left: parent.left; right: parent.right}}
             Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white"}
-            TextField{id: hostnameInput;  text: "192.168.2.51"; anchors { left: parent.left; right: parent.right}}
+            TextField{id: hostnameInput;  text: ""; anchors { left: parent.left; right: parent.right}}
             Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
             TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}}
             Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
