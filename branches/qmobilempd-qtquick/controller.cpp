@@ -28,6 +28,14 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     volDecTimer.setInterval(250);
     filemodels = new QStack<QList<QObject*>*>();
     viewer->rootContext()->setContextProperty("versionstring",QVariant::fromValue(QString(VERSION)));
+    //Start auto connect
+    for(int i = 0;i<serverprofiles->length();i++)
+    {
+        if(serverprofiles->at(i)->getAutoconnect())
+        {
+            connectProfile(i);
+        }
+    }
 }
 
 void Controller::updatePlaylistModel(QList<QObject*>* list)
@@ -379,6 +387,7 @@ void Controller::readSettings()
     CommonDebug(QString::number(size).toAscii()+" Settings found");
     QString hostname,password,name;
     int port;
+    bool autoconnect;
     for(int i = 0;i<size;i++)
     {
         settings.setArrayIndex(i);
@@ -386,7 +395,8 @@ void Controller::readSettings()
         password = settings.value("password").toString();
         name = settings.value("profilename").toString();
         port = settings.value("port").toUInt();
-        serverprofiles->append(new ServerProfile(hostname,password,port,name));
+        autoconnect = settings.value("default").toBool();
+        serverprofiles->append(new ServerProfile(hostname,password,port,name,autoconnect));
     }
     settings.endArray();
     settings.endGroup();
@@ -406,6 +416,7 @@ void Controller::writeSettings()
             settings.setValue("password",serverprofiles->at(i)->getPassword());
             settings.setValue("profilename",serverprofiles->at(i)->getName());
             settings.setValue("port",serverprofiles->at(i)->getPort());
+            settings.setValue("default",serverprofiles->at(i)->getAutoconnect());
             CommonDebug("wrote setting:"+QString::number(i).toAscii());
         }
         settings.endArray();
@@ -421,7 +432,7 @@ void Controller::quit()
 
 void Controller::newProfile()
 {
-    serverprofiles->append(new ServerProfile("","",6600,"Profile_"+QString::number(serverprofiles->length())));
+    serverprofiles->append(new ServerProfile("","",6600,"Profile_"+QString::number(serverprofiles->length()),false));
     viewer->rootContext()->setContextProperty("settingsModel",QVariant::fromValue(*(QList<QObject*>*)serverprofiles));
     emit serverProfilesUpdated();
 }
@@ -434,7 +445,17 @@ void Controller::changeProfile(QVariant profile)
     serverprofiles->at(i)->setHostname(strings[2]);
     serverprofiles->at(i)->setPassword(strings[3]);
     serverprofiles->at(i)->setPort(strings.at(4).toInt());
+    if(strings.at(5).toInt()==1) {
+    //Check for other autoconnects
+        CommonDebug("New auto connect profile");
+        for(int j = 0; j<serverprofiles->length();j++)
+        {
+            serverprofiles->at(j)->setAutoconnect(false);
+        }
+        serverprofiles->at(i)->setAutoconnect(true);
+    }
     emit serverProfilesUpdated();
+    writeSettings();
 }
 
 void Controller::deleteProfile(int index)
