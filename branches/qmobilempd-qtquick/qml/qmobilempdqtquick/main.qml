@@ -1,9 +1,9 @@
-import QtQuick 1.0
-import com.nokia.symbian 1.0
-import com.nokia.extras 1.0
+import QtQuick 1.1
+import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 
 
-Window {
+PageStackWindow {
     id: window
     property string hostname;
     property int port;
@@ -319,21 +319,18 @@ Window {
         pageStack.push(mainPage);
     }
 
-    StatusBar {
-        id: statusBar
-        anchors.top: parent.top
-    }
 
-    PageStack {
-        id: pageStack
-        toolBar: commonToolBar
-        anchors { left: parent.left; right: parent.right; top: statusBar.bottom; bottom: toolBar.top }
-    }
 
-    ToolBar {
-        id: commonToolBar
-        anchors.bottom: parent.bottom
-    }
+//    PageStack {
+//        id: pageStack
+//        toolBar: commonToolBar
+//        anchors { left: parent.left; right: parent.right; top: statusBar.bottom; bottom: toolBar.top }
+//    }
+
+//    ToolBar {
+//        id: commonToolBar
+//        anchors.bottom: parent.bottom
+//    }
 
 
 
@@ -467,8 +464,10 @@ Window {
                 }
 
 
-        tools: ToolBarLayout {
-            id: pageSpecificTools
+        tools:pageSpecificToolsMain
+        ToolBarLayout {
+            id: pageSpecificToolsMain
+            visible: true
             ToolButton { iconSource: enabled ? "icons/close_stop.svg":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
 
             }
@@ -552,7 +551,7 @@ Window {
         opacity:0
         inverted: true
         height: (window.height/3>100) ? 200 : window.height/3
-        anchors {right:parent.right;bottom:commonToolBar.top;}
+        anchors {right:parent.right;bottom:pageStack.toolBar.top}
         valueIndicatorVisible: true
         valueIndicatorText: value+"%";
         onPressedChanged: {
