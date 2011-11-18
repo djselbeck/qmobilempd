@@ -44,20 +44,29 @@ Page{
         }
     }
     Flickable {
-        anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
+        id: settingsflick
+        property int lasty;
+        anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom:splitViewInput.top}
         contentHeight: settingscolumn.height
         Column{
             id:settingscolumn
             spacing: 10
             anchors {left:parent.left;right:parent.right}
-            Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white"}
-            TextField{id: nameInput;  text: "enter name"; anchors { left: parent.left; right: parent.right}}
-            Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white"}
-            TextField{id: hostnameInput;  text: ""; anchors { left: parent.left; right: parent.right}}
-            Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-            TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}}
-            Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}}
-            TextField{id: passwordInput; text:""; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}}
+            Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white";visible:(activeFocus||!inputContext.visible)}
+            TextField{id: nameInput;  text: "enter name"; anchors { left: parent.left; right: parent.right}
+                visible:(activeFocus||!inputContext.visible)}
+            Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white";visible:(activeFocus||!inputContext.visible)}
+            TextField{id: hostnameInput;  text: ""; anchors { left: parent.left; right: parent.right}
+                visible:(activeFocus||!inputContext.visible)}
+            Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
+                visible:(activeFocus||!inputContext.visible)}
+            TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}
+                visible:(activeFocus||!inputContext.visible)}
+            Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
+                visible:(activeFocus||!inputContext.visible)}
+            TextField{id: passwordInput; text:""; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}
+                visible:(activeFocus||!inputContext.visible)
+            }
             Row{
                 id:acswitchrow
                 spacing: 10
@@ -71,15 +80,59 @@ Page{
                     height: autoconnectswitch.height
                     verticalAlignment: Text.AlignVCenter
                 }
+                visible:(activeFocus||!inputContext.visible)
             }
             clip:true
         }
          clip: true
+         onContentYChanged: {
+             console.debug("contenty:"+contentY);
+         }
     }
 
     IntValidator{
         id:portvalidator
         top: 65536
         bottom: 1
+    }
+
+    Item {
+        id: splitViewInput
+
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+        Behavior on height { PropertyAnimation { duration: 200 } }
+
+        states: [
+            State {
+                name: "Visible"; when: inputContext.visible
+                PropertyChanges { target: splitViewInput; height: inputContext.height }
+                PropertyChanges {
+                    target: settingsflick
+                    interactive:false
+                }
+
+            },
+
+            State {
+                name: "Hidden"; when: !inputContext.visible
+                PropertyChanges { target: splitViewInput; height: window.pageStack.toolbar }
+                PropertyChanges {
+                    target: settingsflick
+                    interactive:true
+                }
+            }
+        ]
+        onStateChanged: {
+            if(state=="Visible")
+            {
+                console.debug("input now visible");
+                //settingsflick.contentY = settingsflick.lasty;
+            }
+            else if(state=="Hidden")
+            {
+                console.debug("input now hidden");
+            }
+        }
     }
 }
