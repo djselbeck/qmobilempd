@@ -26,6 +26,8 @@ PageStackWindow {
     property bool quitbtnenabled;
     property bool connected;
     property bool playing:false;
+    showToolBar: !inputContext.visible;
+    showStatusBar: !inputContext.visible;
     property string selectcolor: "lightblue";
     signal setHostname(string hostname);
     signal setPort(int port);
@@ -648,6 +650,8 @@ PageStackWindow {
     Gradient {
         id: fillgradient
     }
+
+
 
 
 }

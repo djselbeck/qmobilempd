@@ -27,7 +27,7 @@ Page{
                     onClicked: {
                         playlist_list_view.visible=false;
 
-                        savenamecolumn.visible=true;
+                        savenamedialog.visible=true;
                     }
                 }
                 ToolButton{
@@ -77,29 +77,44 @@ Page{
             font.pointSize: 7
         }
     }
-    Column {
-        id:savenamecolumn
-        onVisibleChanged: playlistname.text="";
+    Rectangle
+    {
+        id: savenamedialog
+        color: Qt.rgba(0,0,0,0.1)
+        z:1
+        anchors {top:headingrect.bottom;left:parent.left;right:parent.right;bottom:splitViewInput.top}
         visible:false
-        y: parent.height/2
-        anchors {left: parent.left;right:parent.right}
-        Text{text: "Enter name for playlist:";color:"white" }
-        TextField{ id:playlistname;       anchors {left: parent.left;right:parent.right} }
-        ButtonRow{anchors {left: parent.left;right:parent.right}
-            Button{text:"Ok"
-            onClicked: {
-                window.savePlaylist(playlistname.text);
-                savenamecolumn.visible=false;
-                playlist_list_view.visible=true;
-            }}
-            Button{text:"Cancel"
-            onClicked: {
-                savenamecolumn.visible=false;
-                playlist_list_view.visible=true;
-            }}
+        Column {
+            z:2
+            id:savenamecolumn
+            onVisibleChanged: playlistname.text="";
+            visible:true
+            y: parent.height/2
+            anchors {left: parent.left;right:parent.right;bottom:parent.bottom}
+            Text{text: "Enter name for playlist:";color:"white" }
+            TextField{ id:playlistname;       anchors {left: parent.left;right:parent.right}
+                Keys.onPressed: {if(event.key==Qt.Key_Enter){
+                        window.savePlaylist(playlistname.text);
+                        savenamedialog.visible=false;
+                        playlist_list_view.visible=true;
+                    }
+                }
+            }
+            ButtonRow{anchors {left: parent.left;right:parent.right}
+                Button{text:"Ok"
+                onClicked: {
+                    window.savePlaylist(playlistname.text);
+                    savenamedialog.visible=false;
+                    playlist_list_view.visible=true;
+                }}
+                Button{text:"Cancel"
+                onClicked: {
+                    savenamedialog.visible=false;
+                    playlist_list_view.visible=true;
+                }}
+            }
         }
     }
-
     ScrollBar
     {
         id:playlistscroll
@@ -186,5 +201,35 @@ Page{
         }
     }
 
+    Item {
+        id: splitViewInput
 
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+
+        Behavior on height { PropertyAnimation { duration: 200 } }
+
+        states: [
+            State {
+                name: "Visible"; when: inputContext.visible
+                PropertyChanges { target: splitViewInput; height: inputContext.height }
+
+            },
+
+            State {
+                name: "Hidden"; when: !inputContext.visible
+                PropertyChanges { target: splitViewInput; height: window.pageStack.toolbar }
+            }
+        ]
+        onStateChanged: {
+            if(state=="Visible")
+            {
+                console.debug("input now visible");
+                //settingsflick.contentY = settingsflick.lasty;
+            }
+            else if(state=="Hidden")
+            {
+                console.debug("input now hidden");
+            }
+        }
+    }
 }
