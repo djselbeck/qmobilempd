@@ -21,7 +21,6 @@ Page{
             }}
         ToolButton { iconSource: "toolbar-add"; onClicked: {
                 window.addFiles(filepath);
-                console.log("FILEPATH:"+filepath);
             } }
     }
     ListView{
@@ -44,20 +43,6 @@ Page{
         }
     }
 
-    onStatusChanged: {
-        console.debug("Playlist status changed: "+status);
-        if(status==PageStatus.Activating)
-        {
-//            if(first==false)
-//            {
-//                console.debug("File  reactivating: requesting path: "+filepath);
-//                window.requestFilesModel((filepath=="")? "/":filepath);
-//            //filesClicked((filepath=="")? "/":filepath);
-//            }
-//            first = false;
-        }
-    }
-
     Component{
         id:filesDelegate
         Item {
@@ -74,7 +59,6 @@ Page{
                     id: topLayout
                     anchors {verticalCenter: parent.verticalCenter}
                     Text { text: name; color:"white";font.pointSize:8}
-                    //Text {text:artist; color:"grey";font.pointSize:10;}
                 }
             }
             MouseArea {
@@ -82,11 +66,9 @@ Page{
                 onClicked: {
                     if(isDirectory){
                         list_view1.currentIndex = index
-                        console.log("File: "+prepath+name+" clicked");
                         filesClicked((prepath=="/"? "": prepath+"/")+name);
                     }
                     if(isFile) {
-                        console.debug("File clicked: "+title+":"+album);
                         albumTrackClicked(title,album,artist,length,path,year,tracknr);
                     }
                 }

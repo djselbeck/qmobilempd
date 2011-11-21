@@ -60,7 +60,7 @@ Page{
             id: albumtrackDelegate
             Item {
                 id: itemItem
-                width: list_view1.width
+                width: parent.width
                 height: topLayout.height+liststretch
                 property alias color:rectangle.color
                 property alias gradient: rectangle.gradient

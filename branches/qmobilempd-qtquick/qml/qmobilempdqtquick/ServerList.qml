@@ -17,7 +17,6 @@ Page{
     ToolButton { iconSource: "toolbar-add";
 
         onClicked:{
-            console.debug("Settings add clicked");
             window.newProfile();
         }
     }
@@ -65,15 +64,7 @@ Page{
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-//                    var component = Qt.createComponent("SettingsPage.qml");
-//                    var object = component.createObject(window);
-//                    object.hostname = hostname;
-//                    object.port = port;
-//                    object.profilename = name;
-//                    object.password = password;
                     settings_list_view.currentIndex = index;
-//                    object.index = settings_list_view.currentIndex;
-//                    console.debug("Loaded settings index "+index);
                     pageStack.push(Qt.resolvedUrl("SettingsPage.qml"),{hostname:hostname,port:port,profilename:name,password:password,index:index,autoconnect:autoconnect});
                 }
                 onPressed: {

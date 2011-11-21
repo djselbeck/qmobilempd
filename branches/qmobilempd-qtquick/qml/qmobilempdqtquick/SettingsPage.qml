@@ -12,7 +12,6 @@ Page{
     tools:ToolBarLayout {
         id: settingsTools
             ToolButton { iconSource: "toolbar-back" ;onClicked: {
-                    console.debug("Change settings profile index:" +index);
                     window.changeProfile([index,profilename,hostname,password,port,autoconnect?1:0]);
                     pageStack.pop();
                 }
@@ -25,7 +24,6 @@ Page{
                 }
             }
             ToolButton {iconSource: "toolbar-delete"; onClicked: {
-                    console.debug("Delete profile index "+index)
                     window.deleteProfile(index);
                     pageStack.pop();
                 }
@@ -52,18 +50,18 @@ Page{
             id:settingscolumn
             spacing: 10
             anchors {left:parent.left;right:parent.right}
-            Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white";visible:(activeFocus||!inputContext.visible)}
+            Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white";visible:(nameInput.visible)}
             TextField{id: nameInput;  text: "enter name"; anchors { left: parent.left; right: parent.right}
                 visible:(activeFocus||!inputContext.visible)}
-            Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white";visible:(activeFocus||!inputContext.visible)}
+            Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white";visible:(hostnameInput.visible)}
             TextField{id: hostnameInput;  text: ""; anchors { left: parent.left; right: parent.right}
                 visible:(activeFocus||!inputContext.visible)}
             Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
-                visible:(activeFocus||!inputContext.visible)}
+                visible:(portInput.visible)}
             TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}
                 visible:(activeFocus||!inputContext.visible)}
             Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
-                visible:(activeFocus||!inputContext.visible)}
+                visible:(passwordInput.visible)}
             TextField{id: passwordInput; text:""; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}
                 visible:(activeFocus||!inputContext.visible)
             }
@@ -85,9 +83,6 @@ Page{
             clip:true
         }
          clip: true
-         onContentYChanged: {
-             console.debug("contenty:"+contentY);
-         }
     }
 
     IntValidator{
@@ -123,16 +118,6 @@ Page{
                 }
             }
         ]
-        onStateChanged: {
-            if(state=="Visible")
-            {
-                console.debug("input now visible");
-                //settingsflick.contentY = settingsflick.lasty;
-            }
-            else if(state=="Hidden")
-            {
-                console.debug("input now hidden");
-            }
-        }
+
     }
 }
