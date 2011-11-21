@@ -103,7 +103,6 @@ Component{
                 albumClicked(artistname,title);
             }
             onPressAndHold: {
-                console.debug("Long Tap"+":"+title);
                 albumMenu.albumtitle = title;
                 albumMenu.artistname = artistname;
                 albumMenu.open();

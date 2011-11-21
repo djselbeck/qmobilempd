@@ -11,13 +11,6 @@ Page{
                     pageStack.push(mainPage);
                 }}
 
-//                ToolButton {
-//                    iconSource: "toolbar-mediacontrol-stop"
-//                    onClicked: {
-//                        window.stop();
-//                    }
-//                }
-
                 ToolButton{ iconSource:"toolbar-add"; onClicked: {
                         window.addPlaylist(playlistname)
                     }}
@@ -27,7 +20,6 @@ Page{
                         window.deleteSavedPlaylist(playlistname);
                         pageStack.clear()
                         pageStack.push([mainPage,playlistpage]);
-                        //window.requestSavedPlaylists();
                     }
                 }
 
@@ -35,23 +27,9 @@ Page{
             }
         property alias listmodel: playlistsongs_list_view.model;
 
-        Component.onCompleted: {
-            console.debug("albumsongs completed");
-        }
-
-        onStatusChanged: {
-            console.debug("albumsongs status changed: "+status);
-            if(status==PageStatus.Activating)
-            {
-                console.debug("albumsongs activating");
-                //artistalbums_list_view.model = albumsModel;
-            }
-        }
-        Component.onDestruction: {
-            console.debug("albumsongs destroyed");
-        }
         ListView{
             id: playlistsongs_list_view
+            spacing:2
             delegate: playlisttrackDelegate
             anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
             clip: true
@@ -73,18 +51,17 @@ Page{
             id: playlisttrackDelegate
             Item {
                 id: itemItem
-                width: list_view1.width
+                width: parent.width
                 height: topLayout.height+liststretch
-
                 property alias color:rectangle.color
                 property alias gradient:rectangle.gradient
                 Rectangle {
                     id: rectangle
-                    color:"black"
+                    color:Qt.rgba(0.07, 0.07, 0.07, 1)
                     anchors.fill: parent
                     Row{
                         id: topLayout
-                        anchors {verticalCenter: parent.verticalCenter}
+                        anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
                         Text { text: (title==="" ? filename : title); color:"white";font.pointSize:8}
                         Text { text: (length===0 ? "": " ("+lengthformated+")"); color:"white";font.pointSize:8}
                     }
@@ -97,16 +74,13 @@ Page{
                         albumTrackClicked(title,album,artist,lengthformated,uri,year,tracknr);
                     }
                     onPressed: {
-                        itemItem.color = selectcolor;
                         itemItem.gradient = selectiongradient;
                     }
                     onReleased: {
                         itemItem.gradient = fillgradient;
-                        itemItem.color = "black";
                     }
                     onCanceled: {
                         itemItem.gradient = fillgradient;
-                        itemItem.color = "black";
                     }
                 }
             }
@@ -114,7 +88,7 @@ Page{
 
         ScrollBar
         {
-            id:playlistscroll
+            id:playlistsscroll
             flickableItem: playlistsongs_list_view
             anchors {right:playlistsongs_list_view.right; top:playlistsongs_list_view.top}
         }

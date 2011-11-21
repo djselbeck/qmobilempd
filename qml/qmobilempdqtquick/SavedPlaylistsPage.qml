@@ -15,6 +15,7 @@ Page{
             }
     ListView{
         id: savedplaylist_list_view
+        spacing: 2
         delegate: savedlistsdelegate
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
@@ -35,23 +36,23 @@ Page{
         id:savedlistsdelegate
         Item {
             id: itemItem
-            width: list_view1.width
-            height: topLayout.height
+            width: parent.width
+            height: topLayout.height+liststretch
             property alias color:rectangle.color
             property alias gradient:rectangle.gradient
             Rectangle {
                 id: rectangle
-                color:"black"
+                color:Qt.rgba(0.07, 0.07, 0.07, 1)
                 anchors.fill: parent
                 Row{
                     id: topLayout
+                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
                     Text { text: modelData; color:"white";font.pointSize:10;}
                 }
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    console.debug("Playlist:"+modelData+" clicked");
                     window.savedPlaylistClicked(modelData);
                 }
                 onPressed: {
@@ -59,13 +60,18 @@ Page{
                 }
                 onReleased: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = "black";
                 }
                 onCanceled: {
                     itemItem.gradient = fillgradient;
-                    itemItem.color = "black";
+
                 }
             }
         }
+    }
+    ScrollBar
+    {
+        id:playlistsscroll
+        flickableItem: savedplaylist_list_view
+        anchors {right:savedplaylist_list_view.right; top:savedplaylist_list_view.top}
     }
 }

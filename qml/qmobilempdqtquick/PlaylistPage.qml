@@ -220,16 +220,6 @@ Page{
                 PropertyChanges { target: splitViewInput; height: window.pageStack.toolbar }
             }
         ]
-        onStateChanged: {
-            if(state=="Visible")
-            {
-                console.debug("input now visible");
-                //settingsflick.contentY = settingsflick.lasty;
-            }
-            else if(state=="Hidden")
-            {
-                console.debug("input now hidden");
-            }
-        }
+
     }
 }

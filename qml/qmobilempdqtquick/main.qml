@@ -88,7 +88,6 @@ PageStackWindow {
     function slotConnected()
     {
         connected = true;
-        console.debug("Profilename:" + profilename);
     }
 
     function slotDisconnected()
@@ -323,21 +322,6 @@ PageStackWindow {
 
 
 
-//    PageStack {
-//        id: pageStack
-//        toolBar: commonToolBar
-//        anchors { left: parent.left; right: parent.right; top: statusBar.bottom; bottom: toolBar.top }
-//    }
-
-//    ToolBar {
-//        id: commonToolBar
-//        anchors.bottom: parent.bottom
-//    }
-
-
-
-
-
 
     Page {
         id: mainPage
@@ -379,12 +363,8 @@ PageStackWindow {
                     id: list_view1
                     model: mainMenuModel
                     delegate: itemDelegate
-                    signal playlistClicked
-                    onPlaylistClicked: console.log("Send playlistClicked signal")
-
                     height: count*50+25;
                     width: parent.width
-                   //anchors { left: parent.left; right: parent.right; top: mainflickable.bottom; bottom: parent.bottom }
                     clip: true
                     interactive: false
                     spacing:2
@@ -406,16 +386,10 @@ PageStackWindow {
                 }
 
                 onStatusChanged: {
-                    console.debug("Main status changed: "+status);
                     if(status==PageStatus.Activating)
                     {
-                        console.debug("artis activating");
-                        //window.requestArtists();
                         quitbtnenabled = false;
                         activatequitbuttontimer.start();
-
-
-
                     }
                     if(status==PageStatus.Active)
                     {
@@ -498,12 +472,11 @@ PageStackWindow {
     }
 
 
-
-
-    PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 500
-        onCompleted: {
-            hidevolumeslidertimer.start();
-        }
+    PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 200
+    onStarted: {
+        volumeslider.opacity=0;
+        volumeslider.visible=true;
+    }
     }
     PropertyAnimation {id: volumeblendout
                 target: volumeslider
@@ -513,6 +486,7 @@ PageStackWindow {
     onCompleted: {
                 volumeslider.visible=false;
                 }
+
         }
 
 
@@ -521,7 +495,6 @@ PageStackWindow {
         repeat: true
         interval: 200
         onTriggered: {
-            console.debug("Volume timer triggered with value:"+volumeslider.value);
             window.setVolume(volumeslider.value);
         }
     }
@@ -529,7 +502,7 @@ PageStackWindow {
     Timer{
         id:hidevolumeslidertimer
         repeat: false
-        interval: 2500
+        interval: 2900
         onTriggered: {
             volumeblendout.start();
         }
@@ -559,21 +532,26 @@ PageStackWindow {
         onPressedChanged: {
             if(pressed)
             {
-                console.debug("Pressed");
                 updatevolumetimer.start();
                 if(hidevolumeslidertimer.running)
                 {
-                    console.debug("Hidevolume slider stopped");
                     hidevolumeslidertimer.stop();
                 }
             }
             else{
-                console.debug("!Pressed");
-
                 window.setVolume(volumeslider.value);
                 updatevolumetimer.stop();
                 hidevolumeslidertimer.start();
 
+            }
+        }
+        onVisibleChanged: {
+            if(!visible)
+            {
+                hidevolumeslidertimer.stop();
+            }
+            else{
+                hidevolumeslidertimer.start();
             }
         }
 
@@ -606,7 +584,6 @@ PageStackWindow {
     SelectionDialog{
         id: selectserverdialog
         titleText: "Select server:"
-       // model: settingsModel
         visible: false
         delegate: serverSelectDelegate
         onAccepted: {window.connectProfile(selectedIndex);
@@ -633,7 +610,6 @@ PageStackWindow {
         content: [ Text{color: "white"
             text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst. Version: "+aboutdialog.version
             wrapMode: "WordWrap"
-            //anchors {left:parent.left; right: parent.right;}
             width: parent.width
         }]
         onClickedOutside: {aboutdialog.close();}

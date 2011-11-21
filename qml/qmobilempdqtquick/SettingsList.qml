@@ -94,22 +94,18 @@ Page{
     }
     function parseClickedSettings(index)
     {
-            console.debug("parseClickedSettings("+index+")")
             if(settingsModel.get(index).ident=="updatedb"){
                 window.updateDB();
             }
             else if(settingsModel.get(index).ident=="servers"){
-                console.debug("Servers clicked");
                 pageStack.push(serverlist);
             }
             else if(settingsModel.get(index).ident=="about"){
-                console.debug("about to clicked:"+versionstring);
                 aboutdialog.visible=true;
                 aboutdialog.version = versionstring;
                 aboutdialog.open();
             }
             else if(settingsModel.get(index).ident=="connectto"){
-                console.debug("Connect to clicked");
                 selectserverdialog.visible=true;
                 selectserverdialog.open();
             }
