@@ -36,93 +36,61 @@ Page{
 
 }
 
-Component {
-    id: sectionHeadingAlbum
-    Rectangle {
-        width: window.width
-        height: childrenRect.height
-        color: "darkgrey"
+ListHeading {
+    id: listHeading
 
-        Text {
-            text: section
-            font.bold: true
-            style: Text.Raised
-        }
+    ListItemText {
+        anchors.fill: listHeading.paddingItem
+        role: "Heading"
+        text: (artistname==="" ? "Albums" : artistname)
+        horizontalAlignment: Text.AlignLeft
+
     }
 }
 ListView{
     id: albums_list_view
-    delegate: albumDelegate
-    anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
+    delegate: ListItem{
+        id:listitem
+        ListItemText{
+            role: "Title"
+            anchors {verticalCenter: parent.verticalCenter}
+            text: (title===""? "No Album Tag":title)
+        }
+        onClicked: {
+            list_view1.currentIndex = index
+            albumClicked(artistname,title);
+        }
+        onPressAndHold: {
+            albumMenu.albumtitle = title;
+            albumMenu.artistname = artistname;
+            albumMenu.open();
+        }
+
+    }
+
+    anchors { left: parent.left; right: parent.right; top: listHeading.bottom; bottom: parent.bottom }
     clip: true
+    focus: true
     section.property: "sectionprop";
-    section.delegate: sectionHeadingAlbum
+    section.delegate: ListHeading {
+        id: sectionHeading
+        ListItemText {
+            anchors.fill: sectionHeading.paddingItem
+            role: "Heading"
+            horizontalAlignment: Text.AlignLeft
+            text:  section + ":"
+        }
+    }
 
 }
-Rectangle {
-    id:headingrect
-    anchors {left:parent.left;right:parent.right;}
-    height: artext.height
-    color: Qt.rgba(0.07, 0.07, 0.07, 1)
-    Text{
-        id: artext
-        text: (artistname==="" ? "Albums:" :artistname+":")
-        color: "white"
-        font.pointSize: 7
-    }
-}
+
 
 
 SectionScroller{
     listView: albums_list_view
 }
 
-Component{
-    id:albumDelegate
-    Item {
-        id: itemItem
-        width: window.width
-        height: topLayout.height+liststretch
-        property alias color:rectangle.color
-        property alias gradient: rectangle.gradient
-        Rectangle {
-            id: rectangle
-            color: (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
-            anchors.fill: parent
-            Text{
-                id: topLayout
-                anchors {verticalCenter: parent.verticalCenter}
-                text: (title===""? "No Album Tag":title); color:"white";font.pointSize:8; verticalAlignment: "AlignVCenter";
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
 
-                list_view1.currentIndex = index
-                albumClicked(artistname,title);
-            }
-            onPressAndHold: {
-                albumMenu.albumtitle = title;
-                albumMenu.artistname = artistname;
-                albumMenu.open();
-            }
-            onPressed: {
-                itemItem.gradient = selectiongradient;
-            }
-            onReleased: {
-                itemItem.gradient = fillgradient;
-                itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
-            }
-            onCanceled: {
-                itemItem.gradient = fillgradient;
-                itemItem.color = (index%2===0) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
-            }
-
-        }
-    }
-
-}
 
 ContextMenu {
     id: albumMenu

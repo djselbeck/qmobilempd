@@ -11,23 +11,23 @@ Page{
     property int index;
     tools:ToolBarLayout {
         id: settingsTools
-            ToolButton { iconSource: "toolbar-back" ;onClicked: {
-                    window.changeProfile([index,profilename,hostname,password,port,autoconnect?1:0]);
-                    pageStack.pop();
-                }
+        ToolButton { iconSource: "toolbar-back" ;onClicked: {
+                window.changeProfile([index,profilename,hostname,password,port,autoconnect?1:0]);
+                pageStack.pop();
             }
-            ToolButton {text: "Connect"; onClicked: {
-                    window.changeProfile([index,profilename,hostname,password,port,autoconnect?1:0]);
-                    window.connectProfile(index);
-                    pageStack.clear();
-                    pageStack.push(mainPage);
-                }
+        }
+        ToolButton {text: "Connect"; onClicked: {
+                window.changeProfile([index,profilename,hostname,password,port,autoconnect?1:0]);
+                window.connectProfile(index);
+                pageStack.clear();
+                pageStack.push(mainPage);
             }
-            ToolButton {iconSource: "toolbar-delete"; onClicked: {
-                    window.deleteProfile(index);
-                    pageStack.pop();
-                }
+        }
+        ToolButton {iconSource: "toolbar-delete"; onClicked: {
+                window.deleteProfile(index);
+                pageStack.pop();
             }
+        }
     }
     Rectangle {
         id:headingrect
@@ -52,19 +52,26 @@ Page{
             anchors {left:parent.left;right:parent.right}
             Text{id: nameTextLabel; text: qsTr("Profile Name:"); color:"white";visible:(nameInput.visible)}
             TextField{id: nameInput;  text: "enter name"; anchors { left: parent.left; right: parent.right}
-                visible:(activeFocus||!inputContext.visible)}
+                visible:(activeFocus||!inputContext.visible)
+                inputMethodHints: Qt.ImhNoPredictiveText
+            }
             Text{id: hostnameTextLabel; text: qsTr("Hostname:"); color:"white";visible:(hostnameInput.visible)}
             TextField{id: hostnameInput;  text: ""; anchors { left: parent.left; right: parent.right}
-                visible:(activeFocus||!inputContext.visible)}
+                visible:(activeFocus||!inputContext.visible)
+                inputMethodHints: Qt.ImhNoPredictiveText}
             Text{id: portLabel; text: qsTr("Port:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
                 visible:(portInput.visible)}
             TextField{id: portInput;validator: portvalidator;text: "6600"; anchors { left: parent.left; right: parent.right}
-                visible:(activeFocus||!inputContext.visible)}
+                visible:(activeFocus||!inputContext.visible)
+                inputMethodHints: Qt.ImhNoPredictiveText}
             Text{id: passwordLabel; text: qsTr("Password:"); color:"white" ; anchors { left: parent.left;  right: parent.right}
                 visible:(passwordInput.visible)}
             TextField{id: passwordInput; text:""; echoMode: TextInput.PasswordEchoOnEdit ;anchors { left: parent.left; right: parent.right}
                 visible:(activeFocus||!inputContext.visible)
+                inputMethodHints: Qt.ImhNoPredictiveText
             }
+
+
             Row{
                 id:acswitchrow
                 spacing: 10
@@ -82,7 +89,7 @@ Page{
             }
             clip:true
         }
-         clip: true
+        clip: true
     }
 
     IntValidator{

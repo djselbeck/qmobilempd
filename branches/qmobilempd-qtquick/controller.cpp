@@ -214,6 +214,7 @@ void Controller::connectSignals()
     connect(this,SIGNAL(requestConnect()),netaccess,SLOT(connectToHost()));
     connect(this,SIGNAL(requestDisconnect()),netaccess,SLOT(disconnect()));
     connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));
+    connect(this,SIGNAL(showWelcome()),item,SLOT(showWelcome()));
     connect(this,SIGNAL(setUpdateInterval(int)),netaccess,SLOT(setUpdateInterval(int)));
 }
 
@@ -402,6 +403,10 @@ void Controller::readSettings()
     settings.endGroup();
     viewer->rootContext()->setContextProperty("settingsModel",QVariant::fromValue(*(QList<QObject*>*)serverprofiles));
     emit serverProfilesUpdated();
+    if(serverprofiles->length()==0)
+    {
+        emit showWelcome();
+    }
 }
 
 void Controller::writeSettings()
