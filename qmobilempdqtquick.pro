@@ -24,7 +24,7 @@ QT       += core gui network
 symbian {
     TARGET.CAPABILITY += NetworkServices
 #    TARGET.UID3 = 0xE8E76261
-    TARGET.UID3 = 0xE8E76261
+    TARGET.UID3 = 0x2004bca1
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
     ICON = icon_converted.svg
@@ -69,8 +69,7 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog \
-    qml/qmobilempdqtquick/PlaylistComponent.qml
+    qtc_packaging/debian_harmattan/changelog
 
 HEADERS += \
     wlitrack.h \
@@ -92,7 +91,8 @@ HEADERS += \
 
 
 
-VERSION = 1.0.4
+VERSION = 1.0.5
+
 
 
 

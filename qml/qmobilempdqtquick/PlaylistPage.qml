@@ -8,73 +8,105 @@ Page{
     property alias listmodel:playlist_list_view.model
 
     tools:ToolBarLayout {
-    ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-       // ButtonRow {
-                ToolButton {
-                    iconSource: "toolbar-delete"
-                    onClicked: {
-                        window.deletePlaylist();
-                    }
-                }
-                ToolButton {
-                    iconSource: playbuttoniconsource
-                    onClicked: {
-                        window.play();
-                    }
-                }
-                ToolButton {
-                    iconSource: "icons/document-save.svg"
-                    onClicked: {
-                        playlist_list_view.visible=false;
+        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        // ButtonRow {
+        ToolButton {
+            iconSource: "toolbar-delete"
+            onClicked: {
+                window.deletePlaylist();
+            }
+        }
 
-                        savenamedialog.visible=true;
-                    }
-                }
-                ToolButton{
-                    iconSource: "icons/playlist.svg"
-                    onClicked: {
-                        window.requestSavedPlaylists();
-                    }
-                }
+        ToolButton {
+            iconSource: "icons/document-save.svg"
+            onClicked: {
+                playlist_list_view.visible=false;
 
-
-                ToolButton {
-                    iconSource: volumebuttoniconsource;
-                    onClicked: {
-                        if(volumeslider.visible)
-                        {
-                            volumeblendout.start();
-                        }
-                        else{
-                            volumeslider.visible=true;
-                            volumeblendin.start();
-                        }
-                    }
+                savenamedialog.visible=true;
+            }
+        }
+        ToolButton{
+            iconSource: "icons/playlist.svg"
+            onClicked: {
+                window.requestSavedPlaylists();
+            }
+        }
+        ToolButton{
+            iconSource: "icons/point.svg"
+            onClicked: {
+                songid = window.lastsongid;
+            }
+        }
+        ToolButton {
+            iconSource: playbuttoniconsource
+            onClicked: {
+                window.play();
+            }
+        }
+        ToolButton {
+            iconSource: volumebuttoniconsource;
+            onClicked: {
+                if(volumeslider.visible)
+                {
+                    volumeblendout.start();
                 }
+                else{
+                    volumeslider.visible=true;
+                    volumeblendin.start();
+                }
+            }
+        }
 
-//            }
-}
+        //            }
+    }
 
 
     ListView{
         id: playlist_list_view
-        delegate: playlisttrackDelegate
+        delegate: ListItem{
+
+            Row{
+                anchors {verticalCenter: parent.verticalCenter}
+                Image {
+                    visible: playing
+                    source: "icons/play.svg"
+
+                }
+                ListItemText {text: (index+1)+". ";anchors {verticalCenter: parent.verticalCenter}}
+                ListItemText {clip: true; wrapMode: Text.WrapAnywhere; elide: Text.ElideRight; text:  (title==="" ? filename : title);font.italic:(playing) ? true:false;anchors {verticalCenter: parent.verticalCenter}}
+                ListItemText { text: (length===0 ? "": " ("+lengthformated+")");anchors {verticalCenter: parent.verticalCenter}}
+            }
+            onClicked: {
+                list_view1.currentIndex = index
+                if(!playing)
+                {
+                    parseClickedPlaylist(index);
+                }
+                else{
+                    pageStack.push(currentsongpage);
+                }
+            }
+            onPressAndHold: {
+                currentPlaylistMenu.id = index;
+                currentPlaylistMenu.playing = playing;
+                currentPlaylistMenu.open();
+            }
+        }
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
         highlightMoveDuration: 300
-        spacing: 2
-
     }
-    Rectangle {
-        id:headingrect
-        anchors {left:parent.left;right:parent.right;}
-        height: artext.height
-        color: Qt.rgba(0.07, 0.07, 0.07, 1)
-        Text{
-            id: artext
+
+    ListHeading {
+        id: headingrect
+        ListItemText {
+            anchors.fill: headingrect.paddingItem
+            role: "Heading"
             text: "Current playlist:"
-            color: "white"
-            font.pointSize: 7
+            wrapMode: Text.WrapAnywhere
+            elide: Text.ElideLeft
+            horizontalAlignment: Text.AlignLeft
+
         }
     }
     Rectangle
@@ -99,19 +131,20 @@ Page{
                         playlist_list_view.visible=true;
                     }
                 }
+                inputMethodHints: Qt.ImhNoPredictiveText
             }
             ButtonRow{anchors {left: parent.left;right:parent.right}
                 Button{text:"Ok"
-                onClicked: {
-                    window.savePlaylist(playlistname.text);
-                    savenamedialog.visible=false;
-                    playlist_list_view.visible=true;
-                }}
+                    onClicked: {
+                        window.savePlaylist(playlistname.text);
+                        savenamedialog.visible=false;
+                        playlist_list_view.visible=true;
+                    }}
                 Button{text:"Cancel"
-                onClicked: {
-                    savenamedialog.visible=false;
-                    playlist_list_view.visible=true;
-                }}
+                    onClicked: {
+                        savenamedialog.visible=false;
+                        playlist_list_view.visible=true;
+                    }}
             }
         }
     }
@@ -121,59 +154,8 @@ Page{
         flickableItem: playlist_list_view
         anchors {right:playlist_list_view.right; top:playlist_list_view.top}
     }
-    Component{
-        id:playlisttrackDelegate
-        Item {
-            id: itemItem
-            width: parent.width
-            height: topLayout.height+liststretch
-            property alias color:rectangle.color
-            property alias gradient: rectangle.gradient
-            Rectangle {
-                id: rectangle
-                color:playing ? "#8cb2ff" : Qt.rgba(0.07, 0.07, 0.07, 1)
-                anchors.fill: parent
-                Row{
-                    id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter}
-                    Text {text: (index+1)+". ";color: playing ? "black" :"white";font.pointSize: 8}
-                    Text {clip: true; wrapMode: Text.WrapAnywhere; text:  (title==="" ? filename : title); color:playing ? "black" :"white";font.pointSize:8;font.italic:(playing) ? true:false;}
-                    Text { text: (length===0 ? "": " ("+lengthformated+")"); color:playing ? "black" :"white";font.pointSize:8}
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    list_view1.currentIndex = index
-                    if(!playing)
-                    {
-                        parseClickedPlaylist(index);
-                    }
-                    else{
-                        pageStack.push(currentsongpage);
-                    }
-                }
-                onPressAndHold: {
-                   // itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
-                    currentPlaylistMenu.id = index;
-                    currentPlaylistMenu.playing = playing;
-                    currentPlaylistMenu.open();
-                }
-                onPressed: {
-                    itemItem.gradient = selectiongradient;
-                }
-                onReleased: {
-                    itemItem.gradient = fillgradient;
-                   // itemItem.color = playing ? "#c7e0ff" : Qt.rgba(0.07, 0.07, 0.07, 1);
-                }
-                onCanceled: {
-                    itemItem.gradient = fillgradient;
-                    //itemItem.color = playing ? "#c7e0ff" : Qt.rgba(0.07, 0.07, 0.07, 1);
-                }
 
-            }
-        }
-    }
+
 
     ContextMenu {
         id: currentPlaylistMenu

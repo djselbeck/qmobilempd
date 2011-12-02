@@ -15,6 +15,7 @@ PageStackWindow {
     property Page albumspage;
     property int listfontsize:12;
     property int liststretch:20;
+    property int lastsongid:-1;
     property string playbuttoniconsource;
     property string volumebuttoniconsource;
     property string lastpath;
@@ -117,6 +118,11 @@ PageStackWindow {
         selectserverdialog.model = settingsModel;
     }
 
+    function showWelcome()
+    {
+        welcomedialog.open();
+    }
+
     function updateCurrentPlaying(list)
     {
         currentsongpage.title = list[0];
@@ -138,7 +144,11 @@ PageStackWindow {
         currentsongpage.shuffle = (list[9]=="0" ?  false:true);
         currentsongpage.nr = (list[10]===0? "":list[10]);
         currentsongpage.uri = list[11];
-        playlistpage.songid = list[12];
+        if(list[12]!=lastsongid)
+        {
+            playlistpage.songid = list[12];
+            lastsongid = list[12];
+        }
     }
 
     function savedPlaylistClicked(modelData)
@@ -287,7 +297,7 @@ PageStackWindow {
                 selectserverdialog.visible=true;
                 selectserverdialog.open();
             }
-            else if(list_view1.model.get(index).ident=="about"){ 
+            else if(list_view1.model.get(index).ident=="about"){
                 aboutdialog.visible=true;
                 aboutdialog.version = versionstring;
                 aboutdialog.open();
@@ -326,7 +336,7 @@ PageStackWindow {
     Page {
         id: mainPage
         Text{id: hometext;color: "grey"; text:(connected ? " Connected to: " + profilename : "Disconnected"); horizontalAlignment: "AlignHCenter";font.pointSize: 7
-        anchors {left: parent.left;right:parent.right;top:parent.top;}  }
+            anchors {left: parent.left;right:parent.right;top:parent.top;}  }
         Flickable {
             id: mainflickable
             contentHeight: maincolumn.height
@@ -345,13 +355,13 @@ PageStackWindow {
                 anchors {top:parent.top;left:parent.left; right: parent.right;}
                 id: maincolumn
                 Text{visible: playing&&text!=="";id: titletext;color: "white"; text:currentsongpage.title; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;}
+                    anchors {left: parent.left;right:parent.right;}
                 }
                 Text{visible: playing&&text!=="";id: artisttext;color: "white"; text:currentsongpage.artist; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;}
+                    anchors {left: parent.left;right:parent.right;}
                 }
                 Text{id: albumtext;visible: playing&&text!=="";color: "white"; text:currentsongpage.album; horizontalAlignment: "AlignHCenter";font.pointSize: 7
-                anchors {left: parent.left;right:parent.right;}
+                    anchors {left: parent.left;right:parent.right;}
                 }
                 Rectangle {
                     color: Qt.rgba(0.13,0.13,0.13,1)
@@ -362,82 +372,61 @@ PageStackWindow {
                 ListView{
                     id: list_view1
                     model: mainMenuModel
-                    delegate: itemDelegate
-                    height: count*50+25;
+                    delegate: ListItem{
+                        id:itemDelegate
+                        Row{anchors {verticalCenter: parent.verticalCenter}
+                            Image {
+                                source: icon
+                            }
+                            ListItemText {text:name; role:"Title";
+                                anchors {verticalCenter: parent.verticalCenter}
+                            }}
+                        onClicked: {
+                            list_view1.currentIndex = index
+                            parseClicked(index);
+                        }
+                        onPressAndHold: {
+                            list_view1.currentIndex = index
+                            parseClicked(index);
+                        }
+
+                    }
+                    height: count*70+25;
                     width: parent.width
                     clip: true
                     interactive: false
-                    spacing:2
                 }
             }
             clip: true
         }
 
 
-                ListModel {
-                    id: mainMenuModel
-                    ListElement { name: "Song information"; ident:"currentsong"; }
-                    ListElement { name: "Artists"; ident:"artists"; }
-                    ListElement { name: "Albums"; ident:"albums";}
-                    ListElement { name: "Files"; ident:"files" ;}
-                    ListElement { name: "Playlist"; ident:"playlist";}
-                    ListElement { name: "Connect"; ident:"connectto"}
-                    ListElement { name: "Settings"; ident:"settings"}
-                }
+        ListModel {
+            id: mainMenuModel
+            ListElement { name: "Song information"; ident:"currentsong"; icon:"icons/music.svg" }
+            ListElement { name: "Artists"; ident:"artists" ;icon:"icons/contacts.svg" }
+            ListElement { name: "Albums"; ident:"albums";icon:"icons/music_album.svg"}
+            ListElement { name: "Files"; ident:"files" ;icon:"icons/music_file.svg"}
+            ListElement { name: "Playlist"; ident:"playlist";icon:"icons/playlistlist.svg"}
+            ListElement { name: "Connect"; ident:"connectto";icon:"icons/connectivity.svg"}
+            ListElement { name: "Settings"; ident:"settings";icon:"icons/settings.svg"}
+        }
 
-                onStatusChanged: {
-                    if(status==PageStatus.Activating)
-                    {
-                        quitbtnenabled = false;
-                        activatequitbuttontimer.start();
-                    }
-                    if(status==PageStatus.Active)
-                    {
-                        window.cleanFileStack();
-                    }
-                }
+        onStatusChanged: {
+            if(status==PageStatus.Activating)
+            {
+                quitbtnenabled = false;
+                activatequitbuttontimer.start();
+            }
+            if(status==PageStatus.Active)
+            {
+                window.cleanFileStack();
+            }
+        }
 
-                Component{
-                    id:itemDelegate
-                    Item {
-                        id: itemItem
-                        property alias color:rectangle.color
-                        property alias gradient: rectangle.gradient
-                        width: list_view1.width
-                        height: 50
-                        Rectangle {
-                            id: rectangle
-                            color:Qt.rgba(0.07, 0.07, 0.07, 1)
-                            gradient: Gradient{}
-                            anchors.fill: parent
-                            Row{
-                                id: topLayout
-                                anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                                Text { text: name; color:"white";font.pointSize:12;}
-                            }
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
 
-                                list_view1.currentIndex = index
-                                parseClicked(index);
-                            }
-                            onPressed: {
-                                itemItem.gradient = selectiongradient;
-                            }
-                            onReleased: {
-                                itemItem.gradient = fillgradient;
-                                itemItem.color =Qt.rgba(0.07, 0.07, 0.07, 1);
-                            }
-                            onCanceled: {
-                                itemItem.gradient = fillgradient;
-                                itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1);
-                            }
-                        }
-                    }
 
-                }
+
 
 
         tools:pageSpecificToolsMain
@@ -447,47 +436,47 @@ PageStackWindow {
             ToolButton { iconSource: enabled ? "icons/close_stop.svg":"toolbar-home" ; onClicked: window.quit();enabled: quitbtnenabled;
 
             }
-                ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
-                ToolButton {
-                    iconSource: playbuttoniconsource; onClicked: window.play()
-                }
-                ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
-                ToolButton {
-                    iconSource: volumebuttoniconsource;
-                    onClicked: {
-                        if(volumeslider.visible)
-                        {
-                            volumeblendout.start();
-                        }
-                        else{
-                            volumeslider.visible=true;
-                            volumeblendin.start();
+            ToolButton{ iconSource: "toolbar-mediacontrol-backwards"; onClicked: window.prev() }
+            ToolButton {
+                iconSource: playbuttoniconsource; onClicked: window.play()
+            }
+            ToolButton{ iconSource: "toolbar-mediacontrol-forward"; onClicked: window.next() }
+            ToolButton {
+                iconSource: volumebuttoniconsource;
+                onClicked: {
+                    if(volumeslider.visible)
+                    {
+                        volumeblendout.start();
+                    }
+                    else{
+                        volumeslider.visible=true;
+                        volumeblendin.start();
 
-                        }
                     }
                 }
-
             }
+
+        }
 
     }
 
 
     PropertyAnimation {id: volumeblendin; target: volumeslider; properties: "opacity"; to: "1"; duration: 200
-    onStarted: {
-        volumeslider.opacity=0;
-        volumeslider.visible=true;
-    }
+        onStarted: {
+            volumeslider.opacity=0;
+            volumeslider.visible=true;
+        }
     }
     PropertyAnimation {id: volumeblendout
-                target: volumeslider
-                properties: "opacity"
-                to: "0"
-                duration: 500
-    onCompleted: {
-                volumeslider.visible=false;
-                }
-
+        target: volumeslider
+        properties: "opacity"
+        to: "0"
+        duration: 500
+        onCompleted: {
+            volumeslider.visible=false;
         }
+
+    }
 
 
     Timer{
@@ -563,9 +552,9 @@ PageStackWindow {
         text: ""
     }
     MouseArea {
-         anchors.fill: parent
-         enabled: pageStack.busy
-     }
+        anchors.fill: parent
+        enabled: pageStack.busy
+    }
     MouseArea {
         id:blockinteraction
         anchors.fill: parent
@@ -608,11 +597,26 @@ PageStackWindow {
         property string version : "noversion";
         titleText: "About:"
         content: [ Text{color: "white"
-            text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst. Version: "+aboutdialog.version
-            wrapMode: "WordWrap"
-            width: parent.width
-        }]
+                text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst. Version: "+aboutdialog.version
+                wrapMode: "WordWrap"
+                width: parent.width
+            },MouseArea{anchors.fill: parent;onClicked: {aboutdialog.close();}}]
         onClickedOutside: {aboutdialog.close();}
+
+
+    }
+
+
+    CommonDialog{
+        id:welcomedialog
+        property string version : "noversion";
+        titleText: "Welcome:"
+        content: [ Text{color: "white"
+                text: "Welcome to QMobileMPD, to start controlling your MPD server go to settings and add an server profile. \n If you don't know what MPD is you've probably downloaded an useless application.\n Sorry about that. Have fun using it."
+                wrapMode: "WordWrap"
+                width: parent.width
+            },MouseArea{anchors.fill: parent;onClicked: {welcomedialog.close();}}]
+        onClickedOutside: {welcomedialog.close();}
 
 
     }

@@ -17,98 +17,62 @@ Page{
 
     tools: settingstools
     ToolBarLayout { id:settingstools
-    ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
-    ToolButton{ iconSource: "toolbar-home";onClicked: {
-            pageStack.clear();
-            pageStack.push(mainPage);
-        }}
-    ToolButton { iconSource: "toolbar-add";
+        ToolButton { iconSource: "toolbar-back"; onClicked: pageStack.pop() }
+        ToolButton{ iconSource: "toolbar-home";onClicked: {
+                pageStack.clear();
+                pageStack.push(mainPage);
+            }}
 
-        onClicked:{
-            console.debug("Settings add clicked");
-            window.newProfile();
-        }
-    }
     }
     ListView{
         id: settings_list_view
-        delegate: settingsDelegate
+        delegate: ListItem{
+            id:itemDelegate
+            ListItemText {text:name; role:"Title";
+                anchors {verticalCenter: parent.verticalCenter}
+            }
+            onClicked: {
+                settings_list_view.currentIndex = index
+                parseClickedSettings(index);
+            }
+            onPressAndHold: {
+                settings_list_view.currentIndex = index
+                parseClickedSettings(index);
+            }
+        }
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
         model: settingsModel
-        spacing: 2
     }
-    Rectangle {
+
+
+    ListHeading {
         id:headingrect
-        anchors {left:parent.left;right:parent.right;}
-        height: artext.height
-        color: Qt.rgba(0.07, 0.07, 0.07, 1)
-        Text{
-            id: artext
+
+        ListItemText{
             text: "Settings:"
-            color: "white"
-            font.pointSize: 7
-        }
-    }
-
-
-    Component{
-        id:settingsDelegate
-        Item {
-            id: itemItem
-            width: parent.width
-            height: topLayout.height+liststretch
-            property alias color:rectangle.color
-            property alias gradient: rectangle.gradient
-            Rectangle {
-                id: rectangle
-                color:Qt.rgba(0.07, 0.07, 0.07, 1)
-                anchors.fill: parent
-                Row{
-                    id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                    Text { text: name; color:"white";font.pointSize:listfontsize;
-                    }
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-
-                    list_view1.currentIndex = index
-                    parseClickedSettings(index);
-                }
-                onPressed: {
-                    itemItem.gradient = selectiongradient;
-                }
-                onReleased: {
-                    itemItem.gradient = fillgradient;
-                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1)
-                }
-                onCanceled: {
-                    itemItem.gradient = fillgradient;
-                    itemItem.color = Qt.rgba(0.07, 0.07, 0.07, 1)
-                }
-            }
+            role: "Heading"
+            anchors.fill: headingrect.paddingItem
+            horizontalAlignment: Text.AlignLeft
         }
     }
     function parseClickedSettings(index)
     {
-            if(settingsModel.get(index).ident=="updatedb"){
-                window.updateDB();
-            }
-            else if(settingsModel.get(index).ident=="servers"){
-                pageStack.push(serverlist);
-            }
-            else if(settingsModel.get(index).ident=="about"){
-                aboutdialog.visible=true;
-                aboutdialog.version = versionstring;
-                aboutdialog.open();
-            }
-            else if(settingsModel.get(index).ident=="connectto"){
-                selectserverdialog.visible=true;
-                selectserverdialog.open();
-            }
+        if(settingsModel.get(index).ident=="updatedb"){
+            window.updateDB();
+        }
+        else if(settingsModel.get(index).ident=="servers"){
+            pageStack.push(serverlist);
+        }
+        else if(settingsModel.get(index).ident=="about"){
+            aboutdialog.visible=true;
+            aboutdialog.version = versionstring;
+            aboutdialog.open();
+        }
+        else if(settingsModel.get(index).ident=="connectto"){
+            selectserverdialog.visible=true;
+            selectserverdialog.open();
+        }
     }
 
 }

@@ -48,6 +48,7 @@ signals:
     void serverProfilesUpdated();
     void setVolume(int);
     void setUpdateInterval(int);
+    void showWelcome();
 
 
 

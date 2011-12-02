@@ -25,80 +25,77 @@ Page{
     }
     ListView{
         id: files_list_view
-        delegate: filesDelegate
+        delegate: ListItem{
+            id:filesDelegate
+//            Row{
+//                anchors {verticalCenter: parent.verticalCenter}
+
+                Image {
+                    id: fileicon
+                    source: (isDirectory===true ? "icons/folder.svg":"icons/music_file.svg");
+                    height: platformStyle.graphicSizeMedium
+                    width: height
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Column{
+                    anchors{left: fileicon.right;right:parent.right;verticalCenter:parent.verticalCenter;}
+                ListItemText{
+                    id:filenametext
+                    role: "Title"
+                    text: name
+                    wrapMode: "NoWrap"
+                    anchors {left: parent.left;right:parent.right}
+                    elide: Text.ElideMiddle;
+                }
+                ListItemText
+                {
+                    visible: isDirectory===false
+                    role:"SubTitle"
+                    text: (isDirectory===true ? "" : (title==="" ?"" : title+ " - ") + (artist==="" ?  "" : artist) );
+                    anchors {left: parent.left;right:parent.right;}
+                }
+                }
+
+
+           // }
+            onClicked: {
+                if(isDirectory){
+                    list_view1.currentIndex = index
+                    filesClicked((prepath=="/"? "": prepath+"/")+name);
+                }
+                if(isFile) {
+                    albumTrackClicked(title,album,artist,length,path,year,tracknr);
+                }
+            }
+            onPressAndHold: {
+                filesMenu.filepath = (prepath=="/"? "": prepath+"/")+name;
+                filesMenu.currentfilepath = filepath;
+                filesMenu.directory = isDirectory;
+                if(isFile){
+                    filesMenu.title = title;
+                    filesMenu.album = album;
+                    filesMenu.artist = artist;
+                    filesMenu.length = length;
+                    filesMenu.year = year;
+                    filesMenu.nr = tracknr;
+                }
+                filesMenu.open();
+            }
+
+        }
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
         clip: true
-        spacing: 2
     }
-    Rectangle {
-        id:headingrect
-        anchors {left:parent.left;right:parent.right;}
-        height: artext.height
-        color: Qt.rgba(0.07, 0.07, 0.07, 1)
-        Text{
-            id: artext
+    ListHeading {
+        id: headingrect
+        ListItemText {
+            anchors.fill: headingrect.paddingItem
+            role: "Heading"
             text: (filepath===""? "Files:" : filepath+":")
-            color: "white"
-            font.pointSize: 7
-        }
-    }
+            wrapMode: Text.WrapAnywhere
+            elide: Text.ElideLeft
+            horizontalAlignment: Text.AlignLeft
 
-    Component{
-        id:filesDelegate
-        Item {
-            id: itemItem
-            width: window.width
-            height: topLayout.height+liststretch
-            property alias color: rectangle.color
-            property alias gradient: rectangle.gradient
-            Rectangle {
-                id: rectangle
-                color: (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1)
-                anchors.fill: parent
-                Text{
-                    id: topLayout
-                    anchors {verticalCenter: parent.verticalCenter}
-                    Text { text: name; color:"white";font.pointSize:8}
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if(isDirectory){
-                        list_view1.currentIndex = index
-                        filesClicked((prepath=="/"? "": prepath+"/")+name);
-                    }
-                    if(isFile) {
-                        albumTrackClicked(title,album,artist,length,path,year,tracknr);
-                    }
-                }
-                onPressAndHold: {
-                        filesMenu.filepath = (prepath=="/"? "": prepath+"/")+name;
-                    filesMenu.currentfilepath = filepath;
-                    filesMenu.directory = isDirectory;
-                    if(isFile){
-                        filesMenu.title = title;
-                        filesMenu.album = album;
-                        filesMenu.artist = artist;
-                        filesMenu.length = length;
-                        filesMenu.year = year;
-                        filesMenu.nr = tracknr;
-                    }
-                        filesMenu.open();
-
-                }
-                onPressed: {
-                    itemItem.gradient = selectiongradient;
-                }
-                onReleased: {
-                    itemItem.gradient = fillgradient;
-                    itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
-                }
-                onCanceled: {
-                    itemItem.gradient = fillgradient;
-                    itemItem.color = (isDirectory===true) ? Qt.rgba(0.14, 0.14, 0.14, 1) : Qt.rgba(0.07, 0.07, 0.07, 1);
-                }
-            }
         }
     }
 
@@ -137,22 +134,22 @@ Page{
             MenuItem {
                 text: filesMenu.directory ?  "Playback directory" : "Playback file"
                 onClicked: {
-                           if(filesMenu.directory)
-                               window.playFiles(filesMenu.filepath);
-                           else
-                               window.playSong(filesMenu.filepath);
+                    if(filesMenu.directory)
+                        window.playFiles(filesMenu.filepath);
+                    else
+                        window.playSong(filesMenu.filepath);
                 }
             }
             MenuItem {
                 text: "Add current folder"
                 onClicked: {
-                               window.addFiles(filesMenu.currentfilepath);
+                    window.addFiles(filesMenu.currentfilepath);
                 }
             }
             MenuItem {
                 text: "Play current folder"
                 onClicked: {
-                               window.playFiles(filesMenu.currentfilepath);
+                    window.playFiles(filesMenu.currentfilepath);
                 }
             }
         }
