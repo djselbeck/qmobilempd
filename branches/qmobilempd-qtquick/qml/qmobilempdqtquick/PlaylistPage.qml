@@ -72,9 +72,17 @@ Page{
                     source: "icons/play.svg"
 
                 }
-                ListItemText {text: (index+1)+". ";anchors {verticalCenter: parent.verticalCenter}}
-                ListItemText {clip: true; wrapMode: Text.WrapAnywhere; elide: Text.ElideRight; text:  (title==="" ? filename : title);font.italic:(playing) ? true:false;anchors {verticalCenter: parent.verticalCenter}}
-                ListItemText { text: (length===0 ? "": " ("+lengthformated+")");anchors {verticalCenter: parent.verticalCenter}}
+                Column{
+                    Row{
+                        ListItemText {text: (index+1)+". ";anchors {verticalCenter: parent.verticalCenter}}
+                        ListItemText {clip: true; wrapMode: Text.WrapAnywhere; elide: Text.ElideRight; text:  (title==="" ? filename : title);font.italic:(playing) ? true:false;anchors {verticalCenter: parent.verticalCenter}}
+                        ListItemText { text: (length===0 ? "": " ("+lengthformated+")");anchors {verticalCenter: parent.verticalCenter}}
+                    }
+                    ListItemText{text:(artist!=="" ? artist + " - " : "" )+(album!=="" ? album : "");
+                        role: "SubTitle";
+                    }
+                }
+
             }
             onClicked: {
                 list_view1.currentIndex = index

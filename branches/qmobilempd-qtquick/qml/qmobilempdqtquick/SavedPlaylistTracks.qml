@@ -31,12 +31,18 @@ Page{
         id: playlistsongs_list_view
         delegate: ListItem{
             Row{
-                id: topLayout
-                anchors {verticalCenter: parent.verticalCenter;left:parent.left; right: parent.right}
-                ListItemText { text: (title==="" ? filename : title);role:"Title"
-                    anchors {verticalCenter: parent.verticalCenter}}
-                ListItemText { text: (length===0 ? "": " ("+lengthformated+")"); role:"Title"
-                    anchors {verticalCenter: parent.verticalCenter}}
+                anchors {verticalCenter: parent.verticalCenter}
+                Column{
+                    Row{
+                        ListItemText {text: (index+1)+". ";anchors {verticalCenter: parent.verticalCenter}}
+                        ListItemText {clip: true; wrapMode: Text.WrapAnywhere; elide: Text.ElideRight; text:  (title==="" ? filename : title);font.italic:(playing) ? true:false;anchors {verticalCenter: parent.verticalCenter}}
+                        ListItemText { text: (length===0 ? "": " ("+lengthformated+")");anchors {verticalCenter: parent.verticalCenter}}
+                    }
+                    ListItemText{text:(artist!=="" ? artist + " - " : "" )+(album!=="" ? album : "");
+                        role: "SubTitle";
+                    }
+                }
+
             }
             onClicked: {
                 list_view1.currentIndex = index

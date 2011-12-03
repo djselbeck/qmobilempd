@@ -125,6 +125,7 @@ private:
     QTimer *statusupdater;
     quint16 updateinterval;
     quint32 mPlaylistversion;
+    QList<MpdTrack*>* parseMPDTracks(QString cartist);
     QList<MpdTrack*>* getAlbumTracks_prv(QString album);
     QList<MpdTrack*>* getAlbumTracks_prv(QString album, QString cartist);
     QList<MpdAlbum*>* getArtistsAlbums_prv(QString artist);

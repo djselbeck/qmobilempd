@@ -16,14 +16,14 @@ Page {
         ButtonRow {
             id: buttonrowaddplay
             ToolButton{
-                text:"Add"
+                iconSource: "toolbar-add"
                 onClicked: {
                     window.addSong(filename);
                     pageStack.pop();
                 }
             }
             ToolButton{
-                text:"Play"
+                iconSource: "toolbar-mediacontrol-play"
                 onClicked: {
                     window.playSong(filename);
                     pageStack.pop();
