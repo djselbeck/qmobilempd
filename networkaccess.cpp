@@ -1011,6 +1011,7 @@ void NetworkAccess::savePlaylist(QString name)
     emit ready();
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
+        outstream.setCodec("UTF-8");
         outstream << "save \"" << name << "\"" << endl;
         QString response ="";
         while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
@@ -1042,6 +1043,7 @@ void NetworkAccess::deletePlaylist(QString name)
 {
     if (tcpsocket->state() == QAbstractSocket::ConnectedState) {
         QTextStream outstream(tcpsocket);
+        outstream.setCodec("UTF-8");
         outstream << "rm \"" << name << "\"" << endl;
         QString response ="";
         while ((tcpsocket->state()==QTcpSocket::ConnectedState)&&((response.left(2)!=QString("OK")))&&((response.left(3)!=QString("ACK"))))
