@@ -23,7 +23,7 @@ public:
     void setName(QString name);
     void setHostname(QString hostname);
     void setPassword(QString password);
-    void setAutoconnect(bool auto);
+    void setAutoconnect(bool autocon);
 
 signals:
     void valueChanged();

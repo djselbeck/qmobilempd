@@ -57,7 +57,7 @@ SOURCES += main.cpp \
     qthreadex.cpp \
     serverprofile.cpp \
     artistmodel.cpp \
-    albummodel.cpp \
+    albummodel.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -86,12 +86,13 @@ HEADERS += \
     serverprofile.h \
     artistmodel.h \
     albummodel.h \
-    mediakeysobserver.h
+    mediakeysobserver.h \
+    mpdoutput.h
 
 
 
 
-VERSION = 1.0.6
+VERSION = 1.0.7
 
 
 

@@ -64,7 +64,7 @@ Page{
             text: playlistname+":"
             role: "Heading"
             anchors.fill: headingrect.paddingItem
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
         }
     }
 

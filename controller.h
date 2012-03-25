@@ -18,6 +18,7 @@
 #include "artistmodel.h"
 #include "albummodel.h"
 #include "mediakeysobserver.h"
+#include "mpdoutput.h"
 
 
 
@@ -45,10 +46,14 @@ signals:
     void artistAlbumsReady();
     void savedPlaylistsReady();
     void savedPlaylistReady();
+    void outputsReady();
     void serverProfilesUpdated();
     void setVolume(int);
     void setUpdateInterval(int);
     void showWelcome();
+    void requestExit();
+    void searchedTracksReady();
+    void addURIToPlaylist(QString);
 
 
 
@@ -73,7 +78,10 @@ private:
     AlbumModel *albumsmodelold;
     QList<MpdTrack*> *trackmodel;
     QList<MpdTrack*> *playlist;
+    QList<MpdTrack*> *searchedtracks;
+    QList<MPDOutput*> *outputs;
     QStack<QList<QObject*>*> *filemodels;
+    QThread *oldnetthread;
 
 private slots:
     void requestCurrentPlaylist();
@@ -99,6 +107,8 @@ private slots:
     void updatePlaylistModel(QList<QObject*>* list);
     void updateFilesModel(QList<QObject*>* list);
     void updateAlbumTracksModel(QList<QObject*>* list);
+    void updateOutputsModel(QList<QObject*>* list);
+    void updateSearchedTracks(QList<QObject*>* list);
     void setHostname(QString hostname);
     void setPassword(QString password);
     void setPort(int port);
@@ -114,6 +124,8 @@ private slots:
     void applicationDeactivate();
     void fileStackPop();
     void cleanFileStack();
+    void exitRequest();
+    void addlastsearchtoplaylist();
 
 
 

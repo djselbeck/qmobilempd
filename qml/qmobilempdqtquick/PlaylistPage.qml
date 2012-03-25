@@ -113,7 +113,7 @@ Page{
             text: "Current playlist:"
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideLeft
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
 
         }
     }
@@ -212,4 +212,5 @@ Page{
         ]
 
     }
+
 }

@@ -43,7 +43,7 @@ ListHeading {
         anchors.fill: listHeading.paddingItem
         role: "Heading"
         text: (artistname==="" ? "Albums" : artistname)
-        horizontalAlignment: Text.AlignLeft
+//        horizontalAlignment: Text.AlignLeft
 
     }
 }
@@ -77,7 +77,7 @@ ListView{
         ListItemText {
             anchors.fill: sectionHeading.paddingItem
             role: "Heading"
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
             text:  section + ":"
         }
     }

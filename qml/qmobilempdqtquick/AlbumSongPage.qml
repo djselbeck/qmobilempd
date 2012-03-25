@@ -73,7 +73,7 @@ Page{
             anchors.fill: listHeading.paddingItem
             role: "Heading"
             text: (albumname=="" ? "Albumsongs:" : albumname+":")
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
 
         }
     }

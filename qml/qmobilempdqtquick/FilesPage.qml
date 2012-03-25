@@ -64,6 +64,7 @@ Page{
                     filesClicked((prepath=="/"? "": prepath+"/")+name);
                 }
                 if(isFile) {
+                    console.debug("Album:"+album)
                     albumTrackClicked(title,album,artist,length,path,year,tracknr);
                 }
             }
@@ -94,7 +95,7 @@ Page{
             text: (filepath===""? "Files:" : filepath+":")
             wrapMode: Text.WrapAnywhere
             elide: Text.ElideLeft
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
 
         }
     }

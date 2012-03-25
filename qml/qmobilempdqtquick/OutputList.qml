@@ -3,8 +3,8 @@ import com.nokia.symbian 1.1
 
 
 Page{
-    id: settings
-    property alias listmodel:settings_list_view.model
+    id: outputs
+    property alias listmodel:outputs_list_view.model
     property int currentindex:-1;
 
 
@@ -14,27 +14,30 @@ Page{
                 pageStack.clear();
                 pageStack.push(mainPage);
             }}
-        ToolButton { iconSource: "toolbar-add";
 
-            onClicked:{
-                window.newProfile();
-            }
-        }
     }
     ListView{
-        id: settings_list_view
+        id: outputs_list_view
         delegate: ListItem{
-            ListItemText { text: name; role:"Title"
-                anchors {verticalCenter: parent.verticalCenter}
-
+            CheckBox{
+             checked: outputenabled;
+             text: outputname;
+             anchors {verticalCenter: parent.verticalCenter}
             }
+
             onClicked: {
-                settings_list_view.currentIndex = index;
-                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"),{hostname:hostname,port:port,profilename:name,password:password,index:index,autoconnect:autoconnect});
+                outputs_list_view.currentIndex = index;
+                if(outputenabled){
+                    window.disableOutput(id);
+                    outputenabled = false;
+                }
+                else {
+                    window.enableOutput(id);
+                    outputenabled = true;
+                }
             }
             onPressAndHold: {
-                settings_list_view.currentIndex = index;
-                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"),{hostname:hostname,port:port,profilename:name,password:password,index:index,autoconnect:autoconnect});
+                outputs_list_view.currentIndex = index;
             }
         }
         anchors { left: parent.left; right: parent.right; top: headingrect.bottom; bottom: parent.bottom }
@@ -45,7 +48,7 @@ Page{
         id:headingrect
 
         ListItemText{
-            text: "Server list:"
+            text: "Output list:"
             role: "Heading"
             anchors.fill: headingrect.paddingItem
 //            horizontalAlignment: Text.AlignLeft

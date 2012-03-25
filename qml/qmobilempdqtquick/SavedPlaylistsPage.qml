@@ -36,7 +36,7 @@ Page{
             text: "Saved playlists:"
             role: "Heading"
             anchors.fill: headingrect.paddingItem
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
         }
     }
 

@@ -55,8 +55,12 @@ PageStackWindow {
     signal requestFilesPage(string files);
     signal requestFilesModel(string files);
     signal requestCurrentPlaylist();
+    signal requestOutputs();
     signal popfilemodelstack();
     signal cleanFileStack();
+    signal enableOutput(int nr);
+    signal disableOutput(int nr);
+    signal requestSearch(variant request);
 
     // Control signals
     signal play();
@@ -82,6 +86,7 @@ PageStackWindow {
     signal playSong(string uri);
     //Clears playlist before adding
     signal playFiles(string uri);
+    signal addlastsearch();
 
 
     signal quit();
@@ -149,6 +154,7 @@ PageStackWindow {
             playlistpage.songid = list[12];
             lastsongid = list[12];
         }
+        currentsongpage.audioproperties = list[13]+ "Hz "+ list[14] + "Bits " + list[15]+ "Channels";
     }
 
     function savedPlaylistClicked(modelData)
@@ -192,6 +198,11 @@ PageStackWindow {
     function updateAlbumModel()
     {
         pageStack.push(Qt.resolvedUrl("AlbumSongPage.qml"),{artistname:artistname,albumname:albumname,listmodel:albumTracksModel});
+    }
+
+    function updateOutputsModel()
+    {
+        pageStack.push(Qt.resolvedUrl("OutputList.qml"),{listmodel:outputsModel});
     }
 
     function albumTrackClicked(title,album,artist,lengthformatted,uri,year,tracknr)
@@ -305,6 +316,9 @@ PageStackWindow {
             else if(list_view1.model.get(index).ident=="updatedb"){
                 window.updateDB();
             }
+            else if(list_view1.model.get(index).ident=="search"){
+                pageStack.push(Qt.resolvedUrl("SearchPage.qml"));
+            }
         }
 
     }
@@ -314,6 +328,12 @@ PageStackWindow {
         this.artistname = item;
         window.requestArtistAlbums(item);
     }
+    function updateSearchedModel()
+    {
+        console.debug("BLA");
+        pageStack.currentPage.listmodel = searchedTracksModel;
+    }
+
 
     Component.onCompleted: {
         var component = Qt.createComponent("CurrentSong.qml");
@@ -408,6 +428,7 @@ PageStackWindow {
             ListElement { name: "Albums"; ident:"albums";icon:"icons/music_album.svg"}
             ListElement { name: "Files"; ident:"files" ;icon:"icons/music_file.svg"}
             ListElement { name: "Playlist"; ident:"playlist";icon:"icons/playlistlist.svg"}
+            ListElement { name: "Search"; ident:"search";icon:"icons/search.svg"}
             ListElement { name: "Connect"; ident:"connectto";icon:"icons/connectivity.svg"}
             ListElement { name: "Settings"; ident:"settings";icon:"icons/settings.svg"}
         }
@@ -630,8 +651,4 @@ PageStackWindow {
     Gradient {
         id: fillgradient
     }
-
-
-
-
 }
