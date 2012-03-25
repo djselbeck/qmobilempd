@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QDebug>
 #include "mpdalbum.h"
 #include "mpdartist.h"
 

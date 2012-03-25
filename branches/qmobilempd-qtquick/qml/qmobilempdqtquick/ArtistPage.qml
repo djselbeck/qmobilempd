@@ -55,7 +55,7 @@ Page{
             ListItemText {
                 anchors.fill: sectionHeading.paddingItem
                 role: "Heading"
-                horizontalAlignment: Text.AlignLeft
+//                horizontalAlignment: Text.AlignLeft
                 text:  section + ":"
             }
         }
@@ -67,7 +67,7 @@ Page{
             text: "Artists:"
             role: "Heading"
             anchors.fill: headingrect.paddingItem
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
         }
     }
 

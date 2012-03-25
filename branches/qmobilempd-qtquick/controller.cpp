@@ -9,6 +9,7 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     keyobserver = new MediaKeysObserver(this);
     netaccess = new NetworkAccess(0);
     netaccess->setUpdateInterval(1000);
+    oldnetthread = netaccess->thread();
     networkthread = new QThreadEx(this);
     netaccess->moveToThread(networkthread);
     networkthread->start();
@@ -16,9 +17,11 @@ Controller::Controller(QmlApplicationViewer *viewer,QObject *parent) : QObject(p
     playlistversion = 0;
     playlist = 0;
     artistlist = 0;
+    outputs = 0;
     albumlist = 0;
     artistmodelold = 0;
     albumsmodelold = 0;
+    searchedtracks = 0;
     lastplaybackstate = NetworkAccess::STOP;
     connectSignals();
     readSettings();
@@ -120,11 +123,38 @@ void Controller::updateAlbumsModel(QList<QObject*>* list)
     emit albumsReady();
 }
 
+void Controller::updateOutputsModel(QList<QObject*>* list)
+{
+    CommonDebug("OUTPUTS UPDATE REQUIRED");
+    if(outputs!=0)
+    {
+        delete(outputs);
+    }
+    outputs = (QList<MPDOutput*>*)list;
+
+    viewer->rootContext()->setContextProperty("outputsModel",QVariant::fromValue(*list));
+    emit outputsReady();
+}
+
+
 void Controller::updateAlbumTracksModel(QList<QObject*>* list)
 {
     CommonDebug("ALBUM TRACKS UPDATE REQUIRED");
     viewer->rootContext()->setContextProperty("albumTracksModel",QVariant::fromValue(*list));
     emit albumTracksReady();
+}
+
+void Controller::updateSearchedTracks(QList<QObject*>* list)
+{
+    CommonDebug("SEARCHED TRACKS UPDATE REQUIRED");
+    if(searchedtracks!=0)
+    {
+        delete (searchedtracks);
+        searchedtracks = 0;
+    }
+    viewer->rootContext()->setContextProperty("searchedTracksModel",QVariant::fromValue(*list));
+    searchedtracks = (QList<MpdTrack*>*)list;
+    emit searchedTracksReady();
 }
 
 void Controller::connectSignals()
@@ -216,6 +246,18 @@ void Controller::connectSignals()
     connect(this,SIGNAL(serverProfilesUpdated()),item,SLOT(settingsModelUpdated()));
     connect(this,SIGNAL(showWelcome()),item,SLOT(showWelcome()));
     connect(this,SIGNAL(setUpdateInterval(int)),netaccess,SLOT(setUpdateInterval(int)));
+
+    connect(netaccess,SIGNAL(outputsReady(QList<QObject*>*)),this,SLOT(updateOutputsModel(QList<QObject*>*)));
+    connect(this,SIGNAL(outputsReady()),item,SLOT(updateOutputsModel()));
+    connect(item,SIGNAL(requestOutputs()),netaccess,SLOT(getOutputs()));
+    connect(item,SIGNAL(enableOutput(int)),netaccess,SLOT(enableOutput(int)));
+    connect(item,SIGNAL(disableOutput(int)),netaccess,SLOT(disableOutput(int)));
+
+    connect(item,SIGNAL(requestSearch(QVariant)),netaccess,SLOT(searchTracks(QVariant)));
+    connect(netaccess,SIGNAL(searchedTracksReady(QList<QObject*>*)),this,SLOT(updateSearchedTracks(QList<QObject*>*)));
+    connect(this,SIGNAL(searchedTracksReady()),item,SLOT(updateSearchedModel()));
+    connect(item,SIGNAL(addlastsearch()),this,SLOT(addlastsearchtoplaylist()));
+    connect(this,SIGNAL(addURIToPlaylist(QString)),netaccess,SLOT(addTrackToPlaylist(QString)));
 }
 
 void Controller::setPassword(QString password)
@@ -350,6 +392,9 @@ void Controller::updateStatus(status_struct status)
     strings.append(QString::number(status.tracknr));
     strings.append(status.fileuri);
     strings.append(QString::number(status.id));
+    strings.append(QString::number(status.samplerate));
+    strings.append(QString::number(status.bitdepth));
+    strings.append(QString::number(status.channelcount));
     volume = status.volume;
     emit sendStatus(strings);
 }
@@ -432,6 +477,19 @@ void Controller::writeSettings()
 void Controller::quit()
 {
     writeSettings();
+    connect(this,SIGNAL(requestExit()),netaccess,SLOT(exitRequest()));
+    connect(netaccess,SIGNAL(requestExit()),this,SLOT(exitRequest()));
+    QTimer *exittimer = new QTimer();
+    exittimer->setInterval(10000);
+    exittimer->setSingleShot(true);
+    connect(exittimer,SIGNAL(timeout()),this,SLOT(exitRequest()));
+    emit requestExit();
+    exittimer->start();
+}
+
+void Controller::exitRequest()
+{
+    networkthread->exit(0);
     exit(0);
 }
 
@@ -583,5 +641,17 @@ void Controller::cleanFileStack()
                 delete(list->at(i));
             }
             delete(list);
+    }
+    if(searchedtracks!=0){
+        delete(searchedtracks);
+        searchedtracks = 0;
+    }
+}
+
+void Controller::addlastsearchtoplaylist()
+{
+    for(int i = 0;i<searchedtracks->length();i++)
+    {
+        emit addURIToPlaylist(searchedtracks->at(i)->getFileUri());
     }
 }

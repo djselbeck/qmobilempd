@@ -8,6 +8,7 @@ Page{
     property alias port: portInput.text;
     property alias profilename : nameInput.text;
     property alias autoconnect: autoconnectswitch.checked;
+
     property int index;
     tools:ToolBarLayout {
         id: settingsTools

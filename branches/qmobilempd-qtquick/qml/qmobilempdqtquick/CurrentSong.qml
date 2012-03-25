@@ -16,10 +16,12 @@ Page {
     property alias repeat: repeatbtn.checked;
     property alias nr: nrText.text;
     property alias uri: fileText.text;
+    property alias audioproperties: audiopropertiesText.text;
     property alias pospressed: positionSlider.pressed;
     property bool playing;
     property int fontsize:8;
     property int fontsizegrey:7;
+
 
 
     //tools: backTools
@@ -63,6 +65,8 @@ Page {
             Text{id:nrText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "Bitrate:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:bitrateText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            Text{text: "Properties:";color:"grey";font.pointSize: fontsizegrey}
+            Text{id:audiopropertiesText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "FileUri:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:fileText ;text: "";color:"white";font.pointSize:fontsize;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
             clip: true;

@@ -7,6 +7,7 @@
 #include "mpdartist.h"
 #include "mpdtrack.h"
 #include "mpdfileentry.h"
+#include "mpdoutput.h"
 #include "common.h"
 #include "commondebug.h"
 #define READYREAD 15000
@@ -16,7 +17,7 @@ class MpdArtist;
 class MpdTrack;
 class MpdFileEntry;
 
-struct status_struct {quint32 playlistversion; qint32 id; quint16 bitrate;int tracknr;int albumtrackcount;quint8 percent; quint8 volume; QString info; QString title; QString album; QString artist;QString fileuri;quint8 playing; bool repeat; bool shuffle; quint32 length; quint32 currentpositiontime;quint32 playlistlength;};
+struct status_struct {quint32 playlistversion; qint32 id; quint16 bitrate;int tracknr;int albumtrackcount;quint8 percent; quint8 volume; QString info; QString title; QString album; QString artist;QString fileuri;quint8 playing; bool repeat; bool shuffle; quint32 length; quint32 currentpositiontime;quint32 playlistlength;quint16 samplerate;quint8 channelcount;quint8 bitdepth;};
 
 
 class NetworkAccess : public QThread
@@ -54,11 +55,14 @@ signals:
     void albumTracksReady(QList<QObject*>*);
     void savedPlaylistsReady(QStringList*);
     void savedplaylistTracksReady(QList<QObject*>*);
+    void outputsReady(QList<QObject*>*);
+    void searchedTracksReady(QList<QObject*>*);
 
     void startupdateplaylist();
     void finishupdateplaylist();
     void busy();
     void ready();
+    void requestExit();
 public slots:
     void addTrackToPlaylist(QString fileuri);
     void addAlbumToPlaylist(QString album);
@@ -103,6 +107,11 @@ public slots:
     void addPlaylist(QString name);
     void deletePlaylist(QString name);
     void setUpdateInterval(int ms);
+    void exitRequest();
+    void enableOutput(int nr);
+    void disableOutput(int nr);
+    void getOutputs();
+    void searchTracks(QVariant request);
 
 
 protected slots:

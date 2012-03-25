@@ -8,6 +8,7 @@ Page{
     ListModel {
         id: settingsModel
         ListElement { name: "Update database"; ident:"updatedb"; }
+        ListElement { name: "Outputs"; ident:"outputs"; }
         ListElement { name: "Servers"; ident:"servers"}
         ListElement { name: "Connect"; ident:"connectto"}
         ListElement { name: "About"; ident:"about"}
@@ -53,7 +54,7 @@ Page{
             text: "Settings:"
             role: "Heading"
             anchors.fill: headingrect.paddingItem
-            horizontalAlignment: Text.AlignLeft
+//            horizontalAlignment: Text.AlignLeft
         }
     }
     function parseClickedSettings(index)
@@ -72,6 +73,9 @@ Page{
         else if(settingsModel.get(index).ident=="connectto"){
             selectserverdialog.visible=true;
             selectserverdialog.open();
+        }
+        else if(settingsModel.get(index).ident=="outputs"){
+            window.requestOutputs();
         }
     }
 
