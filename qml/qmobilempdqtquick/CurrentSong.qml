@@ -48,19 +48,26 @@ Page {
     }
     Flickable{
         anchors {left:parent.left; right: parent.right;bottom:positionSlider.top;top: parent.top}
+        id: infoFlickable
         contentHeight: infocolumn.height
         //contentWidth: infocolumn.width
         clip: true
         Column {
             id: infocolumn
+            Image{
+               id: coverImage
+               height: infoFlickable.height - (titleText.height + albumText.height + artistText.height)
+               width: height
+               anchors.horizontalCenter: parent.horizontalCenter
+               fillMode: Image.PreserveAspectCrop
+               smooth: true
+               source: coverimageurl
+           }
             //anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
             anchors {left:parent.left; right: parent.right;}
-            Text{text: "Title:";color:"grey";font.pointSize: fontsizegrey}
-            Text{id:titleText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Album:";color:"grey";font.pointSize: fontsizegrey}
-            Text{id:albumText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
-            Text{text: "Artist:";color:"grey";font.pointSize: fontsizegrey}
-            Text{id:artistText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
+            Text{id:titleText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter}}
+            Text{id:albumText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter}}
+            Text{id:artistText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter;}}
             Text{text: "Nr.:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:nrText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "Bitrate:";color:"grey";font.pointSize: fontsizegrey}
@@ -143,6 +150,51 @@ Page {
         //                Text{id:lengthTextcomplete ;text: "";color:"white";font.pointSize:7;wrapMode: "WordWrap";anchors {right: parent.right;}}
     }
 
-    //        anchors {left:parent.left; right: parent.right; bottom: parent.bottom}
+    function makeLastFMRequestURL()
+    {
+        var url = "";
+        url = "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="+ lastfmapikey + "&artist="+artist+"&album="+album
+        console.debug("LastFM url created: " + url);
+        coverfetcherXMLModel.source = url;
+
+        coverfetcherXMLModel.reload();
+
+
+        return url;
+    }
+
+    XmlListModel
+    {
+        id: coverfetcherXMLModel
+        query: "/lfm/album/image"
+        XmlRole { name: "image"; query: "./string()" }
+        XmlRole { name: "size"; query: "@size/string()" }
+        onStatusChanged: {
+            console.debug("XML status changed to: "+ status);
+            if(status == XmlListModel.Ready)
+            {
+                if(count>0)
+                {
+                    console.debug("Xml model ready, count: "+count);
+                    for (var i = 0;i <count;i++)
+                    {
+                        console.debug("item: "+i);
+                        console.debug(coverfetcherXMLModel.get(i).size+":");
+                        console.debug(coverfetcherXMLModel.get(i).image);
+                    }
+                    console.debug("imageurl: " + coverfetcherXMLModel.get(coverfetcherXMLModel.count-1).image);
+                    var coverurl = coverfetcherXMLModel.get(coverfetcherXMLModel.count-1).image;
+                    if(coverurl !== coverimageurl) {
+                        // global
+                        coverimageurl = coverfetcherXMLModel.get(coverfetcherXMLModel.count-1).image;
+                    }
+                }
+            }
+            if(status == XmlListModel.Error)
+            {
+                console.debug(coverfetcherXMLModel.errorString());
+            }
+        }
+    }
 
 }

@@ -23,8 +23,8 @@ QT       += core gui network
 # Allow network access on Symbian
 symbian {
     TARGET.CAPABILITY += NetworkServices
-  #  TARGET.UID3 = 0xE8E76261
-   TARGET.UID3 = 0x2004bca1
+    TARGET.UID3 = 0xE8E76261
+   #TARGET.UID3 = 0x2004bca1
     LIBS += -lremconinterfacebase -lremconcoreapi
     SOURCES += mediakeysobserver.cpp
     ICON = icon_converted.svg
@@ -57,6 +57,7 @@ SOURCES += main.cpp \
     qthreadex.cpp \
     serverprofile.cpp \
     artistmodel.cpp \
+    mpdoutput.cpp \
     albummodel.cpp
 
 # Please do not modify the following two lines. Required for deployment.
@@ -87,7 +88,8 @@ HEADERS += \
     artistmodel.h \
     albummodel.h \
     mediakeysobserver.h \
-    mpdoutput.h
+    mpdoutput.h \
+
 
 
 

@@ -54,6 +54,10 @@ signals:
     void requestExit();
     void searchedTracksReady();
     void addURIToPlaylist(QString);
+    void play();
+    void next();
+    void previous();
+    void stop();
 
 
 

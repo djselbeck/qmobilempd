@@ -228,6 +228,10 @@ void Controller::connectSignals()
     connect(keyobserver,SIGNAL(mediaKeyClicked(int)),this,SLOT(mediaKeyHandle(int)));
     connect(keyobserver,SIGNAL(mediaKeyPressed(int)),this,SLOT(mediaKeyPressed(int)));
     connect(keyobserver,SIGNAL(mediaKeyReleased(int)),this,SLOT(mediaKeyReleased(int)));
+    connect(this,SIGNAL(play()),netaccess,SLOT(pause()));
+    connect(this,SIGNAL(next()),netaccess,SLOT(next()));
+    connect(this,SIGNAL(previous()),netaccess,SLOT(previous()));
+    connect(this,SIGNAL(stop()),netaccess,SLOT(stop()));
     connect(&volDecTimer,SIGNAL(timeout()),this,SLOT(decVolume()));
     connect(&volIncTimer,SIGNAL(timeout()),this,SLOT(incVolume()));
     connect(QApplication::instance(),SIGNAL(focusChanged(QWidget*,QWidget*)),this,SLOT(focusChanged(QWidget*,QWidget*)));
@@ -568,8 +572,17 @@ void Controller::mediaKeyHandle(int key)
     CommonDebug("GOT MediaKey");
     if(key == MediaKeysObserver::EVolDecKey)
         decVolume();
-    if(key == MediaKeysObserver::EVolIncKey)
+    else if(key == MediaKeysObserver::EVolIncKey)
         incVolume();
+    else if(key == MediaKeysObserver::EPlayPauseKey)
+        emit play();
+    else if(key == MediaKeysObserver::EForwardKey)
+        emit next();
+    else if(key == MediaKeysObserver::EBackwardKey)
+        emit previous();
+    else if(key == MediaKeysObserver::EStopKey)
+        emit stop();
+
 
 }
 
