@@ -22,6 +22,8 @@ PageStackWindow {
     property string artistname;
     property string albumname;
     property string playlistname;
+    property string coverimageurl;
+    property string lastfmapikey : "1c728df8f626849518971eaae29e01a1"
     property bool repeat;
     property bool shuffle;
     property bool quitbtnenabled;
@@ -153,6 +155,7 @@ PageStackWindow {
         {
             playlistpage.songid = list[12];
             lastsongid = list[12];
+            currentsongpage.makeLastFMRequestURL();
         }
         currentsongpage.audioproperties = list[13]+ "Hz "+ list[14] + "Bits " + list[15]+ "Channels";
     }
