@@ -621,7 +621,7 @@ PageStackWindow {
         property string version : "noversion";
         titleText: "About:"
         content: [ Text{color: "white"
-                text: "QMobileMPD-QML, copyright 2011 by Hendrik Borghorst. Version: "+aboutdialog.version
+                text: "QMobileMPD-QML, copyright 2011-2013 by Hendrik Borghorst. Version: "+aboutdialog.version
                 wrapMode: "WordWrap"
                 width: parent.width
             },MouseArea{anchors.fill: parent;onClicked: {aboutdialog.close();}}]
