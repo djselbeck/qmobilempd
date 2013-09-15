@@ -51,7 +51,7 @@ Page{
                 {
                     visible: isDirectory===false
                     role:"SubTitle"
-                    text: (isDirectory===true ? "" : (title==="" ?"" : title+ " - ") + (artist==="" ?  "" : artist) );
+                    text: (!isFile ? "" : (title==="" ?"" : title+ " - ") + (artist==="" ?  "" : artist) );
                     anchors {left: parent.left;right:parent.right;}
                 }
                 }
@@ -63,15 +63,20 @@ Page{
                     list_view1.currentIndex = index
                     filesClicked((prepath=="/"? "": prepath+"/")+name);
                 }
-                if(isFile) {
+                else if(isFile) {
                     console.debug("Album:"+album)
                     albumTrackClicked(title,album,artist,length,path,year,tracknr);
+                }
+                else if ( isPlaylist ) {
+                    console.debug("Playlist:"+(prepath=="/"? "": prepath+"/")+name);
+                    savedPlaylistClicked((prepath=="/"? "": prepath+"/")+name);
                 }
             }
             onPressAndHold: {
                 filesMenu.filepath = (prepath=="/"? "": prepath+"/")+name;
                 filesMenu.currentfilepath = filepath;
                 filesMenu.directory = isDirectory;
+                filesMenu.playlist = isPlaylist;
                 if(isFile){
                     filesMenu.title = title;
                     filesMenu.album = album;
@@ -80,7 +85,10 @@ Page{
                     filesMenu.year = year;
                     filesMenu.nr = tracknr;
                 }
-                filesMenu.open();
+                if(!isPlaylist)
+                    filesMenu.open();
+                else
+                    savedPlaylistClicked((prepath=="/"? "": prepath+"/")+name);
             }
 
         }
@@ -118,6 +126,7 @@ Page{
         property string year;
         property int nr;
         property bool directory:false;
+        property bool playlist:false;
         MenuLayout {
             MenuItem {
                 text: "Show song information"
