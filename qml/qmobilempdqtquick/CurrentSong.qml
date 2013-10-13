@@ -64,10 +64,10 @@ Page {
                source: coverimageurl
            }
             //anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
-            anchors {left:parent.left; right: parent.right;}
-            Text{id:titleText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter}}
-            Text{id:albumText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter}}
-            Text{id:artistText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {horizontalCenter: parent.horizontalCenter;}}
+            anchors.fill: parent
+            ScrollLabel{id:titleText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
+            ScrollLabel{id:albumText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
+            ScrollLabel{id:artistText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
             Text{text: "Nr.:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:nrText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "Bitrate:";color:"grey";font.pointSize: fontsizegrey}
@@ -76,7 +76,7 @@ Page {
             Text{id:audiopropertiesText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "FileUri:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:fileText ;text: "";color:"white";font.pointSize:fontsize;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
-            clip: true;
+
         }
     }
     ToolBar{
