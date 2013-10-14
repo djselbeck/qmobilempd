@@ -63,8 +63,9 @@ Page {
                smooth: true
                source: coverimageurl
            }
-            //anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
-            anchors.fill: parent
+//            anchors {left:parent.left; right: parent.right; top:parent.top; bottom:parent.bottom}
+            width: parent.width
+//            anchors.fill: parent
             ScrollLabel{id:titleText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
             ScrollLabel{id:albumText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
             ScrollLabel{id:artistText ;text: "";color:"white";font.pointSize:fontsize;anchors {right:parent.right; left:parent.left}}
@@ -76,7 +77,6 @@ Page {
             Text{id:audiopropertiesText ;text: "";color:"white";font.pointSize:fontsize;wrapMode: "WordWrap";anchors {left:parent.left; right: parent.right;}}
             Text{text: "FileUri:";color:"grey";font.pointSize: fontsizegrey}
             Text{id:fileText ;text: "";color:"white";font.pointSize:fontsize;wrapMode:"WrapAnywhere" ;anchors {left:parent.left; right: parent.right;}}
-
         }
     }
     ToolBar{
